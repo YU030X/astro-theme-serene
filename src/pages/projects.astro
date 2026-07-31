@@ -1,0 +1,43 @@
+---
+import GithubContributions from '@/components/GithubContributions.astro'
+import PageHead from '@/components/PageHead.astro'
+import ProjectCardCompact from '@/components/ProjectCardCompact.astro'
+import { projects, projectsDescription } from '@/data/projects'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { siteConfig } from '@/site.config'
+---
+
+<BaseLayout
+  title="Projects"
+  description="Selected side projects — small, sharp tools built with care."
+>
+  <section class="mx-auto max-w-[var(--container-reading)] pt-14 sm:pt-16" data-pagefind-body>
+    <PageHead title="Projects">{projectsDescription}</PageHead>
+
+    {
+      siteConfig.githubContributions.enabled && (
+        <div class="mt-14" data-reveal>
+          <h2 class="text-lg font-semibold tracking-tight">Activities</h2>
+          <div class="mt-4">
+            <GithubContributions
+              username={siteConfig.githubContributions.username}
+              locale={siteConfig.locale}
+            />
+          </div>
+        </div>
+      )
+    }
+
+    <div
+      class:list={[
+        siteConfig.githubContributions.enabled ? 'mt-10' : 'mt-14',
+      ]}
+      data-reveal="content"
+    >
+      <h2 class="text-lg font-semibold tracking-tight">Programs</h2>
+      <div class="mt-4 grid gap-3 sm:grid-cols-2">
+        {projects.map((project) => <ProjectCardCompact {project} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

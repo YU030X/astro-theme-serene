@@ -1,0 +1,197 @@
+---
+import Icon from '@/components/Icon.astro'
+import ThemeToggle from '@/components/ThemeToggle.astro'
+import { siteConfig } from '@/site.config'
+
+const { pathname } = Astro.url
+const normalized = pathname.replace(/\/$/, '') || '/'
+const isActive = (href: string) =>
+  normalized === href || normalized.startsWith(`${href}/`)
+---
+
+<header id="site-header">
+  <div class="header-shell">
+    <div
+      class="header-row relative mx-auto flex h-14 w-full items-center justify-between px-4 sm:px-6"
+    >
+      <a
+        href="/"
+        class="header-brand font-medium text-ink"
+        aria-label={`${siteConfig.title} — home`}
+      >
+        <span class="text-[1rem]">{siteConfig.title}</span>
+      </a>
+
+      {/* Everything but the brand sits together on the right. */}
+      <div class="flex items-center gap-1.5">
+        <nav
+          class="hidden items-center gap-1 md:flex"
+          aria-label="Main navigation"
+        >
+          {
+            siteConfig.nav.map((item) => (
+              <a
+                href={item.href}
+                class="nav-link relative rounded-md px-3 py-1.5 text-sm font-medium"
+                aria-current={isActive(item.href) ? 'page' : undefined}
+                data-astro-prefetch
+              >
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+
+        <div class="flex items-center gap-0.5">
+          <button
+            class="icon-btn"
+            type="button"
+            data-search-open
+            aria-label="Search (⌘K)"
+          >
+            <Icon name="search" size={18} />
+          </button>
+          <ThemeToggle />
+          <button
+            id="menu-button"
+            class="icon-btn md:hidden"
+            type="button"
+            aria-expanded="false"
+            aria-controls="mobile-nav"
+            aria-label="Menu"
+          >
+            <span class="menu-lines" aria-hidden="true"><i></i><i></i></span>
+          </button>
+        </div>
+      </div>
+
+      <div id="mobile-nav" class="md:hidden">
+        <nav
+          class="surface rounded-2xl p-2 shadow-pop"
+          aria-label="Mobile navigation"
+        >
+          {
+            siteConfig.nav.map((item, i) => (
+              <a
+                href={item.href}
+                class="mobile-nav-link block rounded-md px-4 py-2.5 text-[0.95rem] font-medium transition-colors duration-200"
+                style={`--i: ${i}`}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            ))
+          }
+          <div class="mx-2 my-2 border-t border-line"></div>
+          <a
+            href="/archive"
+            class="mobile-nav-link block rounded-md px-4 py-2.5 text-[0.95rem] font-medium transition-colors duration-200"
+            style={`--i: ${siteConfig.nav.length}`}
+            aria-current={isActive('/archive') ? 'page' : undefined}
+          >
+            Archive
+          </a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* Desktop nav: quiet text, no hover pill — the active page carries a static
+     hairline, in step with the site-wide underline language. */
+  .nav-link {
+    color: var(--quiet);
+    transition: color 0.18s var(--ease-out-quart);
+  }
+  .nav-link:hover {
+    color: var(--accent);
+  }
+  /* After :hover, so the current page stays put when pointed at. */
+  .nav-link[aria-current='page'] {
+    color: var(--ink);
+  }
+  .nav-link[aria-current='page']::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0.75rem;
+    bottom: -0.125rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .mobile-nav-link {
+    color: var(--quiet);
+  }
+  .mobile-nav-link:hover,
+  .mobile-nav-link[aria-current='page'] {
+    background: var(--tint);
+    color: var(--ink);
+  }
+
+  .menu-lines {
+    position: relative;
+    display: block;
+    width: 1.05rem;
+    height: 0.75rem;
+  }
+  .menu-lines i {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    border-radius: 2px;
+    background: currentColor;
+    transition:
+      transform 0.3s var(--ease-spring),
+      top 0.3s var(--ease-spring);
+  }
+  .menu-lines i:first-child {
+    top: 1px;
+  }
+  .menu-lines i:last-child {
+    top: calc(100% - 2.5px);
+  }
+  #menu-button[aria-expanded='true'] .menu-lines i:first-child {
+    top: calc(50% - 1px);
+    transform: rotate(45deg);
+  }
+  #menu-button[aria-expanded='true'] .menu-lines i:last-child {
+    top: calc(50% - 1px);
+    transform: rotate(-45deg);
+  }
+
+  #mobile-nav {
+    position: absolute;
+    z-index: var(--layer-header-menu);
+    inset-inline: 0.75rem;
+    top: calc(100% + 0.4rem);
+    transform-origin: top;
+    opacity: 0;
+    transform: translateY(-4px) scale(0.99);
+    pointer-events: none;
+    visibility: hidden;
+    transition:
+      opacity 0.25s var(--ease-out-quart),
+      transform 0.3s var(--ease-spring),
+      visibility 0s linear 0.3s;
+  }
+  #mobile-nav :global(a) {
+    opacity: 0;
+    transition: opacity 0.25s var(--ease-out-quart);
+    transition-delay: calc(30ms + var(--i, 0) * 25ms);
+  }
+  #mobile-nav.open {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    visibility: visible;
+    transition:
+      opacity 0.25s var(--ease-out-quart),
+      transform 0.3s var(--ease-spring),
+      visibility 0s;
+  }
+  #mobile-nav.open :global(a) {
+    opacity: 1;
+  }
+</style>

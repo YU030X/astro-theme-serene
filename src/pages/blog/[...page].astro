@@ -1,0 +1,52 @@
+---
+import type { GetStaticPaths, Page } from 'astro'
+
+import PageHead from '@/components/PageHead.astro'
+import Pagination from '@/components/Pagination.astro'
+import PostRow from '@/components/PostRow.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getPosts, type Post } from '@/lib/utils'
+import { siteConfig } from '@/site.config'
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPosts()
+  return paginate(posts, { pageSize: siteConfig.postsPerPage })
+}) satisfies GetStaticPaths
+
+const { page } = Astro.props as { page: Page<Post> }
+---
+
+<BaseLayout
+  title="Blog"
+  description={`Writing by ${siteConfig.author} — essays on design, code and attention.`}
+>
+  <section class="mx-auto max-w-[var(--container-reading)] pt-14 sm:pt-16">
+    <PageHead title="Blog">
+      {page.total} essays on design, code, and paying attention.
+      <nav
+        slot="after"
+        class="mt-5 flex items-center justify-center gap-6"
+        aria-label="Blog indexes"
+      >
+        <a
+          class="text-[0.85rem] font-medium text-quiet underline decoration-line underline-offset-4 transition-colors duration-150 hover:text-accent"
+          href="/archive">Archive</a
+        >
+        <a
+          class="text-[0.85rem] font-medium text-quiet underline decoration-line underline-offset-4 transition-colors duration-150 hover:text-accent"
+          href="/categories">Categories</a
+        >
+        <a
+          class="text-[0.85rem] font-medium text-quiet underline decoration-line underline-offset-4 transition-colors duration-150 hover:text-accent"
+          href="/tags">Tags</a
+        >
+      </nav>
+    </PageHead>
+
+    <ul class="mt-14" data-reveal="content">
+      {page.data.map((post) => <PostRow {post} />)}
+    </ul>
+
+    {page.lastPage > 1 && <Pagination {page} />}
+  </section>
+</BaseLayout>

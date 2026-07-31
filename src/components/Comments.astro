@@ -1,0 +1,94 @@
+---
+import { siteConfig } from '@/site.config'
+
+// Waline styles must be imported in frontmatter — a client <script> import does not reliably inject them.
+import '@waline/client/style'
+
+const { enabled, serverURL } = siteConfig.waline
+const active = enabled && serverURL.length > 0
+---
+
+{
+  active && (
+    <section class="mx-auto mt-16 max-w-[var(--container-reading)]" data-pagefind-ignore>
+      <h2 class="mb-5 font-serif text-section font-semibold tracking-tight text-ink">
+        Comments
+      </h2>
+      <div id="waline-thread" data-waline-server={serverURL} />
+    </section>
+  )
+}
+
+{
+  active && (
+    <script>
+      import { init } from '@waline/client'
+
+      type WalineInstance = {
+        update: (opts: Record<string, unknown>) => void
+        destroy: () => void
+      }
+      let walineInstance: WalineInstance | null = null
+
+      const currentTheme = () =>
+        document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
+
+      function mountWaline() {
+        const el = document.getElementById('waline-thread')
+        if (!el) return
+        const serverURL = el.dataset.walineServer
+        if (!serverURL) return
+
+        walineInstance = init({
+          el: '#waline-thread',
+          serverURL,
+          path: window.location.pathname,
+          dark: "[data-theme='dark']",
+          reaction: false
+        }) as WalineInstance | null
+      }
+
+      function teardownWaline() {
+        walineInstance?.destroy()
+        walineInstance = null
+      }
+
+      document.addEventListener('astro:page-load', mountWaline)
+      document.addEventListener('astro:before-swap', teardownWaline)
+
+      new MutationObserver(() => {
+        walineInstance?.update({ dark: currentTheme() === 'dark' })
+      }).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+      })
+    </script>
+  )
+}
+
+{/* Waline's DOM is runtime-injected and never gets Astro's scoped attribute — must stay is:global. */}
+<style is:global>
+  #waline-thread {
+    --waline-font-size: 0.95rem;
+    --waline-theme-color: var(--accent);
+    --waline-active-color: var(--accent-hover);
+    --waline-color: var(--ink);
+    --waline-bg-color: var(--card);
+    --waline-bg-color-light: var(--tint);
+    --waline-bg-color-hover: var(--tint);
+    --waline-border-color: var(--line);
+    --waline-border: 1px solid var(--line);
+    --waline-avatar-radius: 9999px;
+    --waline-box-shadow: none;
+  }
+  #waline-thread .wl-content,
+  #waline-thread .wl-comment-text {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+  /* RSS links + "Powered by Waline" credit. */
+  #waline-thread .wl-rss,
+  #waline-thread .wl-power {
+    display: none !important;
+  }
+</style>

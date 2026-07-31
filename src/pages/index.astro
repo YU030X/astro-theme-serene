@@ -1,0 +1,129 @@
+---
+import { Image } from 'astro:assets'
+
+import HomePostItem from '@/components/HomePostItem.astro'
+import Icon from '@/components/Icon.astro'
+import ProjectCardCompact from '@/components/ProjectCardCompact.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getPosts } from '@/lib/utils'
+import { projects } from '@/data/projects'
+import { siteConfig } from '@/site.config'
+
+const posts = (await getPosts()).slice(0, 7)
+const featured = projects.filter((project) => project.featured)
+---
+
+<BaseLayout>
+  <div class="mx-auto w-full max-w-[var(--container-reading)]">
+    {/* Centered masthead: avatar → name → motto → socials. No boxes, no rules. */}
+    <section class="mt-14 text-center sm:mt-16" data-reveal="masthead">
+      <Image
+        src={siteConfig.avatar}
+        alt={`${siteConfig.title} avatar`}
+        width={144}
+        densities={[1, 2]}
+        loading="eager"
+        class="mx-auto size-[4.5rem] rounded-[1.1rem] ring-1 ring-line"
+      />
+      <h1 class="mt-4 font-serif text-[2.1rem] font-medium leading-tight tracking-[-0.02em]">
+        {siteConfig.title}
+      </h1>
+      <p class="mx-auto mt-2.5 max-w-[32rem] font-serif text-[1.05rem] italic leading-relaxed text-quiet">
+        {siteConfig.motto}
+      </p>
+      <div class="mt-5 flex items-center justify-center gap-0.5">
+        {
+          siteConfig.socials.map((social) => (
+            <a
+              class="icon-btn"
+              href={social.href}
+              aria-label={social.label}
+              {...(social.href.startsWith('http')
+                ? { target: '_blank', rel: 'noopener noreferrer' }
+                : {})}
+            >
+              <Icon name={social.icon} size={17} />
+            </a>
+          ))
+        }
+        <a class="icon-btn" href="/rss.xml" aria-label="RSS feed">
+          <Icon name="rss" size={17} />
+        </a>
+      </div>
+    </section>
+
+    <div data-reveal="content">
+      <section class="mt-14">
+        <div class="flex items-baseline justify-between">
+          <h2 class="text-lg font-semibold tracking-tight">About</h2>
+          <a
+            href="/about"
+            class="group inline-flex items-center gap-1.5 text-[0.8125rem] text-quiet transition-colors duration-150 hover:text-accent"
+          >
+            More
+            <Icon
+              name="arrow-right"
+              size={13}
+              class="transition-transform duration-300 group-hover:translate-x-0.5"
+            />
+          </a>
+        </div>
+        <p class="mt-3 text-[0.95rem] leading-[1.85] text-quiet">
+          {siteConfig.tagline} {siteConfig.bio}
+        </p>
+      </section>
+
+      <section class="mt-14">
+        <div class="mb-3 flex items-baseline justify-between">
+          <h2 class="text-lg font-semibold tracking-tight">Posts</h2>
+          <a
+            href="/blog"
+            class="group inline-flex items-center gap-1.5 text-[0.8125rem] text-quiet transition-colors duration-150 hover:text-accent"
+          >
+            More
+            <Icon
+              name="arrow-right"
+              size={13}
+              class="transition-transform duration-300 group-hover:translate-x-0.5"
+            />
+          </a>
+        </div>
+        <ul>
+          {posts.map((post) => <HomePostItem {post} />)}
+        </ul>
+      </section>
+
+      <section class="mt-14">
+        <div class="mb-4 flex items-baseline justify-between">
+          <h2 class="text-lg font-semibold tracking-tight">Projects</h2>
+          <a
+            href="/projects"
+            class="group inline-flex items-center gap-1.5 text-[0.8125rem] text-quiet transition-colors duration-150 hover:text-accent"
+          >
+            More
+            <Icon
+              name="arrow-right"
+              size={13}
+              class="transition-transform duration-300 group-hover:translate-x-0.5"
+            />
+          </a>
+        </div>
+        <div class="space-y-3">
+          {featured.map((project) => <ProjectCardCompact {project} />)}
+        </div>
+      </section>
+    </div>
+
+    <p class="mt-16 pb-2 text-center text-[0.8125rem] text-quiet">
+      Search anything with
+      <kbd
+        class="mx-0.5 rounded-xs border border-line bg-tint px-1.5 py-0.5 text-[11px]"
+        >⌘K</kbd
+      >, or follow along via
+      <a
+        class="font-medium underline decoration-line underline-offset-2 transition-colors duration-200 hover:text-accent"
+        href="/rss.xml">RSS</a
+      >.
+    </p>
+  </div>
+</BaseLayout>

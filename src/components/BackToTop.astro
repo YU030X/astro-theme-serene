@@ -1,0 +1,45 @@
+---
+import Icon from '@/components/Icon.astro'
+---
+
+<button id="back-to-top" type="button" aria-label="Back to top">
+  <Icon name="arrow-up" size={18} />
+</button>
+
+<style>
+  #back-to-top {
+    position: fixed;
+    right: calc(1.4rem + env(safe-area-inset-right));
+    bottom: calc(1.4rem + env(safe-area-inset-bottom));
+    z-index: var(--layer-sticky);
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 9999px;
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--card) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--quiet);
+    box-shadow: var(--sh-soft);
+    opacity: 0;
+    transform: translateY(14px);
+    pointer-events: none;
+    transition:
+      opacity 0.2s var(--ease-out-quart),
+      transform 0.22s var(--ease-spring),
+      color 0.16s;
+  }
+  #back-to-top:hover {
+    color: var(--ink);
+  }
+  #back-to-top:active {
+    background: var(--tint);
+  }
+  #back-to-top.visible {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+</style>

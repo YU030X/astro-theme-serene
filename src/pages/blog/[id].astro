@@ -1,0 +1,253 @@
+---
+import { Image } from 'astro:assets'
+import { render } from 'astro:content'
+
+import FormattedDate from '@/components/FormattedDate.astro'
+import Icon from '@/components/Icon.astro'
+import TOC from '@/components/TOC.astro'
+import Comments from '@/components/Comments.astro'
+import LikeButton from '@/components/LikeButton.astro'
+import PostLicense from '@/components/PostLicense.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { formatCategory, getPosts, readingTime, type Post } from '@/lib/utils'
+
+export async function getStaticPaths() {
+  const posts = await getPosts()
+  return posts.map((post, i) => ({
+    params: { id: post.id },
+    props: {
+      post,
+      newer: posts[i - 1] ?? null,
+      older: posts[i + 1] ?? null
+    }
+  }))
+}
+
+interface Props {
+  post: Post
+  newer: Post | null
+  older: Post | null
+}
+
+const { post, newer, older } = Astro.props
+const { Content, headings } = await render(post)
+const {
+  title,
+  description,
+  publishDate,
+  updatedDate,
+  category,
+  cover,
+  tags
+} = post.data
+const minutes = readingTime(post.body)
+const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3)
+const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.depth === 3)
+---
+
+<BaseLayout
+  {title}
+  {description}
+  ogImage={cover?.src.src}
+  article={{ publishDate, updatedDate, category, tags }}
+>
+  <div
+    id="reading-progress"
+    class="fixed inset-x-0 top-0 z-[var(--layer-progress)] h-[2px] origin-left bg-accent"
+    style="transform: scaleX(0)"
+    aria-hidden="true"
+  >
+  </div>
+
+  <article class="pt-12 sm:pt-16" data-pagefind-body>
+    <div class="mx-auto max-w-[var(--container-reading)]">
+      <a
+        href="/blog"
+        class="group inline-flex items-center gap-1.5 text-sm text-quiet transition-colors duration-150 hover:text-ink"
+        data-pagefind-ignore
+      >
+        <Icon
+          name="arrow-left"
+          size={15}
+          class="transition-transform duration-300 group-hover:-translate-x-0.5"
+        />
+        Blog
+      </a>
+
+      {
+        cover && (
+          <figure class="mt-8">
+            <div
+              class="hero-figure relative aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[3/2]"
+              data-no-zoom
+            >
+              <Image
+                src={cover.src}
+                alt={cover.alt}
+                width={1400}
+                widths={[720, 1080, 1400]}
+                sizes="(min-width: 800px) 768px, 94vw"
+                loading="eager"
+                fetchpriority="high"
+                class="media-dim block h-full w-full object-[50%_35%] object-cover"
+              />
+            </div>
+            {cover.source && (
+              <figcaption class="mt-2.5 text-right text-xs text-quiet">
+                <a
+                  class="inline-flex items-center gap-1 underline decoration-line underline-offset-2 transition-colors duration-150 hover:text-accent"
+                  href={cover.source}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Icon name="external" size={12} /> Image source
+                </a>
+              </figcaption>
+            )}
+          </figure>
+        )
+      }
+    </div>
+
+    {/* One positioning context from the title down — the TOC rail tops out
+        level with the title block and runs to the article's end. */}
+    <div class="relative">
+      {
+        hasToc && (
+          <aside class="hidden xl:absolute xl:bottom-0 xl:left-[calc(50%-35rem)] xl:top-0 xl:block xl:w-44">
+            <div class="sticky top-28">
+              <TOC {headings} />
+            </div>
+          </aside>
+        )
+      }
+
+      <header class="mx-auto max-w-[var(--container-reading)]">
+      <p class="mt-8 font-mono text-[0.68rem] uppercase tracking-[0.13em] text-quiet">
+        Writing · {formatCategory(category)}
+      </p>
+
+      <h1 class="mt-3 font-serif text-title font-medium leading-[1.16] sm:text-title-lg">
+        {title}
+      </h1>
+
+      <p class="mt-4 max-w-[40rem] text-[1.02rem] italic leading-relaxed text-quiet">
+        {description}
+      </p>
+
+      <dl class="mt-8 grid grid-cols-[5.5rem_minmax(0,1fr)] gap-x-5 gap-y-2.5 text-sm">
+        <dt class="text-quiet">Published</dt>
+        <dd class="os-nums"><FormattedDate date={publishDate} /></dd>
+        {
+          updatedDate && (
+            <>
+              <dt class="text-quiet">Updated</dt>
+              <dd class="os-nums"><FormattedDate date={updatedDate} /></dd>
+            </>
+          )
+        }
+        <dt class="text-quiet">Reading</dt>
+        <dd class="os-nums">{minutes} min</dd>
+        <dt class="text-quiet">Category</dt>
+        <dd>
+          <a
+            class="underline decoration-line underline-offset-3 hover:text-accent"
+            href={`/categories/${category}`}
+          >
+            {formatCategory(category)}
+          </a>
+        </dd>
+        {
+          tags.length > 0 && (
+            <>
+              <dt class="text-quiet">Tags</dt>
+              <dd class="flex flex-wrap gap-x-3 gap-y-1">
+                {tags.map((tag) => (
+                  <a class="underline decoration-line underline-offset-3 hover:text-accent" href={`/tags/${tag}`}>
+                    {tag}
+                  </a>
+                ))}
+              </dd>
+            </>
+          )
+        }
+      </dl>
+    </header>
+
+    {
+      hasToc && (
+        <details class="mx-auto mt-8 max-w-[var(--container-reading)] rounded-2xl border border-line bg-card px-5 py-4 shadow-soft xl:hidden">
+          <summary class="cursor-pointer text-sm font-medium">On this page</summary>
+          <ol class="mt-3 space-y-2 border-t border-line pt-3 text-sm text-quiet">
+            {tocHeadings.map((heading) => (
+              <li class:list={[heading.depth === 3 && 'pl-4']}>
+                <a class="hover:text-ink" href={`#${heading.slug}`}>{heading.text}</a>
+              </li>
+            ))}
+          </ol>
+        </details>
+      )
+    }
+
+    <div class="mx-auto mt-10 max-w-[var(--container-reading)] sm:mt-12">
+      <div class="min-w-0">
+        <div class="prose max-w-none">
+          <Content />
+        </div>
+
+        <div class="article-end" aria-hidden="true"></div>
+
+        <PostLicense {title} {publishDate} postId={post.id} />
+
+        <LikeButton />
+
+        <footer class="mt-12" data-pagefind-ignore>
+          <div class="grid gap-4 sm:grid-cols-2">
+            {
+              older ? (
+                <a class="group rounded-xl p-4 transition-transform duration-300 ease-out hover:-translate-x-1 motion-reduce:transform-none" href={`/blog/${older.id}`}>
+                  <span class="flex items-center gap-1.5 text-xs font-medium text-quiet">
+                    <Icon
+                      name="arrow-left"
+                      size={13}
+                      class="transition-transform duration-300 group-hover:-translate-x-0.5"
+                    />
+                    Previous post
+                  </span>
+                  <span class="mt-2 line-clamp-2 block font-medium leading-snug text-ink transition-colors group-hover:text-accent">
+                    {older.data.title}
+                  </span>
+                </a>
+              ) : (
+                <span />
+              )
+            }
+            {
+              newer && (
+                <a
+                  class="group rounded-xl p-4 text-right transition-transform duration-300 ease-out hover:translate-x-1 motion-reduce:transform-none sm:col-start-2"
+                  href={`/blog/${newer.id}`}
+                >
+                  <span class="flex items-center justify-end gap-1.5 text-xs font-medium text-quiet">
+                    Next post
+                    <Icon
+                      name="arrow-right"
+                      size={13}
+                      class="transition-transform duration-300 group-hover:translate-x-0.5"
+                    />
+                  </span>
+                  <span class="mt-2 line-clamp-2 block font-medium leading-snug text-ink transition-colors group-hover:text-accent">
+                    {newer.data.title}
+                  </span>
+                </a>
+              )
+            }
+          </div>
+        </footer>
+
+        <Comments />
+      </div>
+    </div>
+    </div>
+  </article>
+</BaseLayout>

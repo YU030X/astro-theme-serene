@@ -1,0 +1,27 @@
+---
+/** Family page head: centered serif title + italic subtitle. Optional named
+ *  slots: `eyebrow` (a back link above the title), `title` (rich title
+ *  markup), `after` (index links below the subtitle). */
+interface Props {
+  title?: string
+}
+
+const { title } = Astro.props
+const hasEyebrow = Astro.slots.has('eyebrow')
+---
+
+<div class="a-in text-center">
+  <slot name="eyebrow" />
+  <h1
+    class:list={[
+      'font-serif text-[2.1rem] font-medium leading-tight tracking-[-0.02em]',
+      hasEyebrow && 'mt-4'
+    ]}
+  >
+    <slot name="title">{title}</slot>
+  </h1>
+  <p class="mx-auto mt-2.5 max-w-[32rem] font-serif text-[1.05rem] italic leading-relaxed text-quiet">
+    <slot />
+  </p>
+  <slot name="after" />
+</div>

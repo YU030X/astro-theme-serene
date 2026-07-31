@@ -1,0 +1,138 @@
+---
+import Icon from '@/components/Icon.astro'
+---
+
+<dialog id="search-dialog" class="search-dialog" aria-label="Search">
+  <div class="search-panel">
+    <div class="flex items-center gap-3 border-b border-line px-4">
+      <Icon name="search" size={18} class="shrink-0 text-quiet" />
+      <input
+        type="search"
+        placeholder="Search posts and pages…"
+        autocomplete="off"
+        spellcheck="false"
+        class="h-14 min-w-0 w-full bg-transparent text-[15px] text-ink outline-none placeholder:text-quiet"
+      />
+      <kbd
+        class="hidden shrink-0 rounded-sm border border-line bg-tint px-1.5 py-0.5 text-[11px] text-quiet sm:block"
+        >esc</kbd
+      >
+      <button
+        type="button"
+        class="icon-btn shrink-0"
+        data-search-close
+        aria-label="Close search"
+        title="Close search"
+      >
+        <Icon name="close" size={17} />
+      </button>
+    </div>
+    <div class="max-h-[min(60vh,26rem)] overflow-y-auto overscroll-contain p-2">
+      <p id="search-hint" class="px-3 py-8 text-center text-sm text-quiet">
+        Type to search posts and pages.
+      </p>
+      <div id="search-results"></div>
+    </div>
+    <div
+      class="flex items-center justify-between border-t border-line px-4 py-2.5 text-[11px] text-quiet"
+    >
+      <span class="flex items-center gap-1">
+        <Icon name="command" size={11} /> K to open · esc to close
+      </span>
+      <span>
+        Search by <a
+          href="https://pagefind.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-medium hover:text-ink">Pagefind</a
+        >
+      </span>
+    </div>
+  </div>
+</dialog>
+
+<style is:global>
+  .search-dialog {
+    z-index: var(--layer-modal);
+    margin: 10vh auto auto;
+    width: min(92vw, 34rem);
+    background: transparent;
+    border: none;
+    padding: 0;
+    overflow: visible;
+  }
+  .search-dialog::backdrop {
+    background: rgb(25 25 25 / 0.28);
+  }
+  .search-panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--sh-pop);
+    overflow: hidden;
+  }
+  @keyframes search-in {
+    from {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes backdrop-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  .search-dialog[open] .search-panel {
+    animation: search-in 0.2s var(--ease-spring) both;
+  }
+  .search-dialog[open]::backdrop {
+    animation: backdrop-in 0.16s ease both;
+  }
+
+  .search-result {
+    display: block;
+    border-radius: var(--radius-lg);
+    padding: 0.7rem 0.9rem;
+    transition: background-color 0.2s var(--ease-out-quart);
+  }
+  .search-result:hover,
+  .search-result:focus-visible {
+    background: var(--tint);
+  }
+  .search-result-title {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 550;
+    color: var(--ink);
+  }
+  .search-result-excerpt {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    margin-top: 0.2rem;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: var(--quiet);
+  }
+  .search-result-excerpt mark {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 600;
+    border-radius: 0.2em;
+    padding: 0 0.15em;
+  }
+  .search-empty {
+    padding: 2rem 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--quiet);
+  }
+</style>

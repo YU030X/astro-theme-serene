@@ -1,0 +1,156 @@
+---
+import FormattedDate from '@/components/FormattedDate.astro'
+import PageHead from '@/components/PageHead.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getPosts, groupByYear } from '@/lib/utils'
+
+const posts = await getPosts()
+const years = groupByYear(posts)
+---
+
+<BaseLayout
+  title="Archive"
+  description="Every post on this blog, in chronological order."
+>
+  <section class="pt-14 sm:pt-16">
+    <PageHead title="Archive">{posts.length} posts and counting.</PageHead>
+
+    <div class="mx-auto mt-14 max-w-[var(--container-reading)]">
+      {
+        years.map(([year, list]) => (
+          <section class="mt-10" data-reveal>
+            <div class="year-head">
+              <h2 class="year">{year}</h2>
+              <span class="rule" aria-hidden="true" />
+              <span class="count">
+                {list.length} {list.length === 1 ? 'post' : 'posts'}
+              </span>
+            </div>
+            <ul class="toc-list">
+              {list.map((post) => (
+                <li>
+                  <a href={`/blog/${post.id}`} class="toc-row">
+                    <span class="toc-title">{post.data.title}</span>
+                    <span class="toc-leader" aria-hidden="true" />
+                    <FormattedDate
+                      date={post.data.publishDate}
+                      options={{ month: 'short', day: '2-digit' }}
+                      class="toc-date"
+                    />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Archive as a book's table of contents: title … leader … date.
+     The year is a chapter head; the date plays the page number. */
+
+  .year-head {
+    display: flex;
+    align-items: baseline;
+    gap: 1.1rem;
+  }
+  .year {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-variant-numeric: oldstyle-nums;
+  }
+  .rule {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+    transform: translateY(-0.18em);
+  }
+  .count {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--quiet);
+  }
+
+  .toc-list {
+    list-style: none;
+    margin: 0.75rem 0 0;
+    padding: 0;
+  }
+  .toc-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+    padding: 0.66rem 0.85rem;
+    margin-inline: -0.85rem;
+    transition:
+      background-color 0.18s var(--ease-out-quart),
+      border-color 0.18s var(--ease-out-quart);
+  }
+  .toc-title {
+    min-width: 0;
+    font-size: 0.94rem;
+    line-height: 1.45;
+    color: var(--ink);
+    transition: color 0.15s var(--ease-out-quart);
+  }
+  .toc-leader {
+    flex: 1;
+    min-width: 2.5rem;
+    height: 1em;
+    background-image: radial-gradient(
+      circle,
+      var(--leader-c, color-mix(in srgb, var(--quiet) 38%, transparent)) 1px,
+      transparent 1.35px
+    );
+    background-size: 9px 2.5px;
+    background-repeat: repeat-x;
+    background-position: 0 calc(100% - 0.28em);
+  }
+  .toc-row :global(.toc-date) {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--quiet);
+    white-space: nowrap;
+    transition: color 0.15s var(--ease-out-quart);
+  }
+
+  .toc-row:hover {
+    background: var(--tint);
+    border-color: var(--line);
+  }
+  .toc-row:hover .toc-title {
+    color: var(--accent);
+  }
+  .toc-row:hover .toc-leader {
+    --leader-c: color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  .toc-row:hover :global(.toc-date) {
+    color: var(--ink);
+  }
+
+  /* Narrow screens: the leader yields; the date returns above the title. */
+  @media (max-width: 560px) {
+    .toc-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.2rem;
+      padding-block: 0.7rem;
+    }
+    .toc-leader {
+      display: none;
+    }
+    .toc-row :global(.toc-date) {
+      order: -1;
+    }
+  }
+</style>

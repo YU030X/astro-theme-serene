@@ -1,0 +1,195 @@
+---
+import Comments from '@/components/Comments.astro'
+import LinkCard from '@/components/LinkCard.astro'
+import PageHead from '@/components/PageHead.astro'
+import { friendLinks, linksDescription } from '@/data/links'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { siteConfig } from '@/site.config'
+
+const applyTip = siteConfig.links.applyTip
+---
+
+<BaseLayout
+  title="Links"
+  description="Friends of this site, and places worth your afternoon."
+>
+  <section class="mx-auto max-w-[var(--container-reading)] pt-14 sm:pt-16" data-pagefind-body>
+    <PageHead title="Links">{linksDescription}</PageHead>
+
+    <section class="mt-14" aria-labelledby="directory-title">
+      <div class="flex items-baseline justify-between gap-6" data-reveal>
+        <h2 id="directory-title" class="text-lg font-semibold tracking-tight text-ink">
+          Worth a detour
+        </h2>
+        <p class="shrink-0 font-mono text-[10px] uppercase tracking-[0.12em] text-quiet">
+          {friendLinks.length} entries
+        </p>
+      </div>
+
+      <div
+        class="mt-5 grid gap-3 sm:grid-cols-2"
+        data-reveal="content"
+      >
+        {friendLinks.map((link) => <LinkCard {link} />)}
+      </div>
+    </section>
+
+    {/* Apply Links — open rows, no card shell. */}
+    <section class="mt-16" data-reveal aria-labelledby="exchange-title">
+      <h2 id="exchange-title" class="text-lg font-semibold tracking-tight text-ink">
+        Apply Links
+      </h2>
+      <p class="mt-3 text-[0.9rem] leading-[1.75] text-quiet">
+        Meet the requirements below, then enable Waline in
+        <code class="font-mono text-xs text-ink">src/site.config.ts</code> and
+        leave a comment to propose an exchange.
+      </p>
+
+      <ul class="exchange-rules mt-4 grid gap-1.5 text-[0.8125rem] text-quiet">
+        <li><span aria-hidden="true">01</span>Your site is live and actively maintained.</li>
+        <li><span aria-hidden="true">02</span>You have already linked back to Serene.</li>
+        <li><span aria-hidden="true">03</span>Your content follows applicable laws.</li>
+      </ul>
+
+      <div class="mt-6">
+        {
+          applyTip.map(({ name, val }) => (
+            <button
+              type="button"
+              class="apply-copy-row group grid w-full grid-cols-[4.5rem_minmax(0,1fr)_auto] items-center gap-3 text-left"
+              data-copy={val}
+              data-copy-name={name}
+              aria-label={`Copy ${name}: ${val}`}
+            >
+              <span class="font-mono text-[10px] uppercase tracking-[0.12em] text-quiet">
+                {name}
+              </span>
+              <span class="min-w-0 truncate font-mono text-xs text-ink sm:text-sm">
+                {val}
+              </span>
+              <span class="copy-action text-xs font-medium text-quiet" data-copy-label>
+                Copy
+              </span>
+            </button>
+          ))
+        }
+      </div>
+      <p class="sr-only" aria-live="polite" data-copy-status></p>
+    </section>
+
+    <Comments />
+
+    <script>
+      async function copyText(value: string) {
+        if (!navigator.clipboard || !window.isSecureContext) {
+          throw new Error('Clipboard API unavailable')
+        }
+        await navigator.clipboard.writeText(value)
+      }
+
+      function setupCopyTargets() {
+        const status = document.querySelector<HTMLElement>('[data-copy-status]')
+        for (const el of document.querySelectorAll<HTMLElement>('[data-copy]')) {
+          if (el.dataset.enhanced === 'true') continue
+          el.dataset.enhanced = 'true'
+          let resetTimer: number | undefined
+
+          el.addEventListener('click', async () => {
+            const value = el.dataset.copy ?? ''
+            const label = el.querySelector<HTMLElement>('[data-copy-label]')
+            const name = el.dataset.copyName ?? 'Value'
+            if (!value) return
+
+            window.clearTimeout(resetTimer)
+            try {
+              await copyText(value)
+              el.dataset.copied = 'true'
+              if (label) label.firstChild!.textContent = 'Copied '
+              if (status) status.textContent = `${name} copied to clipboard.`
+              document.dispatchEvent(
+                new CustomEvent('toast', {
+                  detail: { message: `${name} copied` }
+                })
+              )
+              resetTimer = window.setTimeout(() => {
+                delete el.dataset.copied
+                if (label) label.firstChild!.textContent = 'Copy '
+              }, 1800)
+            } catch {
+              if (status) status.textContent = 'Copy failed.'
+              document.dispatchEvent(
+                new CustomEvent('toast', { detail: { message: 'Copy failed' } })
+              )
+            }
+          })
+        }
+      }
+      document.addEventListener('astro:page-load', setupCopyTargets)
+    </script>
+  </section>
+</BaseLayout>
+
+<style>
+  .exchange-rules li {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.55em;
+    line-height: 1.6;
+  }
+
+  .exchange-rules span {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  /* Open copy rows — hairline-separated, no card shell. */
+  .apply-copy-row {
+    position: relative;
+    width: calc(100% + 1.7rem);
+    margin-inline: -0.85rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.18s var(--ease-out-quart);
+  }
+
+  .apply-copy-row + .apply-copy-row::before {
+    content: '';
+    position: absolute;
+    left: 0.85rem;
+    right: 0.85rem;
+    top: 0;
+    height: 1px;
+    background: color-mix(in srgb, var(--line) 72%, transparent);
+    transition: opacity 0.18s var(--ease-out-quart);
+  }
+
+  .apply-copy-row:hover,
+  .apply-copy-row:focus-visible {
+    background: var(--tint);
+  }
+  .apply-copy-row:hover::before,
+  .apply-copy-row:hover + .apply-copy-row::before {
+    opacity: 0;
+  }
+
+  .apply-copy-row [data-copy-label] {
+    transition: color 0.2s var(--ease-out-quart);
+  }
+
+  .apply-copy-row:hover [data-copy-label],
+  .apply-copy-row[data-copied='true'] [data-copy-label] {
+    color: var(--accent);
+  }
+
+  .apply-copy-row[data-copied='true'] {
+    background: var(--accent-soft);
+  }
+
+  @media (max-width: 420px) {
+    .apply-copy-row {
+      grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+    }
+  }
+</style>

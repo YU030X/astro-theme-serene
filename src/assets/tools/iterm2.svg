@@ -1,0 +1,23 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="128"
+  height="128"
+  viewBox="0 0 128 128"
+  role="img"
+  aria-labelledby="title"
+>
+  <title id="title">iTerm2</title>
+  <rect width="112" height="96" x="8" y="16" rx="18" fill="#252a34" />
+  <rect width="96" height="80" x="16" y="24" rx="12" fill="#11141a" />
+  <circle cx="28" cy="35" r="4" fill="#ff5f57" />
+  <circle cx="40" cy="35" r="4" fill="#febc2e" />
+  <circle cx="52" cy="35" r="4" fill="#28c840" />
+  <path
+    fill="none"
+    stroke="#f4f7fb"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="8"
+    d="m34 58 16 14-16 14m29 0h28"
+  />
+</svg>

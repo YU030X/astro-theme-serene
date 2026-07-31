@@ -1,0 +1,44 @@
+---
+import type { Page } from 'astro'
+
+import Icon from '@/components/Icon.astro'
+import type { Post } from '@/lib/utils'
+
+interface Props {
+  page: Page<Post>
+}
+
+const { page } = Astro.props
+---
+
+<nav
+  class="mt-14 flex items-center justify-between"
+  aria-label="Pagination"
+  data-pagefind-ignore
+>
+  {
+    page.url.prev ? (
+      <a class="btn btn-ghost" href={page.url.prev}>
+        <Icon name="arrow-left" size={16} /> Previous
+      </a>
+    ) : (
+      <span class="btn btn-ghost pointer-events-none opacity-35">
+        <Icon name="arrow-left" size={16} /> Previous
+      </span>
+    )
+  }
+  <span class="text-sm tabular-nums text-quiet">
+    {page.currentPage} <span class="mx-0.5 opacity-60">/</span> {page.lastPage}
+  </span>
+  {
+    page.url.next ? (
+      <a class="btn btn-ghost" href={page.url.next}>
+        Next <Icon name="arrow-right" size={16} />
+      </a>
+    ) : (
+      <span class="btn btn-ghost pointer-events-none opacity-35">
+        Next <Icon name="arrow-right" size={16} />
+      </span>
+    )
+  }
+</nav>

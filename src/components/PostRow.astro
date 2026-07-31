@@ -1,0 +1,58 @@
+---
+import { Image } from 'astro:assets'
+
+import DraftBadge from '@/components/DraftBadge.astro'
+import FormattedDate from '@/components/FormattedDate.astro'
+import { formatCategory, readingTime, type Post } from '@/lib/utils'
+
+/** Open list entry: text left, small square thumbnail right, no card box. */
+interface Props {
+  post: Post
+}
+
+const { post } = Astro.props
+const { title, description, publishDate, cover, category, tags } =
+  post.data
+const href = `/blog/${post.id}`
+const minutes = readingTime(post.body)
+const isDraft = post.data.draft && import.meta.env.DEV
+---
+
+<li>
+  <a
+    href={href}
+    class="group -mx-3.5 flex items-center gap-5 rounded-xl px-3.5 py-3.5 transition-colors duration-150 hover:bg-tint"
+  >
+    <span class="min-w-0 flex-1">
+      <span class="flex min-w-0 flex-wrap items-center gap-2 text-[1.02rem] font-medium leading-snug text-ink transition-colors duration-150 group-hover:text-accent">
+        <span>{title}</span>
+        {isDraft && <DraftBadge />}
+      </span>
+      <span class="mt-1 line-clamp-2 block text-sm leading-relaxed text-quiet">
+        {description}
+      </span>
+      <span class="mt-2 block font-mono text-[0.68rem] tracking-[0.04em] text-quiet/85">
+        <FormattedDate date={publishDate} /> · {minutes} min · {formatCategory(category)}
+        {tags.length > 0 && (
+          <span class="text-quiet/65"> · {tags.map((tag) => `#${tag}`).join(' ')}</span>
+        )}
+      </span>
+    </span>
+
+    {
+      cover && (
+        <span class="hidden size-[5.5rem] shrink-0 overflow-hidden rounded-lg sm:block">
+          <Image
+            src={cover.src}
+            alt={cover.alt}
+            width={176}
+            widths={[176, 352]}
+            sizes="88px"
+            loading="lazy"
+            class="media-dim size-full object-cover transition-transform duration-500 ease-spring group-hover:scale-[1.04]"
+          />
+        </span>
+      )
+    }
+  </a>
+</li>
