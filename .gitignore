@@ -1,0 +1,49 @@
+# build output
+dist/
+
+#deploy
+.vercel/
+
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# environment variables
+.env
+.env.production
+
+# macOS
+.DS_Store
+
+# ide
+.idea/
+.vscode/
+.cursor/
+.agents/
+.claude/
+
+
+.playwright-cli/
+.agent-browser/
+*-desktop.png
+*-mobile.png
+
+
+skills-lock.json
+AGENTS.md
+CLAUDE.md
+ARCHITECTURE.md
+TODO.md
+
+demo/
+
+# local reference repositories
+other_base/

@@ -1,0 +1,582 @@
+---
+/**
+ * GitHub contribution calendar — Serene edition.
+ *
+ * Vanilla TS, no framework runtime. Renders a level-0 skeleton at build time
+ * (zero layout shift), then hydrates from the jogruber contributions API with
+ * a 1-hour localStorage cache. All five cell colors derive from theme tokens,
+ * so light/dark both come for free.
+ */
+interface Props {
+  username: string
+  locale?: string
+}
+
+const { username, locale = 'en-US' } = Astro.props
+
+/** 53 weeks x 7 days — same footprint as a typical last-year calendar. */
+const placeholderDays = Array.from({ length: 53 * 7 })
+---
+
+<div
+  class="github-contributions"
+  data-github-contributions
+  data-username={username}
+  data-locale={locale}
+  aria-busy="true"
+>
+  <div class="github-contributions__scroller" data-contribution-scroller>
+    <div class="github-contributions__canvas">
+      <div
+        class="github-contributions__grid"
+        data-contribution-grid
+        data-loading
+        role="img"
+        aria-label={`Loading GitHub contributions for ${username}`}
+      >
+        {
+          placeholderDays.map(() => (
+            <span class="github-contributions__day" aria-hidden="true" />
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="github-contributions__tooltip"
+    data-contribution-tooltip
+    role="tooltip"
+  >
+  </div>
+
+  <div class="github-contributions__footer">
+    <div class="github-contributions__legend" aria-hidden="true">
+      <span class="github-contributions__legend-label">Less</span>
+      {
+        [0, 1, 2, 3, 4].map((level) => (
+          <span class="github-contributions__day" data-level={level} />
+        ))
+      }
+      <span class="github-contributions__legend-label">More</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  interface ContributionDay {
+    date: string
+    count: number
+    level: number
+  }
+
+  interface ContributionResponse {
+    total?: Record<string, number>
+    contributions: ContributionDay[]
+  }
+
+  interface CachedContributionResponse {
+    cachedAt: number
+    data: ContributionResponse
+  }
+
+  const CACHE_DURATION_MILLISECONDS = 60 * 60 * 1000
+  const API_ENDPOINT = 'https://github-contributions-api.jogruber.de/v4/'
+
+  function isContributionResponse(
+    value: unknown
+  ): value is ContributionResponse {
+    if (!value || typeof value !== 'object') return false
+
+    const candidate = value as Partial<ContributionResponse>
+    return (
+      Array.isArray(candidate.contributions) &&
+      candidate.contributions.every(
+        (contribution) =>
+          contribution &&
+          typeof contribution.date === 'string' &&
+          typeof contribution.count === 'number' &&
+          typeof contribution.level === 'number'
+      )
+    )
+  }
+
+  function readCachedContributions(
+    cacheKey: string
+  ): CachedContributionResponse | null {
+    try {
+      const cachedValue = localStorage.getItem(cacheKey)
+      if (!cachedValue) return null
+
+      const parsedValue = JSON.parse(
+        cachedValue
+      ) as Partial<CachedContributionResponse>
+      if (
+        typeof parsedValue.cachedAt !== 'number' ||
+        !isContributionResponse(parsedValue.data)
+      ) {
+        localStorage.removeItem(cacheKey)
+        return null
+      }
+
+      return parsedValue as CachedContributionResponse
+    } catch {
+      return null
+    }
+  }
+
+  function writeCachedContributions(
+    cacheKey: string,
+    data: ContributionResponse
+  ): void {
+    try {
+      localStorage.setItem(
+        cacheKey,
+        JSON.stringify({ cachedAt: Date.now(), data })
+      )
+    } catch {
+      /* storage unavailable */
+    }
+  }
+
+  /** Parse a `YYYY-MM-DD` string as UTC midnight, immune to local timezones. */
+  function parseCalendarDate(date: string): Date {
+    return new Date(`${date}T00:00:00Z`)
+  }
+
+  function scrollToLatest(scroller: HTMLElement): void {
+    scroller.scrollLeft = scroller.scrollWidth
+  }
+
+  function renderContributionCalendar(
+    root: HTMLElement,
+    data: ContributionResponse,
+    username: string,
+    locale: string
+  ): void {
+    const grid = root.querySelector<HTMLElement>('[data-contribution-grid]')
+    const scroller = root.querySelector<HTMLElement>(
+      '[data-contribution-scroller]'
+    )
+    if (
+      !grid ||
+      !scroller ||
+      data.contributions.length === 0
+    ) {
+      throw new Error('Contribution data is incomplete')
+    }
+
+    const sortedContributions = [...data.contributions].sort((first, second) =>
+      first.date.localeCompare(second.date)
+    )
+    /* Sunday-based weekday of the first day = leading pad cells in column 1. */
+    const startOffset = parseCalendarDate(
+      sortedContributions[0].date
+    ).getUTCDay()
+    const dateFormatter = new Intl.DateTimeFormat(locale, {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+      timeZone: 'UTC'
+    })
+
+    const fragment = document.createDocumentFragment()
+    for (let padIndex = 0; padIndex < startOffset; padIndex += 1) {
+      const pad = document.createElement('span')
+      pad.className =
+        'github-contributions__day github-contributions__day--pad'
+      pad.setAttribute('aria-hidden', 'true')
+      fragment.append(pad)
+    }
+
+    sortedContributions.forEach((contribution, dayIndex) => {
+      const day = document.createElement('button')
+      const countLabel =
+        contribution.count === 0
+          ? 'No contributions'
+          : contribution.count === 1
+            ? '1 contribution'
+            : `${contribution.count.toLocaleString(locale)} contributions`
+      const label = `${countLabel} on ${dateFormatter.format(
+        parseCalendarDate(contribution.date)
+      )}`
+
+      day.type = 'button'
+      day.className = 'github-contributions__day'
+      day.dataset.level = String(
+        Math.min(4, Math.max(0, Math.round(contribution.level)))
+      )
+      day.dataset.index = String(dayIndex)
+      /* Custom bubble instead of the sluggish native title tooltip. */
+      day.dataset.tooltip = label
+      day.setAttribute('aria-label', label)
+      day.tabIndex = dayIndex === sortedContributions.length - 1 ? 0 : -1
+      fragment.append(day)
+    })
+
+    grid.replaceChildren(fragment)
+    grid.removeAttribute('data-loading')
+    grid.setAttribute('role', 'group')
+    grid.setAttribute(
+      'aria-label',
+      `GitHub contributions for ${username} in the last year`
+    )
+
+    root.dataset.state = 'ready'
+    root.setAttribute('aria-busy', 'false')
+
+    /* Latest activity lives at the far right — reveal it once laid out. */
+    requestAnimationFrame(() => scrollToLatest(scroller))
+  }
+
+  function showContributionError(root: HTMLElement): void {
+    const message = document.createElement('p')
+    message.className = 'github-contributions__error'
+    message.textContent = 'Contribution data unavailable.'
+
+    root.replaceChildren(message)
+    root.dataset.state = 'error'
+    root.setAttribute('aria-busy', 'false')
+  }
+
+  /**
+   * Roving tabindex + arrow keys, delegated once per grid element so the
+   * stale-cache re-render needs no listener bookkeeping. Up/Down move a day,
+   * Left/Right move a week.
+   */
+  function bindCalendarKeyboardNavigation(grid: HTMLElement): void {
+    grid.addEventListener('focusin', (event) => {
+      const focusedDay = event.target
+      if (!(focusedDay instanceof HTMLButtonElement)) return
+
+      const previousStop = grid.querySelector<HTMLButtonElement>(
+        'button[tabindex="0"]'
+      )
+      if (previousStop && previousStop !== focusedDay) {
+        previousStop.tabIndex = -1
+      }
+      focusedDay.tabIndex = 0
+    })
+
+    grid.addEventListener('keydown', (event) => {
+      const focusedDay = event.target
+      if (!(focusedDay instanceof HTMLButtonElement)) return
+
+      const indexChangeByKey: Record<string, number> = {
+        ArrowUp: -1,
+        ArrowDown: 1,
+        ArrowLeft: -7,
+        ArrowRight: 7
+      }
+      const indexChange = indexChangeByKey[event.key]
+      if (indexChange === undefined) return
+
+      const nextIndex = Number(focusedDay.dataset.index) + indexChange
+      const nextDay = grid.querySelector<HTMLButtonElement>(
+        `button[data-index="${nextIndex}"]`
+      )
+      if (!nextDay) return
+
+      event.preventDefault()
+      nextDay.focus()
+    })
+  }
+
+  /**
+   * Custom tooltip pinned above the hovered (or focused) cell. Delegated on
+   * the root so re-renders need no rebinding; positions via rect math, so it
+   * tracks the horizontally scrolled grid, and hides on scroll.
+   */
+  function bindCalendarTooltip(root: HTMLElement): void {
+    const tooltip = root.querySelector<HTMLElement>(
+      '[data-contribution-tooltip]'
+    )
+    if (!tooltip) return
+
+    const hideTooltip = () => {
+      delete tooltip.dataset.visible
+    }
+
+    const showTooltipFor = (target: EventTarget | null) => {
+      if (!(target instanceof Element)) return
+      const day = target.closest<HTMLElement>(
+        'button.github-contributions__day'
+      )
+      const label = day?.dataset.tooltip
+      if (!day || !label) return
+
+      tooltip.textContent = label
+      tooltip.dataset.visible = 'true'
+
+      const rootRect = root.getBoundingClientRect()
+      const dayRect = day.getBoundingClientRect()
+      const halfWidth = tooltip.offsetWidth / 2
+      const centerX = dayRect.left - rootRect.left + dayRect.width / 2
+      const clampedX = Math.min(
+        Math.max(centerX, halfWidth + 2),
+        Math.max(rootRect.width - halfWidth - 2, halfWidth + 2)
+      )
+      tooltip.style.left = `${clampedX}px`
+      tooltip.style.top = `${dayRect.top - rootRect.top}px`
+      /* The bubble is clamped inside the component; the caret is not — it
+         slides along the bubble so it always points at the hovered cell. */
+      const caretX = Math.min(
+        Math.max(halfWidth + (centerX - clampedX), 10),
+        tooltip.offsetWidth - 10
+      )
+      tooltip.style.setProperty('--gh-caret-x', `${caretX}px`)
+    }
+
+    root.addEventListener('mouseover', (event) => showTooltipFor(event.target))
+    root.addEventListener('mouseout', hideTooltip)
+    root.addEventListener('focusin', (event) => showTooltipFor(event.target))
+    root.addEventListener('focusout', hideTooltip)
+    root
+      .querySelector('[data-contribution-scroller]')
+      ?.addEventListener('scroll', hideTooltip, { passive: true })
+  }
+
+  async function loadContributionCalendar(root: HTMLElement): Promise<void> {
+    const username = root.dataset.username
+    const locale = root.dataset.locale ?? 'en-US'
+    if (!username) {
+      showContributionError(root)
+      return
+    }
+
+    const cacheKey = `serene:github-contributions:${username}:last`
+    let cachedResponse = readCachedContributions(cacheKey)
+    const cacheIsFresh =
+      cachedResponse !== null &&
+      Date.now() - cachedResponse.cachedAt < CACHE_DURATION_MILLISECONDS
+
+    if (cachedResponse) {
+      try {
+        renderContributionCalendar(root, cachedResponse.data, username, locale)
+        if (cacheIsFresh) return
+      } catch {
+        cachedResponse = null
+      }
+    }
+
+    try {
+      const endpoint = `${API_ENDPOINT}${encodeURIComponent(username)}?y=last`
+      const response = await fetch(endpoint)
+      if (!response.ok) throw new Error(`GitHub API returned ${response.status}`)
+
+      const data: unknown = await response.json()
+      if (!isContributionResponse(data)) {
+        throw new Error('GitHub API returned an unexpected response')
+      }
+
+      writeCachedContributions(cacheKey, data)
+      renderContributionCalendar(root, data, username, locale)
+    } catch {
+      if (!cachedResponse) showContributionError(root)
+    }
+  }
+
+  function initializeGithubContributionCalendars(): void {
+    document
+      .querySelectorAll<HTMLElement>(
+        '[data-github-contributions]:not([data-initialized])'
+      )
+      .forEach((root) => {
+        root.dataset.initialized = 'true'
+
+        const grid = root.querySelector<HTMLElement>(
+          '[data-contribution-grid]'
+        )
+        const scroller = root.querySelector<HTMLElement>(
+          '[data-contribution-scroller]'
+        )
+        if (grid) bindCalendarKeyboardNavigation(grid)
+        bindCalendarTooltip(root)
+        /* Park the skeleton at the far right so the data swap never moves. */
+        if (scroller) scrollToLatest(scroller)
+
+        void loadContributionCalendar(root)
+      })
+  }
+
+  initializeGithubContributionCalendars()
+  document.addEventListener(
+    'astro:page-load',
+    initializeGithubContributionCalendars
+  )
+</script>
+
+<style is:global>
+  .github-contributions {
+    --gh-cell: 10px;
+    --gh-gap: 3px;
+    position: relative;
+    min-width: 0;
+  }
+
+  /* Floating tooltip — shadows are reserved for overlays, and this is one. */
+  .github-contributions__tooltip {
+    position: absolute;
+    z-index: 30;
+    transform: translate(-50%, calc(-100% - 8px));
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--card);
+    box-shadow: var(--sh-soft);
+    padding: 0.3rem 0.6rem;
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s var(--ease-out-quart);
+  }
+
+  .github-contributions__tooltip::after {
+    content: '';
+    position: absolute;
+    left: var(--gh-caret-x, 50%);
+    bottom: -4px;
+    width: 7px;
+    height: 7px;
+    transform: translateX(-50%) rotate(45deg);
+    background: var(--card);
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .github-contributions__tooltip[data-visible] {
+    opacity: 1;
+  }
+
+  /* Horizontal scroll only — the global thin scrollbar does the rest. */
+  .github-contributions__scroller {
+    max-width: 100%;
+    overflow-x: auto;
+    padding-bottom: 0.4rem;
+  }
+
+  /* The 2px padding keeps focus rings from clipping at the edges. */
+  .github-contributions__canvas {
+    width: max-content;
+    padding: 2px;
+  }
+
+  .github-contributions__grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: var(--gh-cell);
+    grid-template-rows: repeat(7, var(--gh-cell));
+    gap: var(--gh-gap);
+  }
+
+  /* Five-step scale, all derived from theme tokens — dark mode is free. */
+  .github-contributions__day {
+    width: var(--gh-cell);
+    height: var(--gh-cell);
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--ink) 6%, var(--card));
+  }
+
+  .github-contributions__day[data-level='1'] {
+    background: color-mix(in srgb, var(--accent) 25%, var(--card));
+  }
+
+  .github-contributions__day[data-level='2'] {
+    background: color-mix(in srgb, var(--accent) 45%, var(--card));
+  }
+
+  .github-contributions__day[data-level='3'] {
+    background: color-mix(in srgb, var(--accent) 70%, var(--card));
+  }
+
+  .github-contributions__day[data-level='4'] {
+    background: var(--accent);
+  }
+
+  .github-contributions__day--pad {
+    visibility: hidden;
+  }
+
+  button.github-contributions__day {
+    appearance: none;
+    border: 0;
+    padding: 0;
+    cursor: default;
+    transition: box-shadow 0.15s var(--ease-out-quart);
+  }
+
+  button.github-contributions__day:hover {
+    box-shadow: inset 0 0 0 1px
+      color-mix(in srgb, var(--ink) 35%, transparent);
+  }
+
+  button.github-contributions__day:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  /* One quiet pulse on the whole skeleton instead of 371 animations. */
+  .github-contributions__grid[data-loading] {
+    animation: github-contributions-pulse 2s var(--ease-out-quart) infinite
+      alternate;
+  }
+
+  @keyframes github-contributions-pulse {
+    from {
+      opacity: 0.45;
+    }
+    to {
+      opacity: 0.9;
+    }
+  }
+
+  .github-contributions__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem 1.25rem;
+    margin-top: 0.55rem;
+  }
+
+  .github-contributions__legend {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gh-gap);
+    color: var(--quiet);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .github-contributions__legend-label:first-child {
+    margin-right: 0.3rem;
+  }
+
+  .github-contributions__legend-label:last-child {
+    margin-left: 0.3rem;
+  }
+
+  .github-contributions__error {
+    margin: 0;
+    color: var(--quiet);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .github-contributions__grid[data-loading] {
+      animation: none;
+      opacity: 0.7;
+    }
+
+    button.github-contributions__day {
+      transition: none;
+    }
+  }
+</style>

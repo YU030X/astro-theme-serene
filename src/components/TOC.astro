@@ -1,0 +1,120 @@
+---
+import type { MarkdownHeading } from 'astro'
+
+interface Props {
+  headings: MarkdownHeading[]
+}
+
+const { headings } = Astro.props
+const items = headings.filter((h) => h.depth === 2 || h.depth === 3)
+
+/** Group h3s under their preceding h2; orphan h3s (before any h2) become top-level rows. */
+type TocGroup = { parent: MarkdownHeading | null; children: MarkdownHeading[] }
+const groups: TocGroup[] = []
+for (const heading of items) {
+  const last = groups[groups.length - 1]
+  if (heading.depth === 2) {
+    groups.push({ parent: heading, children: [] })
+  } else if (last?.parent) {
+    last.children.push(heading)
+  } else {
+    groups.push({ parent: null, children: [heading] })
+  }
+}
+---
+
+{
+  items.length > 0 && (
+    <nav id="toc" class="text-sm" aria-label="Table of contents" data-pagefind-ignore>
+      <p class="mb-3 font-mono text-[10px] uppercase tracking-[0.12em] text-quiet">
+        Table of Contents
+      </p>
+      <div class="relative">
+        <div class="toc-marker" aria-hidden="true" />
+        <ul class="space-y-0.5 border-l border-line">
+          {groups.map((group) =>
+            group.parent ? (
+              <li data-toc-group>
+                <a
+                  href={`#${group.parent.slug}`}
+                  class="block py-1.5 pl-4 pr-2 leading-snug text-quiet transition-colors duration-200 hover:text-ink"
+                >
+                  {group.parent.text}
+                </a>
+                {group.children.length > 0 && (
+                  <div class="toc-sub">
+                    <ul>
+                      {group.children.map((child) => (
+                        <li>
+                          <a
+                            href={`#${child.slug}`}
+                            class="block py-1.5 pl-7 pr-2 text-[13px] leading-snug text-quiet transition-colors duration-200 hover:text-ink"
+                          >
+                            {child.text}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </li>
+            ) : (
+              group.children.map((child) => (
+                <li data-toc-group>
+                  <a
+                    href={`#${child.slug}`}
+                    class="block py-1.5 pl-4 pr-2 leading-snug text-quiet transition-colors duration-200 hover:text-ink"
+                  >
+                    {child.text}
+                  </a>
+                </li>
+              ))
+            )
+          )}
+        </ul>
+      </div>
+    </nav>
+  )
+}
+
+<style is:global>
+  /* Marker duration/curve must match the accordion fold — app.ts aims it at the settled position. */
+  #toc .toc-marker {
+    position: absolute;
+    left: -1px;
+    top: 0;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+    height: 1rem;
+    opacity: 0;
+    transition:
+      transform 0.3s var(--ease-spring),
+      height 0.3s var(--ease-spring),
+      opacity 0.15s ease;
+  }
+  #toc a.active {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Collapsed subs are visibility:hidden so they leave the tab order. */
+  #toc .toc-sub {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s var(--ease-spring);
+  }
+  #toc .toc-sub > ul {
+    overflow: hidden;
+    min-height: 0;
+    visibility: hidden;
+    transition: visibility 0s 0.3s;
+  }
+  #toc li.is-active > .toc-sub {
+    grid-template-rows: 1fr;
+  }
+  #toc li.is-active > .toc-sub > ul {
+    visibility: visible;
+    transition-delay: 0s;
+  }
+</style>

@@ -1,0 +1,53 @@
+---
+import Icon from '@/components/Icon.astro'
+import PageHead from '@/components/PageHead.astro'
+import PostRow from '@/components/PostRow.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import {
+  formatCategory,
+  getCategories,
+  getPosts,
+  type Post
+} from '@/lib/utils'
+
+export async function getStaticPaths() {
+  const posts = await getPosts()
+  return getCategories(posts).map(({ category }) => ({
+    params: { category },
+    props: {
+      posts: posts.filter((post) => post.data.category === category)
+    }
+  }))
+}
+
+const { category } = Astro.params as { category: string }
+const { posts } = Astro.props as { posts: Post[] }
+const categoryLabel = formatCategory(category)
+---
+
+<BaseLayout
+  title={categoryLabel}
+  description={`Posts filed in the ${categoryLabel} category.`}
+>
+  <section class="pt-14 sm:pt-16">
+    <PageHead title={categoryLabel}>
+      <a
+        slot="eyebrow"
+        href="/categories"
+        class="group inline-flex items-center gap-1.5 text-sm font-medium text-quiet transition-colors hover:text-ink"
+      >
+        <Icon
+          name="arrow-left"
+          size={15}
+          class="transition-transform duration-300 group-hover:-translate-x-0.5"
+        />
+        All categories
+      </a>
+      {`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`} in this category.
+    </PageHead>
+
+    <ul class="mx-auto mt-14 max-w-[var(--container-reading)]">
+      {posts.map((post) => <PostRow {post} />)}
+    </ul>
+  </section>
+</BaseLayout>

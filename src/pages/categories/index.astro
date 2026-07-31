@@ -1,0 +1,36 @@
+---
+import Icon from '@/components/Icon.astro'
+import PageHead from '@/components/PageHead.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { formatCategory, getCategories, getPosts } from '@/lib/utils'
+
+const posts = await getPosts()
+const categories = getCategories(posts)
+---
+
+<BaseLayout title="Categories" description="Browse posts by their primary category.">
+  <section class="pt-14 sm:pt-16">
+    <PageHead title="Categories">
+      {categories.length} collections across {posts.length} posts.
+    </PageHead>
+
+    <div class="mx-auto mt-14 grid max-w-[var(--container-reading)] gap-3 sm:grid-cols-2">
+      {
+        categories.map(({ category, count }, index) => (
+          <a
+            class="soft-lift no-hover-lift group flex items-center justify-between rounded-2xl border border-line bg-card px-5 py-4"
+            href={`/categories/${category}`}
+            style={`--reveal-delay: ${(index % 8) * 40}ms`}
+            data-reveal
+          >
+            <span class="flex items-center gap-3 font-medium text-ink transition-colors group-hover:text-accent">
+              <Icon name="layers" size={16} class="text-quiet" />
+              {formatCategory(category)}
+            </span>
+            <span class="font-mono text-xs text-quiet">{count}</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

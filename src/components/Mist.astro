@@ -1,0 +1,112 @@
+---
+/** Decorative wash. Hue must always derive from --accent — one-accent rule holds in both themes. */
+interface Props {
+  class?: string
+}
+const { class: className } = Astro.props
+---
+
+<div class:list={['mist', className]} aria-hidden="true">
+  <div class="veil veil-1"></div>
+  <div class="veil veil-2"></div>
+  <div class="veil veil-3"></div>
+</div>
+
+<style>
+  .mist {
+    position: absolute;
+    inset-inline: 0;
+    top: -8rem;
+    height: 40rem;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: -1;
+    mask-image: linear-gradient(to bottom, black 55%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent);
+  }
+  .veil {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(72px);
+    will-change: transform;
+  }
+  /* Dark canvas swallows low-alpha washes — dark mode needs its own stronger mixes. */
+  :global([data-theme='dark']) .veil-1 {
+    background: radial-gradient(
+      circle at 32% 32%,
+      color-mix(in srgb, var(--accent) 30%, transparent),
+      transparent 66%
+    );
+  }
+  :global([data-theme='dark']) .veil-2 {
+    background: radial-gradient(
+      circle at 60% 40%,
+      color-mix(in srgb, var(--accent) 20%, transparent),
+      transparent 64%
+    );
+  }
+  :global([data-theme='dark']) .veil-3 {
+    background: radial-gradient(
+      circle at 50% 50%,
+      color-mix(in srgb, var(--accent) 13%, transparent),
+      transparent 62%
+    );
+  }
+  .veil-1 {
+    width: 36rem;
+    height: 36rem;
+    left: 2%;
+    top: -7rem;
+    background: radial-gradient(
+      circle at 32% 32%,
+      color-mix(in srgb, var(--accent) 26%, transparent),
+      transparent 64%
+    );
+    animation: mist-a 46s ease-in-out infinite alternate;
+  }
+  .veil-2 {
+    width: 30rem;
+    height: 30rem;
+    right: 4%;
+    top: -3rem;
+    background: radial-gradient(
+      circle at 60% 40%,
+      color-mix(in srgb, var(--accent) 17%, transparent),
+      transparent 62%
+    );
+    animation: mist-b 58s ease-in-out infinite alternate;
+  }
+  .veil-3 {
+    width: 24rem;
+    height: 24rem;
+    left: 42%;
+    top: 3rem;
+    background: radial-gradient(
+      circle at 50% 50%,
+      color-mix(in srgb, var(--accent) 11%, transparent),
+      transparent 60%
+    );
+    animation: mist-a 64s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes mist-a {
+    from {
+      transform: translate3d(-3%, -2%, 0) scale(1);
+    }
+    to {
+      transform: translate3d(5%, 6%, 0) scale(1.1);
+    }
+  }
+  @keyframes mist-b {
+    from {
+      transform: translate3d(3%, 4%, 0) scale(1.05);
+    }
+    to {
+      transform: translate3d(-5%, -4%, 0) scale(0.95);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .veil {
+      animation: none;
+    }
+  }
+</style>

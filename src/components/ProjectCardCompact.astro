@@ -1,0 +1,108 @@
+---
+import Icon from '@/components/Icon.astro'
+import type { Project } from '@/data/projects'
+
+/** Short project card; repo / website icons sit above the cover link. */
+interface Props {
+  project: Project
+}
+
+const { project } = Astro.props
+const primaryLink = project.href ?? project.repo
+---
+
+<article
+  class="pcc group relative isolate overflow-hidden rounded-2xl border border-line bg-card px-3.5 py-3 transition-colors duration-200 hover:border-[color-mix(in_srgb,var(--quiet)_28%,var(--line))]"
+  style={`--pa: ${project.gradient[0]}; --pb: ${project.gradient[1]}`}
+>
+  {
+    primaryLink && (
+      <a
+        href={primaryLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="absolute inset-0 z-10"
+        aria-label={project.name}
+      />
+    )
+  }
+
+  <span class="pcc-glow" aria-hidden="true"></span>
+
+  <span class="block text-[0.95rem] font-medium text-ink">{project.name}</span>
+  <span class="mt-1 line-clamp-2 block max-w-[85%] text-sm leading-relaxed text-quiet">
+    {project.description}
+  </span>
+  <span class="mt-1.5 flex items-center justify-between gap-3">
+    <span class="min-w-0 truncate font-mono text-[0.62rem] uppercase tracking-[0.08em] text-quiet/75">
+      {project.tags.join(' · ')}
+    </span>
+    <span class="relative z-20 flex gap-0.5">
+      {
+        project.repo && (
+          <a
+            class="icon-btn icon-btn-sm"
+            href={project.repo}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${project.name} repository`}
+          >
+            <Icon name="github" size={15} />
+          </a>
+        )
+      }
+      {
+        project.href && (
+          <a
+            class="icon-btn icon-btn-sm"
+            href={project.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${project.name} website`}
+          >
+            <Icon name="external" size={15} />
+          </a>
+        )
+      }
+    </span>
+  </span>
+</article>
+
+<style>
+  .pcc-glow {
+    position: absolute;
+    inset-block: 0;
+    right: 0;
+    width: 52%;
+    z-index: -1;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to right, transparent, black 55%);
+    mask-image: linear-gradient(to right, transparent, black 55%);
+  }
+  .pcc-glow::after {
+    content: '';
+    position: absolute;
+    right: -3rem;
+    top: 50%;
+    width: 12rem;
+    height: 12rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, var(--pa), var(--pb));
+    filter: blur(36px);
+    opacity: 0.22;
+    transform: translateY(-50%);
+    transition:
+      opacity 0.5s var(--ease-out-quart),
+      transform 0.5s var(--ease-spring);
+  }
+  :global([data-theme='dark']) .pcc-glow::after {
+    opacity: 0.18;
+  }
+  .pcc:hover .pcc-glow::after {
+    opacity: 0.36;
+    transform: translate(4px, -50%);
+  }
+  :global([data-theme='dark']) .pcc:hover .pcc-glow::after {
+    opacity: 0.3;
+  }
+</style>

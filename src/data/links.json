@@ -1,0 +1,28 @@
+{
+  "friends": [
+    {
+      "id_name": "recommended-links",
+      "desc": "Sites worth visiting.",
+      "link_list": [
+        {
+          "name": "Astro",
+          "intro": "The web framework for content-driven websites.",
+          "link": "https://astro.build",
+          "avatar": "/images/links/astro.svg"
+        },
+        {
+          "name": "MDN Web Docs",
+          "intro": "Still the best reference on the open web.",
+          "link": "https://developer.mozilla.org",
+          "avatar": "/images/links/mdn.svg"
+        },
+        {
+          "name": "Tailwind CSS",
+          "intro": "Utility-first CSS — Serene uses Tailwind v4 tokens.",
+          "link": "https://tailwindcss.com",
+          "avatar": "/images/links/tailwind.svg"
+        }
+      ]
+    }
+  ]
+}

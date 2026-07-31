@@ -1,0 +1,71 @@
+---
+title: 'Writing with MDX in Serene'
+description: "A small MDX sample showing prose, sidenotes, Callouts and the theme's code treatment."
+publishDate: 2026-07-31
+category: reference
+tags: [mdx, markdown, writing]
+cover:
+  src: '../../assets/posts/米山舞-２０２０年４月１３日.jpg'
+  alt: 'Bright character illustration'
+  source: 'https://www.pixiv.net/artworks/80786439'
+---
+
+import Sidenote from '@/components/Sidenote.astro'
+
+## Where an article begins
+
+Writing does not need to begin with a perfect structure. Put down a complete sentence first, then let headings, lists and quotes find their places. MDX keeps the familiarity of Markdown while allowing a little controlled layout language when the page needs it<Sidenote num={1}>A sidenote is useful for a source, a small piece of context, or a thought that should not interrupt the main line.</Sidenote>.
+
+Here is a regular link to [Astro](https://astro.build). It should feel like a quiet line on paper and reveal the accent color only when the reader points at it.
+
+> White space is not the absence of content; it is where the reader chooses to pause.
+
+## Structure and emphasis
+
+- **Bold text** is for words that genuinely need to be seen.
+- `Inline code` stays inside the sentence instead of breaking its rhythm.
+- A short list keeps related ideas together.
+
+1. Give the idea a clear name.
+2. Arrange the path into its details.
+3. Remove decoration that carries no meaning.
+
+---
+
+## Notes and decisions
+
+> [!TIP] A writing prompt
+> Write the natural sentence first. Decide later whether it needs a component or an interaction.
+
+> [!IMPORTANT] A layout rule
+> Every visual element on the article page should help reading. A border without an information job can go.
+
+> [!CAUTION]- Experimental content
+> This article only checks existing features. New syntax or behavior should be discussed before it becomes part of the theme.
+
+## Code has context too
+
+The language label keeps code identifiable at rest; when the pointer enters, the copy action takes over that small control space.
+
+```ts
+const readingMode = {
+  pace: 'unhurried',
+  keepMargins: true
+}
+```
+
+```css
+.article {
+  max-width: var(--container-reading);
+  margin-inline: auto;
+}
+```
+
+```bash
+npm run check
+npm run build
+```
+
+## After the draft
+
+A test article can still be a readable article. It does not need to list every syntax feature; it only needs to let prose, hierarchy, code and notes share one page naturally.

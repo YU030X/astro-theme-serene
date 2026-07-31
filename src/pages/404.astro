@@ -1,0 +1,105 @@
+---
+import Icon from '@/components/Icon.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+---
+
+<BaseLayout
+  title="Page not found"
+  description="This page is not in this book."
+>
+  <section class="grid min-h-[62vh] place-items-center py-16 text-center">
+    <div>
+      <div
+        class="leaf a-in mx-auto"
+        role="img"
+        aria-label="An intentionally blank page, folio 404"
+      >
+        <p class="document-eyebrow folio">Serene · Page 404</p>
+        <div class="blank">
+          <p>This page is<br />intentionally left blank.</p>
+        </div>
+        <span class="seal" aria-hidden="true"></span>
+      </div>
+
+      <h1
+        class="a-in mt-9 font-serif text-2xl font-semibold tracking-tight sm:text-3xl"
+        style="--d: 80ms"
+      >
+        Page not found
+      </h1>
+      <p class="a-in mx-auto mt-3 max-w-md text-quiet" style="--d: 140ms">
+        The link may be broken, or the page may have moved. Head back home,
+        or search the site.
+      </p>
+      <div
+        class="a-in mt-8 flex flex-wrap items-center justify-center gap-3"
+        style="--d: 200ms"
+      >
+        <a class="btn btn-primary" href="/">
+          <Icon name="arrow-left" size={15} /> Back home
+        </a>
+        <button class="btn btn-ghost" type="button" data-search-open>
+          <Icon name="search" size={15} /> Search the site
+        </button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .leaf {
+    position: relative;
+    width: min(22rem, 88vw);
+    aspect-ratio: 5 / 6;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    background: var(--card);
+    padding: 1.3rem 1.5rem 1.4rem;
+  }
+  .leaf::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    bottom: -1px;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-top-left-radius: var(--radius-md);
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+    background: linear-gradient(
+      315deg,
+      transparent 48%,
+      color-mix(in srgb, var(--tint) 85%, var(--card)) 50%
+    );
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+  }
+  .folio {
+    font-size: 0.62rem;
+  }
+  .blank {
+    display: grid;
+    place-items: center;
+    padding-inline: 1rem;
+  }
+  .blank p {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.02rem;
+    line-height: 1.9;
+    color: var(--quiet);
+  }
+  .seal {
+    display: grid;
+    place-items: center;
+  }
+  .seal::after {
+    content: '';
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 1.5px;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+</style>

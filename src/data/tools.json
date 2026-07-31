@@ -1,0 +1,77 @@
+{
+  "tools": [
+    {
+      "id_name": "productivity",
+      "desc": "Productivity",
+      "tool_list": [
+        {
+          "name": "Chrome",
+          "intro": "Browser",
+          "link": "https://www.google.com/chrome/",
+          "icon": "chrome"
+        },
+        {
+          "name": "Typora",
+          "intro": "Markdown Editor",
+          "link": "https://typora.io/",
+          "icon": "typora"
+        },
+        {
+          "name": "Obsidian",
+          "intro": "Knowledge Base",
+          "link": "https://obsidian.md/",
+          "icon": "obsidian"
+        }
+      ]
+    },
+    {
+      "id_name": "development",
+      "desc": "Development",
+      "tool_list": [
+        {
+          "name": "VS Code",
+          "intro": "IDE",
+          "link": "https://code.visualstudio.com/",
+          "icon": "vscode"
+        },
+        {
+          "name": "Cursor",
+          "intro": "AI Code Editor",
+          "link": "https://www.cursor.com/",
+          "icon": "cursor"
+        },
+        {
+          "name": "Zed",
+          "intro": "Text Editor",
+          "link": "https://zed.dev/",
+          "icon": "zed"
+        },
+        {
+          "name": "PowerShell 7",
+          "intro": "Terminal",
+          "link": "https://learn.microsoft.com/en-us/powershell/",
+          "icon": "powershell"
+        }
+      ]
+    },
+    {
+      "id_name": "environment",
+      "desc": "Environment",
+      "tool_list": [
+        {
+          "name": "Windows 11",
+          "intro": "Too Many Bugs",
+          "link": "https://www.microsoft.com/en-us/windows/",
+          "icon": "windows11"
+        },
+        {
+          "name": "McDonald's",
+          "intro": "Never Mind This",
+          "link": "https://www.mcdonalds.com",
+          "strikethrough": true,
+          "icon": "mcdonalds1"
+        }
+      ]
+    }
+  ]
+}

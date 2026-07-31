@@ -1,0 +1,38 @@
+---
+import Icon from '@/components/Icon.astro'
+---
+
+<button
+  class="icon-btn theme-toggle"
+  data-theme-toggle
+  type="button"
+  aria-label="Switch to dark theme"
+  aria-pressed="false"
+>
+  <Icon name="sun" size={19} class="icon-sun" />
+  <Icon name="moon" size={19} class="icon-moon" />
+</button>
+
+<style>
+  .theme-toggle {
+    position: relative;
+  }
+  .theme-toggle :global(svg) {
+    position: absolute;
+    transition:
+      opacity 0.4s var(--ease-out-quart),
+      transform 0.5s var(--ease-spring);
+  }
+  .theme-toggle :global(.icon-moon) {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.6);
+  }
+  :global([data-theme='dark']) .theme-toggle :global(.icon-sun) {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+  :global([data-theme='dark']) .theme-toggle :global(.icon-moon) {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+</style>

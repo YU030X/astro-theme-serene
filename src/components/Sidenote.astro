@@ -1,0 +1,16 @@
+---
+/**
+ * MDX only (plain .md cannot use components). Place directly after the word it annotates:
+ *   import Sidenote from '@/components/Sidenote.astro'
+ *   ...word<Sidenote num={1}>note text</Sidenote>
+ * Styles live in global.css (.sidenote, .sidenote-ref, .sidenote-num).
+ */
+interface Props {
+  num: number
+}
+const { num } = Astro.props
+---
+
+<span class="sidenote-ref">{num}</span><span class="sidenote"
+  ><span class="sidenote-num">{num}</span><slot /></span
+>

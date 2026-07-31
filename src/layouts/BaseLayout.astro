@@ -1,0 +1,100 @@
+---
+import '@/styles/global.css'
+
+import { ClientRouter } from 'astro:transitions'
+
+import BackToTop from '@/components/BackToTop.astro'
+import BaseHead, { type ArticleMeta } from '@/components/BaseHead.astro'
+import Footer from '@/components/Footer.astro'
+import Header from '@/components/Header.astro'
+import Mist from '@/components/Mist.astro'
+import SearchModal from '@/components/SearchModal.astro'
+import Toast from '@/components/Toast.astro'
+import { siteConfig } from '@/site.config'
+
+interface Props {
+  title?: string
+  description?: string
+  ogImage?: string
+  article?: ArticleMeta
+}
+
+const { title, description, ogImage, article } = Astro.props
+---
+
+<!doctype html>
+<html lang={siteConfig.locale}>
+  <head>
+    <BaseHead {title} {description} {ogImage} {article} />
+    <ClientRouter />
+    {/* Theme boot — runs before paint to avoid any flash */}
+    <script is:inline>
+      ;(function () {
+        var root = document.documentElement
+        root.classList.add('js')
+        function preferred() {
+          var stored = null
+          try {
+            stored = localStorage.getItem('theme')
+          } catch (e) {}
+          if (stored === 'light' || stored === 'dark') return stored
+          return window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light'
+        }
+        function apply() {
+          root.dataset.theme = preferred()
+        }
+        apply()
+        // Re-apply after every view-transition swap (before first paint)
+        document.addEventListener('astro:after-swap', apply)
+      })()
+    </script>
+  </head>
+
+  <body class="flex min-h-dvh flex-col bg-canvas text-ink">
+    <a href="#main" class="skip-link btn btn-primary">Skip to content</a>
+
+    <Mist />
+
+    <Header />
+
+    <main id="main" class="page-shell mx-auto w-full max-w-[70rem] flex-1 pb-10">
+      <slot />
+    </main>
+
+    <Footer />
+    <SearchModal />
+    <BackToTop />
+    <Toast />
+
+    <script>
+      import '../scripts/app'
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  .page-shell,
+  .footer-shell {
+    padding-inline:
+      calc(1rem + env(safe-area-inset-left))
+      calc(1rem + env(safe-area-inset-right));
+  }
+  @media (min-width: 640px) {
+    .page-shell,
+    .footer-shell {
+      padding-inline:
+        calc(1.75rem + env(safe-area-inset-left))
+        calc(1.75rem + env(safe-area-inset-right));
+    }
+  }
+  @media (min-width: 1024px) {
+    .page-shell,
+    .footer-shell {
+      padding-inline:
+        calc(2.5rem + env(safe-area-inset-left))
+        calc(2.5rem + env(safe-area-inset-right));
+    }
+  }
+</style>

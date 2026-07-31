@@ -1,0 +1,336 @@
+---
+import FormattedDate from '@/components/FormattedDate.astro'
+import Icon from '@/components/Icon.astro'
+import { siteConfig } from '@/site.config'
+
+interface Props {
+  title: string
+  publishDate: Date
+  postId: string
+}
+
+const { title, publishDate, postId } = Astro.props
+const { articleLicense } = siteConfig
+const permalink = new URL(`/blog/${postId}`, siteConfig.site).href
+const xShareUrl = `https://x.com/intent/post?${new URLSearchParams({
+  text: title,
+  url: permalink
+})}`
+const active =
+  articleLicense.enabled &&
+  articleLicense.name.trim().length > 0 &&
+  articleLicense.url.trim().length > 0
+---
+
+{
+  active && (
+    <section
+      class="license-card surface"
+      aria-labelledby="article-license-title"
+      data-post-license
+      data-pagefind-ignore
+    >
+      <Icon name="copyright" size={88} class="license-mark" />
+
+      <div class="license-body">
+        <header class="license-header">
+          <div class="license-copy min-w-0">
+            <h2 id="article-license-title" class="license-title">
+              {title}
+            </h2>
+            <a class="license-url" href={permalink}>
+              {permalink}
+            </a>
+          </div>
+        </header>
+
+        <dl class="license-meta">
+          <div>
+            <dt>Author</dt>
+            <dd>{siteConfig.author}</dd>
+          </div>
+          <div>
+            <dt>Published</dt>
+            <dd>
+              <FormattedDate date={publishDate} />
+            </dd>
+          </div>
+          <div>
+            <dt>Copyright</dt>
+            <dd>
+              <a href={articleLicense.url} target="_blank" rel="license noopener noreferrer">
+                {articleLicense.name}
+              </a>
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <footer class="license-footer">
+        <p class="license-note">Images are sourced from the internet. Please contact me for removal if necessary.</p>
+
+        <div class="license-actions" role="group" aria-label="Article actions">
+          <button
+            type="button"
+            class="icon-btn license-action"
+            data-copy-article
+            data-url={permalink}
+            aria-label="Copy article link"
+            title="Copy article link"
+          >
+            <Icon name="link" size={16} />
+          </button>
+          <button
+            type="button"
+            class="icon-btn license-action"
+            data-share-article
+            data-url={permalink}
+            data-title={title}
+            aria-label="Share article"
+            title="Share article"
+          >
+            <Icon name="share" size={16} />
+          </button>
+          <a
+            class="icon-btn license-action"
+            href={xShareUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Share on X"
+            title="Share on X"
+          >
+            <Icon name="x" size={13} />
+          </a>
+        </div>
+      </footer>
+    </section>
+  )
+}
+
+<script>
+  function toast(message: string) {
+    document.dispatchEvent(
+      new CustomEvent('toast', { detail: { message } })
+    )
+  }
+
+  async function copyArticleLink(url: string) {
+    try {
+      await navigator.clipboard.writeText(url)
+      toast('Article link copied')
+    } catch {
+      toast('Copy failed')
+    }
+  }
+
+  function setupPostLicenses() {
+    document.querySelectorAll<HTMLElement>('[data-post-license]').forEach((card) => {
+      if (card.dataset.enhanced === 'true') return
+      card.dataset.enhanced = 'true'
+
+      const copyButton = card.querySelector<HTMLButtonElement>('[data-copy-article]')
+      copyButton?.addEventListener('click', () => {
+        const url = copyButton.dataset.url
+        if (url) void copyArticleLink(url)
+      })
+
+      const shareButton = card.querySelector<HTMLButtonElement>('[data-share-article]')
+      shareButton?.addEventListener('click', async () => {
+        const url = shareButton.dataset.url
+        const title = shareButton.dataset.title
+        if (!url) return
+
+        if (!navigator.share) {
+          await copyArticleLink(url)
+          return
+        }
+
+        try {
+          await navigator.share({ title, url })
+          toast('Article shared')
+        } catch (error) {
+          if (error instanceof DOMException && error.name === 'AbortError') return
+          toast('Sharing unavailable — try copying the link')
+        }
+      })
+    })
+  }
+
+  document.addEventListener('astro:page-load', setupPostLicenses)
+</script>
+
+<style>
+  .license-card {
+    position: relative;
+    margin-top: 2.5rem;
+    overflow: hidden;
+    background:
+      radial-gradient(
+        circle at 92% 12%,
+        color-mix(in srgb, var(--accent) 10%, transparent),
+        transparent 34%
+      ),
+      var(--card);
+  }
+
+  .license-body {
+    padding: 1.25rem;
+  }
+
+  .license-header {
+    padding-right: 5.5rem;
+  }
+
+  .license-title {
+    margin: 0;
+    max-width: 34rem;
+    overflow-wrap: anywhere;
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.35;
+    text-wrap: pretty;
+  }
+
+  .license-url {
+    display: block;
+    margin-top: 0.35rem;
+    max-width: 34rem;
+    overflow-wrap: anywhere;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    line-height: 1.55;
+    color: var(--quiet);
+    transition: color 0.2s var(--ease-out-quart);
+  }
+
+  .license-url:hover {
+    color: var(--accent);
+  }
+
+  :global(.license-mark) {
+    position: absolute;
+    top: 1.15rem;
+    right: 1.2rem;
+    width: 5rem;
+    height: 5rem;
+    color: color-mix(in srgb, var(--accent) 35%, var(--quiet));
+    opacity: 0.14;
+    pointer-events: none;
+  }
+
+  .license-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem 1.25rem;
+    margin-top: 1rem;
+  }
+
+  .license-meta > div {
+    min-width: 0;
+  }
+
+  .license-meta dt {
+    font-size: 0.72rem;
+    color: var(--quiet);
+  }
+
+  .license-meta dd {
+    margin-top: 0.18rem;
+    overflow-wrap: anywhere;
+    font-size: 0.84rem;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  .license-meta a,
+  .license-note a {
+    text-decoration: underline;
+    text-decoration-color: var(--line);
+    text-underline-offset: 0.2em;
+    transition:
+      color 0.2s var(--ease-out-quart),
+      text-decoration-color 0.2s var(--ease-out-quart);
+  }
+
+  .license-meta a:hover,
+  .license-note a:hover {
+    color: var(--accent);
+    text-decoration-color: currentColor;
+  }
+
+  .license-footer {
+    display: flex;
+    min-height: 3.7rem;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem 1rem;
+    background: color-mix(in srgb, var(--tint) 54%, transparent);
+    padding: 0.65rem 0.75rem 0.65rem 1.25rem;
+  }
+
+  .license-note {
+    min-width: 12rem;
+    flex: 1;
+    font-size: 0.74rem;
+    line-height: 1.55;
+    color: var(--quiet);
+  }
+
+  .license-actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 0.15rem;
+  }
+
+  .license-action {
+    width: 2.15rem;
+    height: 2.15rem;
+    border: 1px solid transparent;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .license-action:hover {
+    border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+    background: var(--card);
+    color: var(--accent);
+  }
+
+  @media (pointer: coarse) {
+    .license-action {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .license-header {
+      padding-right: 4.2rem;
+    }
+
+    :global(.license-mark) {
+      top: 1rem;
+      right: 1rem;
+      width: 3.7rem;
+      height: 3.7rem;
+    }
+
+    .license-meta {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .license-meta > div:last-child {
+      grid-column: 1 / -1;
+    }
+
+    .license-footer {
+      padding: 0.75rem 1rem;
+    }
+
+    .license-note {
+      flex-basis: 100%;
+    }
+  }
+</style>

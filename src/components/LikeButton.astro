@@ -1,0 +1,167 @@
+---
+import Icon from '@/components/Icon.astro'
+import { siteConfig } from '@/site.config'
+
+const { enabled, serverURL } = siteConfig.waline
+const active = enabled && serverURL.length > 0
+---
+
+{
+  active && (
+    <div
+      class="like-button mx-auto mt-10 flex max-w-[var(--container-reading)] flex-col items-center gap-2"
+      data-pagefind-ignore
+    >
+      <button
+        type="button"
+        class="like-toggle"
+        data-like
+        data-waline-server={serverURL}
+        aria-pressed="false"
+        aria-label="Like this post"
+      >
+        <Icon name="heart" size={18} class="like-heart" />
+        <span class="like-count" data-like-count>0</span>
+      </button>
+    </div>
+  )
+}
+
+<script>
+  // Waline article-counter API (no extra backend):
+  //   GET  api/article?path=…&type=reaction0  → read count
+  //   POST api/article {path,type:'reaction0'[,action:'desc']} → +1 / -1
+  const REACTION_TYPE = 'reaction0'
+  const storageKey = (path: string) => `serene:like:${path}`
+
+  function setupLikeButton() {
+    const button = document.querySelector<HTMLButtonElement>('[data-like]')
+    if (!button || button.dataset.enhanced === 'true') return
+    button.dataset.enhanced = 'true'
+
+    const serverURL = button.dataset.walineServer
+    const countEl = button.querySelector<HTMLElement>('[data-like-count]')
+    if (!serverURL || !countEl) return
+    const base = serverURL.replace(/\/$/, '')
+    const path = window.location.pathname
+    let liked = false
+    let count = 0
+    let busy = false
+    try {
+      liked = localStorage.getItem(storageKey(path)) === '1'
+    } catch {
+      /* storage blocked */
+    }
+    button.setAttribute('aria-pressed', String(liked))
+    button.classList.toggle('is-liked', liked)
+    const render = () => {
+      countEl.textContent = String(count)
+      button.setAttribute('aria-pressed', String(liked))
+      button.classList.toggle('is-liked', liked)
+    }
+    const loadCount = async () => {
+      try {
+        const url = new URL('api/article', `${base}/`)
+        url.searchParams.set('path', path)
+        url.searchParams.set('type', REACTION_TYPE)
+        url.searchParams.set('lang', navigator.language)
+        const response = await fetch(url)
+        if (!response.ok) return
+        const payload = await response.json()
+        const data = Array.isArray(payload?.data) ? payload.data : payload
+        const value = Array.isArray(data) ? data[0]?.[REACTION_TYPE] : undefined
+        if (typeof value === 'number' && Number.isFinite(value)) {
+          count = value
+          render()
+        }
+      } catch {
+        /* offline or blocked — keep the optimistic value */
+      }
+    }
+    const vote = async () => {
+      if (busy) return
+      busy = true
+      const nextLiked = !liked
+      liked = nextLiked
+      count = Math.max(0, count + (nextLiked ? 1 : -1))
+      render()
+      try {
+        localStorage.setItem(storageKey(path), nextLiked ? '1' : '0')
+      } catch {
+        /* ignore */
+      }
+      try {
+        const url = new URL('api/article', `${base}/`)
+        url.searchParams.set('lang', navigator.language)
+        await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path,
+            type: REACTION_TYPE,
+            action: nextLiked ? undefined : 'desc'
+          }),
+          keepalive: true
+        })
+      } catch {
+        liked = !nextLiked
+        count = Math.max(0, count + (nextLiked ? -1 : 1))
+        try {
+          localStorage.setItem(storageKey(path), liked ? '1' : '0')
+        } catch {
+          /* ignore */
+        }
+        render()
+      } finally {
+        busy = false
+      }
+    }
+    button.addEventListener('click', vote)
+    void loadCount()
+  }
+  document.addEventListener('astro:page-load', setupLikeButton)
+</script>
+<style>
+  .like-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    padding: 0.5rem 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--quiet);
+    transition:
+      color 0.2s var(--ease-out-quart),
+      border-color 0.2s var(--ease-out-quart),
+      background-color 0.2s var(--ease-out-quart),
+      transform 0.12s var(--ease-spring);
+  }
+  .like-toggle:hover {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  }
+  .like-toggle:active {
+    transform: scale(0.96);
+  }
+  .like-toggle .like-heart {
+    transition:
+      transform 0.2s var(--ease-spring),
+      fill 0.2s var(--ease-out-quart),
+      color 0.2s var(--ease-out-quart);
+  }
+  .like-toggle.is-liked {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+  }
+  .like-toggle.is-liked .like-heart {
+    fill: var(--accent);
+    color: var(--accent);
+    transform: scale(1.08);
+  }
+  .like-count {
+    font-variant-numeric: tabular-nums;
+  }
+</style>

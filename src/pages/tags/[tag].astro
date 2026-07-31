@@ -1,0 +1,43 @@
+---
+import Icon from '@/components/Icon.astro'
+import PageHead from '@/components/PageHead.astro'
+import PostRow from '@/components/PostRow.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getPosts, getTags, type Post } from '@/lib/utils'
+
+export async function getStaticPaths() {
+  const posts = await getPosts()
+  return getTags(posts).map(({ tag }) => ({
+    params: { tag },
+    props: { posts: posts.filter((post) => post.data.tags.includes(tag)) }
+  }))
+}
+
+const { tag } = Astro.params
+const { posts } = Astro.props as { posts: Post[] }
+---
+
+<BaseLayout title={`#${tag}`} description={`Posts tagged with #${tag}.`}>
+  <section class="pt-14 sm:pt-16">
+    <PageHead>
+      <a
+        slot="eyebrow"
+        href="/tags"
+        class="group inline-flex items-center gap-1.5 text-sm font-medium text-quiet transition-colors hover:text-ink"
+      >
+        <Icon
+          name="arrow-left"
+          size={15}
+          class="transition-transform duration-300 group-hover:-translate-x-0.5"
+        />
+        All tags
+      </a>
+      <Fragment slot="title"><span class="text-quiet">#</span>{tag}</Fragment>
+      {`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`} with this tag.
+    </PageHead>
+
+    <ul class="mx-auto mt-14 max-w-[var(--container-reading)]">
+      {posts.map((post) => <PostRow {post} />)}
+    </ul>
+  </section>
+</BaseLayout>

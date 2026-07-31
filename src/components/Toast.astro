@@ -1,0 +1,70 @@
+---
+/** Trigger: document.dispatchEvent(new CustomEvent('toast', { detail: { message: '…' } })) */
+---
+
+<div
+  id="toast-region"
+  class="pointer-events-none fixed inset-x-0 bottom-0 z-[var(--layer-feedback)] flex flex-col items-center gap-2 p-4"
+  role="status"
+  aria-live="polite"
+>
+</div>
+
+<script>
+  const REGION_ID = 'toast-region'
+  const VISIBLE_MS = 2600
+
+  function showToast(message: string) {
+    const region = document.getElementById(REGION_ID)
+    if (!region || !message) return
+
+    const toast = document.createElement('div')
+    toast.className = 'toast-item'
+    toast.textContent = message
+    region.append(toast)
+
+    // Force a frame so the entrance transition runs.
+    requestAnimationFrame(() => toast.classList.add('is-visible'))
+
+    const remove = () => {
+      toast.classList.remove('is-visible')
+      toast.addEventListener('transitionend', () => toast.remove(), { once: true })
+      // Fallback in case the transition never fires.
+      setTimeout(() => toast.remove(), 400)
+    }
+    setTimeout(remove, VISIBLE_MS)
+  }
+
+  document.addEventListener('toast', (event) => {
+    const detail = (event as CustomEvent<{ message?: string }>).detail
+    showToast(detail?.message ?? '')
+  })
+</script>
+
+<style is:global>
+  #toast-region .toast-item {
+    pointer-events: auto;
+    max-width: min(92vw, 24rem);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--card);
+    box-shadow: var(--sh-pop);
+    padding: 0.6rem 0.9rem;
+    font-size: 0.85rem;
+    color: var(--ink);
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 0.24s var(--ease-out-quart),
+      transform 0.28s var(--ease-spring);
+  }
+  #toast-region .toast-item.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #toast-region .toast-item {
+      transition-duration: 0.01ms;
+    }
+  }
+</style>

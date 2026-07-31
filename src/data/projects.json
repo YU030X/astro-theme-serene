@@ -1,0 +1,39 @@
+{
+  "projects": [
+    {
+      "id_name": "theme-demos",
+      "desc": "Demo projects.",
+      "project_list": [
+        {
+          "name": "Serene",
+          "intro": "The theme you are looking at — a quiet, editorial blog theme for Astro with fluid motion and instant loads.",
+          "tags": ["Astro", "Tailwind CSS", "TypeScript"],
+          "website": "https://astro-theme-serene.vercel.app",
+          "repository": "https://github.com/yu030x/astro-theme-serene",
+          "gradient": ["#5a7ba6", "#6d6a9e"],
+          "featured": true
+        },
+        {
+          "name": "Astro",
+          "intro": "The framework Serene is built on — content-first, zero JS by default, islands when you need them.",
+          "tags": ["Framework"],
+          "website": "https://astro.build",
+          "repository": "https://github.com/withastro/astro",
+          "featured": true
+        },
+        {
+          "name": "Tailwind CSS",
+          "intro": "Utility CSS with Serene’s OKLCH-friendly tokens wired through Tailwind v4 @theme.",
+          "tags": ["CSS"],
+          "website": "https://tailwindcss.com"
+        },
+        {
+          "name": "Pagefind search",
+          "intro": "Static full-text search (⌘K) indexed at build time — no external search service required.",
+          "tags": ["Pagefind", "UX"],
+          "website": "https://pagefind.app"
+        }
+      ]
+    }
+  ]
+}
