@@ -19,7 +19,7 @@
 ## 特性
 
 - 编辑式博客页面：分类、标签、归档、RSS、站点地图、Open Graph 与 JSON-LD。
-- 支持 Markdown、MDX、旁注、代码高亮和 Callout。
+- 支持 Markdown、MDX、KaTeX 数学公式、旁注、代码高亮和 Callout。
 - 以阅读为先：目录、阅读进度、图片放大、暗色模式和 reduced-motion 支持。
 - Pagefind 静态搜索；Waline 评论、点赞和 GitHub 贡献图均为可选。
 - 无需后端，构建后的 `dist/` 可部署到任意静态托管。
@@ -84,6 +84,16 @@ draft: false
 ```
 
 支持 `note`、`info`、`tip`、`important`、`warning`、`caution` 和 `success`，且不区分大小写。
+
+数学公式支持行内和独立显示的 KaTeX 写法：
+
+```markdown
+行内公式：$E = mc^2$
+
+$$
+\int_0^1 x^2\,dx = \frac{1}{3}
+$$
+```
 
 ## 目录结构
 

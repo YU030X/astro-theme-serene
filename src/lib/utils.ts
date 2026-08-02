@@ -82,5 +82,5 @@ export function formatDate(
     day: 'numeric'
   }
 ): string {
-  return new Intl.DateTimeFormat(siteConfig.locale, options).format(date)
+  return new Intl.DateTimeFormat(siteConfig.dateLocale, options).format(date)
 }
