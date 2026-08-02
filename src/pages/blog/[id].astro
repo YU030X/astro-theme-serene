@@ -197,9 +197,9 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
 
         <div class="article-end" aria-hidden="true"></div>
 
-        <PostLicense {title} {publishDate} postId={post.id} />
-
-        <LikeButton />
+        <PostLicense {title} {publishDate} postId={post.id}>
+          <LikeButton compact slot="article-actions" />
+        </PostLicense>
 
         <footer class="mt-12" data-pagefind-ignore>
           <div class="grid gap-4 sm:grid-cols-2">

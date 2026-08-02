@@ -70,6 +70,7 @@ const active =
         <p class="license-note">Images are sourced from the internet. Please contact me for removal if necessary.</p>
 
         <div class="license-actions" role="group" aria-label="Article actions">
+          <slot name="article-actions" />
           <button
             type="button"
             class="icon-btn license-action"
@@ -106,6 +107,8 @@ const active =
     </section>
   )
 }
+
+{!active && <div class="article-actions-fallback"><slot name="article-actions" /></div>}
 
 <script>
   function toast(message: string) {
@@ -282,6 +285,13 @@ const active =
     flex: none;
     align-items: center;
     gap: 0.15rem;
+  }
+
+  .article-actions-fallback {
+    display: flex;
+    justify-content: flex-end;
+    max-width: var(--container-reading);
+    margin: 1.5rem auto 0;
   }
 
   .license-action {
