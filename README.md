@@ -19,7 +19,7 @@ English | [简体中文](./README.zh-CN.md) · **[Live demo →](https://astro-t
 ## Features
 
 - Editorial blog pages with categories, tags, archive, RSS, sitemap, Open Graph and JSON-LD.
-- Markdown and MDX support, including sidenotes, syntax highlighting and Callouts.
+- Markdown and MDX support, including KaTeX math, sidenotes, syntax highlighting and Callouts.
 - Reading-first details: table of contents, progress bar, image zoom, dark mode and reduced-motion support.
 - Static search with Pagefind; Waline comments, reactions and GitHub contributions are optional.
 - No required backend. Build `dist/` and deploy it to any static host.
@@ -84,6 +84,16 @@ Regular quotes and Callouts use familiar Markdown syntax:
 ```
 
 Supported labels include `note`, `info`, `tip`, `important`, `warning`, `caution`, and `success` (case-insensitive).
+
+Math supports inline and display KaTeX syntax:
+
+```markdown
+Inline math: $E = mc^2$
+
+$$
+\int_0^1 x^2\,dx = \frac{1}{3}
+$$
+```
 
 ## Project structure
 

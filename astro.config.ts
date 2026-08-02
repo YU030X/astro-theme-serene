@@ -3,9 +3,14 @@ import { unified } from '@astrojs/markdown-remark'
 import sitemap from '@astrojs/sitemap'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'astro/config'
+import rehypeKatex from 'rehype-katex'
+import remarkMath from 'remark-math'
 
 import remarkCallouts from './src/plugins/remark-callouts'
 import { siteConfig } from './src/site.config'
+
+const remarkPlugins = [remarkMath, remarkCallouts]
+const rehypePlugins = [rehypeKatex]
 
 // https://astro.build/config
 export default defineConfig({
@@ -24,7 +29,8 @@ export default defineConfig({
 
   markdown: {
     processor: unified({
-      remarkPlugins: [remarkCallouts]
+      remarkPlugins,
+      rehypePlugins
     }),
     shikiConfig: {
       // Dual themes — the active one is picked via CSS variables in global.css
@@ -36,7 +42,7 @@ export default defineConfig({
     }
   },
 
-  integrations: [mdx({ remarkPlugins: [remarkCallouts] }), sitemap()],
+  integrations: [mdx({ remarkPlugins, rehypePlugins }), sitemap()],
 
   vite: {
     plugins: [tailwindcss()]

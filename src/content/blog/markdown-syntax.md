@@ -1,6 +1,6 @@
 ---
 title: 'Markdown syntax support'
-description: 'A compact showcase of Markdown and prose styles in Serene — headings, callouts, code, tables, and more.'
+description: 'A compact showcase of Markdown and prose styles in Serene — headings, callouts, code, tables, math, and more.'
 publishDate: 2026-07-19
 category: reference
 tags: [markdown, reference]
@@ -117,6 +117,16 @@ console.log(lines.join('\n'))
 | Dark mode | `data-theme` on `<html>` |
 | Search | Pagefind after build |
 | Comments | Opt-in Waline |
+
+## Math
+
+Inline math uses single dollar signs, such as $E = mc^2$.
+
+Display math uses a double-dollar block:
+
+$$
+\int_0^1 x^2\,dx = \frac{1}{3}
+$$
 
 ## Keyboard and marks
 

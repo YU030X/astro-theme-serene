@@ -48,8 +48,11 @@ export const siteConfig = {
   /** Statically imported so Astro can optimize it everywhere it is rendered. */
   avatar,
 
-  /** BCP 47 tag used for <html lang> and date formatting. */
+  /** BCP 47 tag used for <html lang> and localized metadata. */
   locale: 'en-US',
+
+  /** BCP 47 tag used for article and archive date formatting. */
+  dateLocale: 'en-US',
 
   /** Posts per page on /blog. */
   postsPerPage: 8,
