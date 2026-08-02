@@ -2,44 +2,48 @@
 import Icon from '@/components/Icon.astro'
 import type { Project } from '@/data/projects'
 
-/** Short project card; repo / website icons sit above the cover link. */
+/** Project card, with an optional open-row treatment for the home page. */
 interface Props {
   project: Project
+  variant?: 'card' | 'open'
 }
 
-const { project } = Astro.props
+const { project, variant = 'card' } = Astro.props
 const primaryLink = project.href ?? project.repo
 ---
 
-<article
-  class="pcc group relative isolate overflow-hidden rounded-2xl border border-line bg-card px-3.5 py-3 transition-colors duration-200 hover:border-[color-mix(in_srgb,var(--quiet)_28%,var(--line))]"
-  style={`--pa: ${project.gradient[0]}; --pb: ${project.gradient[1]}`}
->
-  {
-    primaryLink && (
-      <a
-        href={primaryLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="absolute inset-0 z-10"
-        aria-label={project.name}
-      />
-    )
-  }
+{
+  variant === 'open' ? (
+    <article
+      class="prow group relative isolate -mx-3 grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 overflow-hidden rounded-[0.9rem] px-3 py-3.5 sm:gap-x-4"
+      style={`--pa: ${project.gradient[0]}; --pb: ${project.gradient[1]}`}
+    >
+      {primaryLink && (
+        <a
+          href={primaryLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="absolute inset-0 z-10"
+          aria-label={project.name}
+        />
+      )}
 
-  <span class="pcc-glow" aria-hidden="true"></span>
+      <span class="min-w-0">
+        <span class="flex min-w-0 items-baseline gap-2">
+          <span class="min-w-0 truncate text-[0.95rem] font-medium text-ink">
+            {project.name}
+          </span>
+          <span class="min-w-0 truncate font-mono text-[0.62rem] uppercase tracking-[0.08em] text-quiet/75">
+            {project.tags.join(' · ')}
+          </span>
+        </span>
+        <span class="mt-1 block truncate text-sm leading-relaxed text-quiet">
+          {project.description}
+        </span>
+      </span>
 
-  <span class="block text-[0.95rem] font-medium text-ink">{project.name}</span>
-  <span class="mt-1 line-clamp-2 block max-w-[85%] text-sm leading-relaxed text-quiet">
-    {project.description}
-  </span>
-  <span class="mt-1.5 flex items-center justify-between gap-3">
-    <span class="min-w-0 truncate font-mono text-[0.62rem] uppercase tracking-[0.08em] text-quiet/75">
-      {project.tags.join(' · ')}
-    </span>
-    <span class="relative z-20 flex gap-0.5">
-      {
-        project.repo && (
+      <span class="relative z-20 row-span-2 flex self-center gap-0.5 pr-3">
+        {project.repo && (
           <a
             class="icon-btn icon-btn-sm"
             href={project.repo}
@@ -49,10 +53,8 @@ const primaryLink = project.href ?? project.repo
           >
             <Icon name="github" size={15} />
           </a>
-        )
-      }
-      {
-        project.href && (
+        )}
+        {project.href && (
           <a
             class="icon-btn icon-btn-sm"
             href={project.href}
@@ -62,13 +64,106 @@ const primaryLink = project.href ?? project.repo
           >
             <Icon name="external" size={15} />
           </a>
-        )
-      }
-    </span>
-  </span>
-</article>
+        )}
+      </span>
+
+      <span class="glowline" aria-hidden="true" />
+    </article>
+  ) : (
+    <article
+      class="pcc group relative isolate overflow-hidden rounded-2xl border border-line bg-card px-3.5 py-3 transition-colors duration-200 hover:border-[color-mix(in_srgb,var(--line)_88%,var(--card))]"
+      style={`--pa: ${project.gradient[0]}; --pb: ${project.gradient[1]}`}
+    >
+      {primaryLink && (
+        <a
+          href={primaryLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="absolute inset-0 z-10"
+          aria-label={project.name}
+        />
+      )}
+
+      <span class="pcc-glow" aria-hidden="true" />
+
+      <span class="block text-[0.95rem] font-medium text-ink">{project.name}</span>
+      <span class="mt-1 line-clamp-2 block max-w-[85%] text-sm leading-relaxed text-quiet">
+        {project.description}
+      </span>
+      <span class="mt-1.5 flex items-center justify-between gap-3">
+        <span class="min-w-0 truncate font-mono text-[0.62rem] uppercase tracking-[0.08em] text-quiet/75">
+          {project.tags.join(' · ')}
+        </span>
+        <span class="relative z-20 flex gap-0.5">
+          {project.repo && (
+            <a
+              class="icon-btn icon-btn-sm"
+              href={project.repo}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${project.name} repository`}
+            >
+              <Icon name="github" size={15} />
+            </a>
+          )}
+          {project.href && (
+            <a
+              class="icon-btn icon-btn-sm"
+              href={project.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${project.name} website`}
+            >
+              <Icon name="external" size={15} />
+            </a>
+          )}
+        </span>
+      </span>
+    </article>
+  )
+}
 
 <style>
+  .prow {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.18s var(--ease-out-quart);
+  }
+
+  .prow:hover,
+  .prow:focus-within {
+    background: color-mix(in srgb, var(--tint) 72%, transparent);
+  }
+
+  .prow .glowline {
+    position: absolute;
+    inset-block: 0.65rem;
+    right: 0;
+    width: 3px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--pa), var(--pb));
+    opacity: 0.55;
+    pointer-events: none;
+    transition:
+      opacity 0.25s var(--ease-out-quart),
+      width 0.25s var(--ease-spring);
+  }
+
+  .prow:hover .glowline,
+  .prow:focus-within .glowline {
+    width: 4px;
+    opacity: 0.9;
+  }
+
+  :global([data-theme='dark']) .prow .glowline {
+    opacity: 0.62;
+  }
+
+  :global([data-theme='dark']) .prow:hover .glowline,
+  :global([data-theme='dark']) .prow:focus-within .glowline {
+    opacity: 0.95;
+  }
+
   .pcc-glow {
     position: absolute;
     inset-block: 0;
@@ -79,6 +174,7 @@ const primaryLink = project.href ?? project.repo
     -webkit-mask-image: linear-gradient(to right, transparent, black 55%);
     mask-image: linear-gradient(to right, transparent, black 55%);
   }
+
   .pcc-glow::after {
     content: '';
     position: absolute;
@@ -95,14 +191,25 @@ const primaryLink = project.href ?? project.repo
       opacity 0.5s var(--ease-out-quart),
       transform 0.5s var(--ease-spring);
   }
+
   :global([data-theme='dark']) .pcc-glow::after {
     opacity: 0.18;
   }
+
   .pcc:hover .pcc-glow::after {
     opacity: 0.36;
     transform: translate(4px, -50%);
   }
+
   :global([data-theme='dark']) .pcc:hover .pcc-glow::after {
     opacity: 0.3;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .prow,
+    .prow .glowline,
+    .pcc-glow::after {
+      transition: none;
+    }
   }
 </style>
