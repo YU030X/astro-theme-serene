@@ -16,7 +16,6 @@ const primaryLink = project.href ?? project.repo
   variant === 'open' ? (
     <article
       class="prow group relative isolate -mx-3 grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 overflow-hidden rounded-[0.9rem] px-3 py-3.5 sm:gap-x-4"
-      style={`--pa: ${project.gradient[0]}; --pb: ${project.gradient[1]}`}
     >
       {primaryLink && (
         <a
@@ -42,7 +41,7 @@ const primaryLink = project.href ?? project.repo
         </span>
       </span>
 
-      <span class="relative z-20 row-span-2 flex self-center gap-0.5 pr-3">
+      <span class="relative z-20 row-span-2 flex self-center gap-0.5">
         {project.repo && (
           <a
             class="icon-btn icon-btn-sm"
@@ -67,7 +66,6 @@ const primaryLink = project.href ?? project.repo
         )}
       </span>
 
-      <span class="glowline" aria-hidden="true" />
     </article>
   ) : (
     <article
@@ -135,35 +133,6 @@ const primaryLink = project.href ?? project.repo
     background: color-mix(in srgb, var(--tint) 72%, transparent);
   }
 
-  .prow .glowline {
-    position: absolute;
-    inset-block: 0.65rem;
-    right: 0;
-    width: 3px;
-    border-radius: 2px;
-    background: linear-gradient(180deg, var(--pa), var(--pb));
-    opacity: 0.55;
-    pointer-events: none;
-    transition:
-      opacity 0.25s var(--ease-out-quart),
-      width 0.25s var(--ease-spring);
-  }
-
-  .prow:hover .glowline,
-  .prow:focus-within .glowline {
-    width: 4px;
-    opacity: 0.9;
-  }
-
-  :global([data-theme='dark']) .prow .glowline {
-    opacity: 0.62;
-  }
-
-  :global([data-theme='dark']) .prow:hover .glowline,
-  :global([data-theme='dark']) .prow:focus-within .glowline {
-    opacity: 0.95;
-  }
-
   .pcc-glow {
     position: absolute;
     inset-block: 0;
@@ -207,7 +176,6 @@ const primaryLink = project.href ?? project.repo
 
   @media (prefers-reduced-motion: reduce) {
     .prow,
-    .prow .glowline,
     .pcc-glow::after {
       transition: none;
     }
