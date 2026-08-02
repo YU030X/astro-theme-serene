@@ -114,7 +114,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
     <div class="relative">
       {
         hasToc && (
-          <aside class="hidden xl:absolute xl:bottom-0 xl:left-[calc(50%-35rem)] xl:top-0 xl:block xl:w-44">
+          <aside class="hidden xl:absolute xl:bottom-0 xl:left-[calc(50%-37rem)] xl:top-0 xl:block xl:w-44 xl:pt-12">
             <div class="sticky top-28">
               <TOC {headings} />
             </div>
@@ -122,12 +122,8 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
         )
       }
 
-      <header class="mx-auto max-w-[var(--container-reading)]">
-      <p class="mt-8 font-mono text-[0.68rem] uppercase tracking-[0.13em] text-quiet">
-        Writing · {formatCategory(category)}
-      </p>
-
-      <h1 class="mt-3 font-serif text-title font-medium leading-[1.16] sm:text-title-lg">
+      <header class="mx-auto max-w-[var(--container-reading)] pt-12">
+      <h1 class="mt-0 font-serif text-title font-medium leading-[1.16] sm:text-title-lg">
         {title}
       </h1>
 
@@ -210,7 +206,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
                     <Icon
                       name="arrow-left"
                       size={13}
-                      class="transition-transform duration-300 group-hover:-translate-x-0.5"
+                      class="shrink-0"
                     />
                     Previous post
                   </span>
@@ -233,7 +229,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
                     <Icon
                       name="arrow-right"
                       size={13}
-                      class="transition-transform duration-300 group-hover:translate-x-0.5"
+                      class="shrink-0"
                     />
                   </span>
                   <span class="mt-2 line-clamp-2 block font-medium leading-snug text-ink transition-colors group-hover:text-accent">

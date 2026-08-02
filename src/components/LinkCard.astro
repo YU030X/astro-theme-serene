@@ -3,8 +3,6 @@ import Icon from '@/components/Icon.astro'
 import type { FriendLink } from '@/data/links'
 import { getAvatarThemeColor } from '@/lib/image-color'
 
-/** Friend link card: round avatar, name and intro, with the avatar blown up
- *  as a soft left backdrop. Hover tints toward the per-link theme color. */
 interface Props {
   link: FriendLink
 }
@@ -16,42 +14,21 @@ const avatarThemeColor = link.avatar
 const themeColor = avatarThemeColor
   ? `rgb(${avatarThemeColor})`
   : `hsl(${link.hue} 55% 58%)`
-/* SVG brand marks are logos, not photos: fit them whole (an SVG without
-   width/height has a 300x150 intrinsic size, so `cover` crops it badly). */
 const avatarIsLogo =
   link.avatar?.split(/[?#]/)[0].toLowerCase().endsWith('.svg') ?? false
+const domain = new URL(link.url).hostname.replace(/^www\./, '')
 ---
 
 <a
   href={link.url}
   target="_blank"
   rel="noopener noreferrer"
-  class="link-card group relative isolate flex items-center gap-3.5 overflow-hidden rounded-xl border border-line/75 bg-card px-4 py-3"
+  class="link-card group grid min-h-[6.75rem] min-w-0 grid-cols-[2.25rem_minmax(0,1fr)_0.875rem] grid-rows-[auto_1fr_auto] items-start gap-x-2.5 gap-y-1 overflow-hidden rounded-xl border border-line/75 bg-card px-3.5 py-3"
   style={`--link-theme-color: ${themeColor}`}
   aria-label={`Visit ${link.name} (opens in a new tab)`}
 >
-  {
-    link.avatar && (
-      <img
-        class:list={[
-          'link-card__backdrop',
-          avatarIsLogo && 'link-card__backdrop--logo'
-        ]}
-        src={link.avatar}
-        width="250"
-        height="150"
-        alt=""
-        aria-hidden="true"
-        loading="lazy"
-        decoding="async"
-        referrerpolicy="no-referrer"
-        onerror="this.remove()"
-      />
-    )
-  }
-
   <span
-    class="link-avatar relative grid size-[3.25rem] shrink-0 select-none place-items-center overflow-hidden rounded-full border border-line bg-tint text-sm font-medium text-ink"
+    class="link-avatar relative row-span-3 grid size-9 select-none place-items-center self-start overflow-hidden rounded-full border border-line bg-tint text-xs font-medium text-ink"
     aria-hidden="true"
   >
     <span>{link.name.charAt(0)}</span>
@@ -60,14 +37,14 @@ const avatarIsLogo =
         <img
           src={link.avatar}
           alt=""
-          width="52"
-          height="52"
+          width="36"
+          height="36"
           loading="lazy"
           decoding="async"
           referrerpolicy="no-referrer"
           class:list={[
             'absolute inset-0 size-full bg-card',
-            avatarIsLogo ? 'object-contain p-[0.45rem]' : 'object-cover'
+            avatarIsLogo ? 'object-contain p-[0.35rem]' : 'object-cover'
           ]}
           onerror="this.remove()"
         />
@@ -75,74 +52,73 @@ const avatarIsLogo =
     }
   </span>
 
-  <span class="min-w-0 flex-1">
-    <span class="link-name block truncate text-[0.95rem] font-semibold leading-5 text-ink">
-      {link.name}
-    </span>
-    <span class="mt-1 line-clamp-1 block text-[0.8rem] leading-5 text-quiet">
-      {link.description}
-    </span>
+  <span class="link-name min-w-0 truncate text-[0.875rem] font-semibold leading-5 text-ink">
+    {link.name}
+  </span>
+
+  <span class="col-[2/4] line-clamp-2 min-w-0 text-[0.75rem] leading-[1.45] text-quiet">
+    {link.description}
+  </span>
+
+  <span class="link-domain col-[2/4] flex min-w-0 items-center gap-1.5 font-mono text-[0.58rem] uppercase tracking-[0.09em] text-quiet/70">
+    <span class="link-dot size-1 shrink-0 rounded-full" aria-hidden="true"></span>
+    <span class="truncate">{domain}</span>
   </span>
 
   <Icon
     name="arrow-up-right"
     size={14}
-    class="link-external absolute right-3 top-3 text-quiet/70"
+    class="link-external col-start-3 row-start-1 mt-0.5 text-quiet/65"
   />
 </a>
 
 <style>
   .link-card {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
     transition:
-      border-color 0.2s var(--ease-out-quart),
-      background-color 0.2s var(--ease-out-quart);
+      border-color 0.18s var(--ease-out-quart),
+      background-color 0.18s var(--ease-out-quart);
   }
 
-  .link-card:hover {
-    border-color: color-mix(in srgb, var(--link-theme-color) 30%, var(--line));
-    background: color-mix(in srgb, var(--card) 96%, var(--link-theme-color));
+  .link-card:hover,
+  .link-card:focus-visible {
+    border-color: color-mix(in srgb, var(--line) 88%, var(--card));
+    background: color-mix(in srgb, var(--card) 94%, var(--link-theme-color));
   }
 
-  /* The avatar again, oversized and fading out rightward behind the row. */
-  .link-card__backdrop {
-    position: absolute;
-    inset-block: 0;
-    left: -0.5rem;
-    width: 62%;
-    height: 100%;
-    z-index: -1;
-    object-fit: cover;
-    opacity: 0.12;
-    filter: saturate(0.8);
-    -webkit-mask-image: linear-gradient(to left, transparent 0%, black 100%);
-    mask-image: linear-gradient(to left, transparent 0%, black 100%);
-    pointer-events: none;
-  }
-
-  :global([data-theme='dark']) .link-card__backdrop {
-    opacity: 0.1;
-  }
-
-  /* Logos float whole as a faint watermark instead of being crop-zoomed. */
-  .link-card__backdrop--logo {
-    object-fit: contain;
-    padding-block: 0.5rem;
+  .link-dot {
+    background: var(--link-theme-color);
+    opacity: 0.72;
   }
 
   .link-avatar,
   .link-name,
-  .link-external {
+  .link-domain,
+  .link-external,
+  .link-dot {
     transition:
       color 0.2s var(--ease-out-quart),
-      border-color 0.2s var(--ease-out-quart);
+      border-color 0.2s var(--ease-out-quart),
+      opacity 0.2s var(--ease-out-quart);
   }
 
-  .link-card:hover .link-avatar {
+  .link-card:hover .link-avatar,
+  .link-card:focus-visible .link-avatar {
     border-color: color-mix(in srgb, var(--link-theme-color) 34%, var(--line));
   }
 
   .link-card:hover .link-name,
-  .link-card:hover .link-external {
+  .link-card:hover .link-domain,
+  .link-card:hover .link-external,
+  .link-card:focus-visible .link-name,
+  .link-card:focus-visible .link-domain,
+  .link-card:focus-visible .link-external {
     color: color-mix(in srgb, var(--link-theme-color) 76%, var(--ink));
+  }
+
+  .link-card:hover .link-dot,
+  .link-card:focus-visible .link-dot {
+    opacity: 1;
   }
 </style>

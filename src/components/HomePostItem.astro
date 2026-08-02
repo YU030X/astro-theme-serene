@@ -1,6 +1,7 @@
 ---
 import DraftBadge from '@/components/DraftBadge.astro'
 import FormattedDate from '@/components/FormattedDate.astro'
+import Icon from '@/components/Icon.astro'
 import type { Post } from '@/lib/utils'
 
 interface Props {
@@ -14,18 +15,23 @@ const isDraft = post.data.draft && import.meta.env.DEV
 <li>
   <a
     href={`/blog/${post.id}`}
-    class="group -mx-3 grid grid-cols-[minmax(0,1fr)] gap-x-3 gap-y-0.5 rounded-lg px-3 py-2 transition-colors duration-150 hover:bg-tint sm:grid-cols-[5.75rem_minmax(0,1fr)] sm:items-baseline"
+    class="group -mx-3 grid grid-cols-[minmax(0,1fr)_2rem] gap-x-3 gap-y-0.5 rounded-lg px-3 py-2 transition-colors duration-150 hover:bg-tint sm:grid-cols-[5.75rem_minmax(0,1fr)_5.75rem] sm:items-baseline"
   >
     <FormattedDate
       date={post.data.publishDate}
       options={{ month: 'short', day: 'numeric', year: 'numeric' }}
-      class="col-start-1 row-start-1 font-mono text-[0.72rem] tabular-nums text-quiet sm:col-auto sm:row-auto"
+      class="col-span-2 col-start-1 row-start-1 font-mono text-[0.72rem] tabular-nums text-quiet sm:col-span-1 sm:col-start-1 sm:row-auto"
     />
     <span
-      class="col-start-1 row-start-2 flex min-w-0 items-center gap-2 text-[0.94rem] leading-snug text-ink transition-colors duration-150 group-hover:text-accent sm:col-start-2 sm:row-start-1"
+      class="col-span-2 col-start-1 row-start-2 flex min-w-0 items-center justify-center gap-2 px-8 text-center text-[0.94rem] leading-snug text-ink transition-colors duration-150 group-hover:text-accent sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:px-0"
     >
       <span class="min-w-0 truncate">{post.data.title}</span>
       {isDraft && <DraftBadge />}
     </span>
+    <Icon
+      name="arrow-right"
+      size={14}
+      class="col-start-2 row-start-2 self-center justify-self-end text-quiet/65 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-accent sm:col-start-3 sm:row-start-1"
+    />
   </a>
 </li>
