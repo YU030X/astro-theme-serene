@@ -303,6 +303,31 @@
   filter: brightness(0.85);
 }
 
+img[data-image-loading] {
+  background-color: color-mix(in srgb, var(--tint) 82%, var(--card));
+  background-image: linear-gradient(
+    118deg,
+    color-mix(in srgb, var(--accent) 5%, transparent),
+    color-mix(in srgb, var(--card) 78%, transparent) 48%,
+    color-mix(in srgb, var(--accent) 8%, transparent)
+  );
+  background-size: 220% 100%;
+  animation: image-skeleton-shimmer 1.45s var(--ease-out-quart) infinite;
+}
+@keyframes image-skeleton-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  img[data-image-loading] {
+    animation: none;
+  }
+}
+
 /* Article hero — offset + cast shadow lift the cover; the edge line is an
    inset ring over the image, never a light outer border (pale fringe). */
 .hero-figure {
@@ -865,8 +890,8 @@ html.medium-zoom--opened {
 .prose summary.callout-title {
   position: relative;
   margin: -1em -1.2em;
-  border-radius: calc(var(--radius-lg) - 1px);
-  padding: 1em 1.2em;
+  border-radius: 0;
+  padding: 1rem 1.15rem;
   cursor: pointer;
   list-style: none;
   -webkit-tap-highlight-color: transparent;
@@ -892,7 +917,7 @@ html.medium-zoom--opened {
   transition: transform 0.22s var(--ease-spring);
 }
 .prose summary.callout-title:hover {
-  background: color-mix(in srgb, var(--callout-color) 7%, transparent);
+  background-color: color-mix(in srgb, var(--callout-color) 6%, transparent);
   color: var(--callout-color);
 }
 .prose details.callout[open] > summary.callout-title {
@@ -914,6 +939,22 @@ html.medium-zoom--opened {
 .prose .callout :where(p, li):not(.callout-title) {
   font-family: var(--font-sans);
   font-style: normal;
+}
+
+.prose details.callout[data-collapsible='true'] {
+  --callout-collapsible-pad-block: 1rem;
+  --callout-collapsible-pad-inline: 1.15rem;
+  padding: var(--callout-collapsible-pad-block)
+    var(--callout-collapsible-pad-inline) 1.05rem;
+}
+.prose details.callout[data-collapsible='true'] > summary.callout-title {
+  margin: calc(-1 * var(--callout-collapsible-pad-block))
+    calc(-1 * var(--callout-collapsible-pad-inline));
+  padding: var(--callout-collapsible-pad-block)
+    var(--callout-collapsible-pad-inline);
+}
+.prose details.callout[data-collapsible='true'][open] > summary.callout-title {
+  margin-bottom: 0.75em;
 }
 .prose .callout :where(:not(pre) > code):not(:where(.not-prose *)) {
   border-color: color-mix(in srgb, var(--callout-color) 22%, var(--line));

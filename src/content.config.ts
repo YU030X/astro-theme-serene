@@ -21,7 +21,7 @@ const blog = defineCollection({
         .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
       cover: z
         .object({
-          src: image(),
+          src: z.union([image(), z.url()]),
           alt: z.string().default(''),
           /** Optional source URL for the cover image (attribution link). */
           source: z.url().optional()

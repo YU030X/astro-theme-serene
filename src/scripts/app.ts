@@ -578,6 +578,33 @@ function setupImageZoom(signal: AbortSignal) {
   signal.addEventListener('abort', () => finishClose(false), { once: true })
 }
 
+function setupImageLoading(signal: AbortSignal) {
+  const images = document.querySelectorAll<HTMLImageElement>(
+    'img:not([data-image-skeleton="off"])'
+  )
+
+  for (const image of images) {
+    image.setAttribute('data-image-loading', '')
+
+    const finish = (failed: boolean) => {
+      image.removeAttribute('data-image-loading')
+      image.toggleAttribute('data-image-error', failed)
+    }
+
+    image.addEventListener('load', () => finish(false), {
+      signal,
+      once: true
+    })
+    image.addEventListener('error', () => finish(true), {
+      signal,
+      once: true
+    })
+
+    if (image.complete && image.naturalWidth > 0) finish(false)
+    else if (image.complete && image.loading !== 'lazy') finish(true)
+  }
+}
+
 /* Search (Pagefind, loaded on demand) */
 
 interface PagefindResult {
@@ -744,6 +771,7 @@ function init() {
   setupProgress(signal)
   setupToc(signal)
   setupCodeBlocks(signal)
+  setupImageLoading(signal)
   setupImageZoom(signal)
   setupSearch(signal)
   setupHeadingAnchors()
