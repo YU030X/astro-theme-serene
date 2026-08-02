@@ -42,15 +42,27 @@ const isDraft = post.data.draft && import.meta.env.DEV
     {
       cover && (
         <span class="hidden size-[5.5rem] shrink-0 overflow-hidden rounded-lg sm:block">
-          <Image
-            src={cover.src}
-            alt={cover.alt}
-            width={176}
-            widths={[176, 352]}
-            sizes="88px"
-            loading="lazy"
-            class="media-dim size-full object-cover transition-transform duration-500 ease-spring group-hover:scale-[1.04]"
-          />
+          {typeof cover.src === 'string' ? (
+            <img
+              src={cover.src}
+              alt={cover.alt}
+              width="176"
+              height="176"
+              loading="lazy"
+              decoding="async"
+              class="media-dim size-full object-cover transition-transform duration-500 ease-spring group-hover:scale-[1.04]"
+            />
+          ) : (
+            <Image
+              src={cover.src}
+              alt={cover.alt}
+              width={176}
+              widths={[176, 352]}
+              sizes="88px"
+              loading="lazy"
+              class="media-dim size-full object-cover transition-transform duration-500 ease-spring group-hover:scale-[1.04]"
+            />
+          )}
         </span>
       )
     }

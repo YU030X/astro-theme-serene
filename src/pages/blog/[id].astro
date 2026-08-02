@@ -40,6 +40,11 @@ const {
   cover,
   tags
 } = post.data
+const coverUrl = cover
+  ? typeof cover.src === 'string'
+    ? cover.src
+    : cover.src.src
+  : undefined
 const minutes = readingTime(post.body)
 const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3)
 const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.depth === 3)
@@ -48,7 +53,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
 <BaseLayout
   {title}
   {description}
-  ogImage={cover?.src.src}
+  ogImage={coverUrl}
   article={{ publishDate, updatedDate, category, tags }}
 >
   <div
@@ -81,16 +86,29 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
               class="hero-figure relative aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[3/2]"
               data-no-zoom
             >
-              <Image
-                src={cover.src}
-                alt={cover.alt}
-                width={1400}
-                widths={[720, 1080, 1400]}
-                sizes="(min-width: 800px) 768px, 94vw"
-                loading="eager"
-                fetchpriority="high"
-                class="media-dim block h-full w-full object-[50%_35%] object-cover"
-              />
+              {typeof cover.src === 'string' ? (
+                <img
+                  src={cover.src}
+                  alt={cover.alt}
+                  width="1400"
+                  height="933"
+                  loading="eager"
+                  decoding="async"
+                  fetchpriority="high"
+                  class="media-dim block h-full w-full object-[50%_35%] object-cover"
+                />
+              ) : (
+                <Image
+                  src={cover.src}
+                  alt={cover.alt}
+                  width={1400}
+                  widths={[720, 1080, 1400]}
+                  sizes="(min-width: 800px) 768px, 94vw"
+                  loading="eager"
+                  fetchpriority="high"
+                  class="media-dim block h-full w-full object-[50%_35%] object-cover"
+                />
+              )}
             </div>
             {cover.source && (
               <figcaption class="mt-2.5 text-right text-xs text-quiet">
