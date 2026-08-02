@@ -2,6 +2,12 @@
 import Icon from '@/components/Icon.astro'
 import { siteConfig } from '@/site.config'
 
+interface Props {
+  /** Render as one action in the article license footer. */
+  compact?: boolean
+}
+
+const { compact = false } = Astro.props
 const { enabled, serverURL } = siteConfig.waline
 const active = enabled && serverURL.length > 0
 ---
@@ -9,7 +15,7 @@ const active = enabled && serverURL.length > 0
 {
   active && (
     <div
-      class="like-button mx-auto mt-10 flex max-w-[var(--container-reading)] flex-col items-center gap-2"
+      class:list={['like-button', compact && 'like-button-compact']}
       data-pagefind-ignore
     >
       <button
@@ -21,7 +27,7 @@ const active = enabled && serverURL.length > 0
         aria-label="Like this post"
       >
         <Icon name="heart" size={18} class="like-heart" />
-        <span class="like-count" data-like-count>0</span>
+        <span class="like-count" data-like-count aria-live="polite">0</span>
       </button>
     </div>
   )
@@ -133,6 +139,8 @@ const active = enabled && serverURL.length > 0
     font-size: 0.9rem;
     font-weight: 500;
     color: var(--quiet);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
     transition:
       color 0.2s var(--ease-out-quart),
       border-color 0.2s var(--ease-out-quart),
@@ -145,6 +153,32 @@ const active = enabled && serverURL.length > 0
   }
   .like-toggle:active {
     transform: scale(0.96);
+  }
+  .like-button {
+    display: flex;
+    max-width: var(--container-reading);
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 2.5rem auto 0;
+  }
+  .like-button-compact {
+    display: flex;
+    max-width: none;
+    flex: none;
+    flex-direction: row;
+    margin: 0;
+  }
+  .like-button-compact .like-toggle {
+    min-height: 2.15rem;
+    padding: 0.35rem 0.65rem;
+    border-color: transparent;
+    background: transparent;
+  }
+  .like-button-compact .like-toggle:hover,
+  .like-button-compact .like-toggle:focus-visible {
+    border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+    background: var(--card);
   }
   .like-toggle .like-heart {
     transition:
