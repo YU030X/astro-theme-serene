@@ -14,20 +14,16 @@ const blog = defineCollection({
       description: z.string().max(200),
       publishDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
-      category: z
-        .string()
-        .trim()
-        .toLowerCase()
-        .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+      category: z.string().trim(),
+      tags: z.array(z.string()).default([]).transform(dedupeLowercase),
       cover: z
         .object({
           src: z.union([image(), z.url()]),
-          alt: z.string().default(''),
+          alt: z.string().default('Header Image'),
           /** Optional source URL for the cover image (attribution link). */
           source: z.url().optional()
         })
         .optional(),
-      tags: z.array(z.string()).default([]).transform(dedupeLowercase),
       draft: z.boolean().default(false)
     })
 })

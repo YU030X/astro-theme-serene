@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets'
 import { render } from 'astro:content'
 
+import DraftBadge from '@/components/DraftBadge.astro'
 import FormattedDate from '@/components/FormattedDate.astro'
 import Icon from '@/components/Icon.astro'
 import TOC from '@/components/TOC.astro'
@@ -40,6 +41,7 @@ const {
   cover,
   tags
 } = post.data
+const isDraft = post.data.draft && import.meta.env.DEV
 const coverUrl = cover
   ? typeof cover.src === 'string'
     ? cover.src
@@ -141,8 +143,9 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
       }
 
       <header class="mx-auto max-w-[var(--container-reading)] pt-12">
-      <h1 class="mt-0 font-serif text-title font-medium leading-[1.16] sm:text-title-lg">
-        {title}
+      <h1 class="mt-0 flex items-baseline gap-2 font-serif text-title font-medium leading-[1.16] sm:text-title-lg">
+        <span>{title}</span>
+        {isDraft && <DraftBadge />}
       </h1>
 
       <p class="mt-4 max-w-[40rem] text-[1.02rem] italic leading-relaxed text-quiet">

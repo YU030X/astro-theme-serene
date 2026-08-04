@@ -7,10 +7,11 @@ import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
 
 import remarkCallouts from './src/plugins/remark-callouts'
+import rehypeImageAttrs from './src/plugins/rehype-image-attrs'
 import { siteConfig } from './src/site.config'
 
 const remarkPlugins = [remarkMath, remarkCallouts]
-const rehypePlugins = [rehypeKatex]
+const rehypePlugins = [rehypeKatex, rehypeImageAttrs]
 
 // https://astro.build/config
 export default defineConfig({
@@ -23,6 +24,14 @@ export default defineConfig({
   },
 
   image: {
+    service: {
+      entrypoint: 'astro/assets/services/sharp',
+      config: {
+        jpeg: { quality: 85, progressive: true },
+        webp: { quality: 85 },
+        avif: { quality: 85 }
+      }
+    },
     // Emit responsive image styles for <Image layout="..."> components.
     responsiveStyles: true
   },
