@@ -47,13 +47,13 @@ for (const [path, raw] of Object.entries(iconModules)) {
               </span>
             )}
             <Tag
-              class="tool-item"
+              class:list={['tool-item', tool.href && 'link-underline']}
               {...(tool.href
                 ? { href: tool.href, target: '_blank', rel: 'noopener noreferrer' }
                 : {})}
             >
               {svg && <span class="tool-icon" aria-hidden="true" set:html={svg} />}
-              <span class:list={[tool.strikethrough && 'line-through decoration-quiet/70']}>
+              <span class:list={[tool.strikethrough && 'tool-strikethrough']}>
                 {tool.name}
               </span>
             </Tag>
@@ -80,18 +80,18 @@ for (const [path, raw] of Object.entries(iconModules)) {
     font-weight: 500;
   }
 
-  a.tool-item {
-    text-decoration: underline;
-    text-decoration-color: color-mix(in srgb, var(--ink) 18%, transparent);
-    text-decoration-thickness: 1.5px;
-    text-underline-offset: 4px;
-    transition:
-      color 0.2s var(--ease-out-quart),
-      text-decoration-color 0.2s var(--ease-out-quart);
-  }
-
   a.tool-item:hover {
     color: var(--accent);
+  }
+
+  .tool-strikethrough {
+    text-decoration: line-through;
+    text-decoration-color: color-mix(in srgb, var(--quiet) 70%, transparent);
+    text-decoration-thickness: 1.5px;
+    transition: text-decoration-color 0.2s var(--ease-out-quart);
+  }
+
+  a.tool-item:hover .tool-strikethrough {
     text-decoration-color: color-mix(in srgb, var(--accent) 60%, transparent);
   }
 
@@ -126,7 +126,8 @@ for (const [path, raw] of Object.entries(iconModules)) {
 
   @media (prefers-reduced-motion: reduce) {
     a.tool-item,
-    .tool-icon {
+    .tool-icon,
+    .tool-strikethrough {
       transition: none;
     }
   }

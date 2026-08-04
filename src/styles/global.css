@@ -709,6 +709,22 @@ html[data-theme-switching]::view-transition-old(root) {
   }
 }
 
+/* Shared inline links — one quiet underline treatment across page and tool links. */
+.link-underline {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--ink) 18%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+  transition:
+    color 0.2s var(--ease-out-quart),
+    text-decoration-color 0.2s var(--ease-out-quart);
+}
+
+.link-underline:hover {
+  color: var(--accent);
+  text-decoration-color: color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
 /* Links — a faint ink underline keeps the affordance; the accent line draws in from the left on hover. */
 .prose :where(a):not(:where(.not-prose *)) {
   font-weight: 500;
