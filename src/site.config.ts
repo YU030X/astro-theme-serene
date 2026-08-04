@@ -23,13 +23,14 @@ export const siteConfig = {
   description:
     'A serene, editorial blog theme for Astro — quiet design, fluid motion, instant loads.',
   author: 'Serene',
-  authorUrl: 'https://github.com/yu030x',
+  authorUrl: 'https://github.com/yu030x/astro-theme-serene',
   tagline: 'An Astro theme for quiet reading.',
   motto: 'Quiet reading, by design.',
   bio: 'Editorial structure, system type, and calm motion — everything defers to the sentence you are reading.',
   avatar,
   locale: 'en-US',
   dateLocale: 'en-US',
+
   postsPerPage: 8,
 
   articleLicense: {
