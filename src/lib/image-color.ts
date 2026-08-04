@@ -25,10 +25,6 @@ interface ColorBucket {
   score: number
 }
 
-/**
- * Extracted colors can be garish or near-black; cap saturation and pull
- * lightness into a mid band so one value reads on both light and dark canvases.
- */
 const MAX_SATURATION = 0.5
 const MIN_LIGHTNESS = 0.52
 const MAX_LIGHTNESS = 0.66

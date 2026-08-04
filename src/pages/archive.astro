@@ -49,9 +49,6 @@ const years = groupByYear(posts)
 </BaseLayout>
 
 <style>
-  /* Archive as a book's table of contents: title … leader … date.
-     The year is a chapter head; the date plays the page number. */
-
   .year-head {
     display: flex;
     align-items: baseline;
@@ -138,7 +135,6 @@ const years = groupByYear(posts)
     color: var(--ink);
   }
 
-  /* Narrow screens: the leader yields; the date returns above the title. */
   @media (max-width: 560px) {
     .toc-row {
       flex-direction: column;
