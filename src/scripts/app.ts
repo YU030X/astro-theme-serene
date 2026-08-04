@@ -473,7 +473,15 @@ function setupImageZoom(signal: AbortSignal) {
   }
 
   const open = (image: HTMLImageElement) => {
-    if (source || !image.complete) return
+    if (source) return
+
+    if (!image.complete) {
+      image
+        .decode()
+        .then(() => open(image))
+        .catch(() => {})
+      return
+    }
 
     const rect = image.getBoundingClientRect()
     if (!rect.width || !rect.height) return
@@ -574,7 +582,16 @@ function setupImageZoom(signal: AbortSignal) {
     },
     { signal }
   )
-  window.addEventListener('resize', () => close(false), { signal })
+  let lastWidth = window.innerWidth
+  window.addEventListener(
+    'resize',
+    () => {
+      const widthChanged = Math.abs(window.innerWidth - lastWidth) > 40
+      lastWidth = window.innerWidth
+      if (widthChanged) close(false)
+    },
+    { signal }
+  )
   signal.addEventListener('abort', () => finishClose(false), { once: true })
 }
 
