@@ -52,48 +52,6 @@ Start with [`src/site.config.ts`](src/site.config.ts): site identity, author URL
 
 Waline is disabled by default. Enable them only after adding your own server URL.
 
-## Write a post
-
-Add`.md`or`.mdx`files under `src/content/blog/`. The schema lives in [`src/content.config.ts`](src/content.config.ts).
-
-```yaml
----
-title: 'Hello world'
-description: 'A short summary for lists, SEO and RSS.'
-publishDate: 2026-07-31
-category: notes
-tags: [astro, writing]
-cover:
-  src: '../../assets/posts/dawn.jpg'
-  alt: 'Cover description'
-  source: 'https://example.com/source'
-draft: false
----
-```
-
-Regular quotes and Callouts use familiar Markdown syntax:
-
-```markdown
-> A regular quote.
-
-> [!TIP]
-> Keep the useful sentence close to the idea it explains.
-
-> [!NOTE]+ An open note
-> `+` starts the Callout expanded; `-` starts it collapsed.
-```
-
-Supported labels include `note`, `info`, `tip`, `important`, `warning`, `caution`, and `success` (case-insensitive).
-
-Math supports inline and display KaTeX syntax:
-
-```markdown
-Inline math: $E = mc^2$
-
-$$
-\int_0^1 x^2\,dx = \frac{1}{3}
-$$
-```
 
 ## Project structure
 

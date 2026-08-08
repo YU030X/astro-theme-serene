@@ -52,48 +52,6 @@ npm run dev       # http://localhost:4321
 
 Waline 默认关闭。只有在填入自己的服务地址后再启用。
 
-## 撰写文章
-
-在 `src/content/blog/` 下添加 `.md` 或 `.mdx` 文件，字段定义见 [`src/content.config.ts`](src/content.config.ts)。
-
-```yaml
----
-title: '你好，世界'
-description: '用于列表、SEO 与 RSS 的简短摘要。'
-publishDate: 2026-07-31
-category: notes
-tags: [astro, writing]
-cover:
-  src: '../../assets/posts/dawn.jpg'
-  alt: '封面描述'
-  source: 'https://example.com/source'
-draft: false
----
-```
-
-普通引用和 Callout 的 Markdown 写法：
-
-```markdown
-> 普通引用。
-
-> [!TIP]
-> 把提示放在真正需要它的句子附近。
-
-> [!NOTE]+ 默认展开的提示
-> `+` 默认展开，`-` 默认收起。
-```
-
-支持 `note`、`info`、`tip`、`important`、`warning`、`caution` 和 `success`，且不区分大小写。
-
-数学公式支持行内和独立显示的 KaTeX 写法：
-
-```markdown
-行内公式：$E = mc^2$
-
-$$
-\int_0^1 x^2\,dx = \frac{1}{3}
-$$
-```
 
 ## 目录结构
 
@@ -127,7 +85,7 @@ astro-theme-serene/
 
 ## 致谢
 
-视觉方向参考 [astro-theme-pure](https://github.com/cworld1/astro-theme-pure) 与 [Litos](https://github.com/Dnzzk2/Litos)。
+视觉参考 [astro-theme-pure](https://github.com/cworld1/astro-theme-pure) 与 [Litos](https://github.com/Dnzzk2/Litos)。
 
 ## 许可证
 
