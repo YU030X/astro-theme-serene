@@ -122,6 +122,9 @@
 
   /* Page width — the single column measure every route shares. */
   --container-reading: 44rem;
+  /* Article body only — a shorter measure than the page container so the
+     line length stays near 75 characters at the prose size below. */
+  --container-prose: 40rem;
 
   /* Type scale — shared semantic sizes; one-off component sizes stay local. */
   --text-title: 2rem; /* article h1 base */
@@ -416,6 +419,9 @@ body::before {
 
 /* Row metadata: the section name keeps small caps, tags fall back to
    lowercase so the two read as different kinds of label. */
+.post-meta-date {
+  font-variant-numeric: oldstyle-nums tabular-nums;
+}
 .post-meta-cat {
   color: color-mix(in srgb, var(--ink) 58%, var(--quiet));
 }
@@ -692,7 +698,7 @@ html[data-theme-switching]::view-transition-old(root) {
   --tw-prose-th-borders: var(--line);
   --tw-prose-td-borders: var(--line);
 
-  font-size: 1.0625rem;
+  font-size: 1rem;
   line-height: 1.8;
   color: var(--ink);
 }
