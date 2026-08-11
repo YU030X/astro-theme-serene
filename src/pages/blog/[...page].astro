@@ -43,7 +43,7 @@ const { page } = Astro.props as { page: Page<Post> }
       </nav>
     </PageHead>
 
-    <ul class="mt-14" data-reveal="content">
+    <ul class="post-list mt-14" data-reveal="content">
       {page.data.map((post) => <PostRow {post} />)}
     </ul>
 
