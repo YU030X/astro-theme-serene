@@ -31,10 +31,10 @@ const isDraft = post.data.draft && import.meta.env.DEV
       <span class="mt-1 line-clamp-2 block text-sm leading-relaxed text-quiet">
         {description}
       </span>
-      <span class="mt-2 block font-mono text-[0.68rem] tracking-[0.04em] text-quiet/85">
+      <span class="mt-2 block font-mono text-[0.68rem] tracking-[0.04em] text-quiet">
         <FormattedDate date={publishDate} /> · {minutes} min · {formatCategory(category)}
         {tags.length > 0 && (
-          <span class="text-quiet/65"> · {tags.map((tag) => `#${tag}`).join(' ')}</span>
+          <span> · {tags.map((tag) => `#${tag}`).join(' ')}</span>
         )}
       </span>
     </span>
