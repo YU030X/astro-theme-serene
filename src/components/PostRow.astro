@@ -31,8 +31,8 @@ const isDraft = post.data.draft && import.meta.env.DEV
       <span class="mt-1 line-clamp-2 text-sm leading-relaxed text-quiet">
         {description}
       </span>
-      <span class="os-nums mt-2 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 text-[0.8rem] text-quiet">
-        <span class="flex items-baseline gap-1.5">
+      <span class="os-nums mt-2 grid gap-x-4 gap-y-1 text-[0.8rem] text-quiet sm:grid-cols-[9.5rem_minmax(0,1fr)]">
+        <span class="post-meta-date flex items-baseline gap-1.5">
           <FormattedDate date={publishDate} />
           <span class="opacity-45" aria-hidden="true">·</span>
           <span>{minutes} min</span>
