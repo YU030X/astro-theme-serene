@@ -51,10 +51,10 @@ function setupMobileNav(signal: AbortSignal) {
   const panel = document.getElementById('mobile-nav')
   if (!button || !panel) return
 
-  const setOpen = (open: boolean) => {
+  const setOpen = (open: boolean, { refocus = false } = {}) => {
     button.setAttribute('aria-expanded', String(open))
     panel.classList.toggle('open', open)
-    if (!open) button.focus({ preventScroll: true })
+    if (!open && refocus) button.focus({ preventScroll: true })
   }
 
   button.addEventListener(
@@ -64,7 +64,12 @@ function setupMobileNav(signal: AbortSignal) {
   )
   document.addEventListener(
     'keydown',
-    (e) => e.key === 'Escape' && setOpen(false),
+    (e) => {
+      // Only a real close steals focus back to the button — an Escape pressed
+      // elsewhere on the page must leave focus where it is.
+      if (e.key === 'Escape' && panel.classList.contains('open'))
+        setOpen(false, { refocus: true })
+    },
     { signal }
   )
   document.addEventListener(

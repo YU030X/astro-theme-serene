@@ -9,6 +9,7 @@ import Icon from '@/components/Icon.astro'
       <input
         type="search"
         placeholder="Search posts and pages…"
+        aria-label="Search posts and pages"
         autocomplete="off"
         spellcheck="false"
         class="h-14 min-w-0 w-full bg-transparent text-[15px] text-ink outline-none placeholder:text-quiet"
@@ -70,6 +71,11 @@ import Icon from '@/components/Icon.astro'
     border-radius: var(--radius-2xl);
     box-shadow: var(--sh-pop);
     overflow: hidden;
+    transition: border-color 0.2s var(--ease-out-quart);
+  }
+  /* The input drops its outline; the panel border carries the focus cue. */
+  .search-panel:focus-within {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
   }
   @keyframes search-in {
     from {
