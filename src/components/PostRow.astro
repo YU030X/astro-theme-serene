@@ -5,7 +5,7 @@ import DraftBadge from '@/components/DraftBadge.astro'
 import FormattedDate from '@/components/FormattedDate.astro'
 import { formatCategory, readingTime, type Post } from '@/lib/utils'
 
-/** Open list entry: text left, small square thumbnail right, no card box. */
+/** Open list entry: text left, 8:5 thumbnail right, no card box. */
 interface Props {
   post: Post
 }
@@ -28,25 +28,34 @@ const isDraft = post.data.draft && import.meta.env.DEV
         <span>{title}</span>
         {isDraft && <DraftBadge />}
       </span>
-      <span class="mt-1 line-clamp-2 block text-sm leading-relaxed text-quiet">
+      <span class="mt-1 line-clamp-2 text-sm leading-relaxed text-quiet">
         {description}
       </span>
-      <span class="mt-2 block font-mono text-[0.68rem] tracking-[0.04em] text-quiet">
-        <FormattedDate date={publishDate} /> · {minutes} min · {formatCategory(category)}
-        {tags.length > 0 && (
-          <span> · {tags.map((tag) => `#${tag}`).join(' ')}</span>
-        )}
+      <span class="os-nums mt-2 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 text-[0.8rem] text-quiet">
+        <span class="flex items-baseline gap-1.5">
+          <FormattedDate date={publishDate} />
+          <span class="opacity-45" aria-hidden="true">·</span>
+          <span>{minutes} min</span>
+        </span>
+        <span class="flex items-baseline gap-2">
+          <span class="post-meta-cat">{formatCategory(category)}</span>
+          {tags.length > 0 && (
+            <span class="post-meta-tags opacity-70">
+              {tags.slice(0, 2).map((tag) => `#${tag}`).join(' ')}
+            </span>
+          )}
+        </span>
       </span>
     </span>
 
     {
       cover && (
-        <span class="hidden size-[5.5rem] shrink-0 overflow-hidden rounded-lg sm:block">
+        <span class="block h-[3.75rem] w-24 shrink-0 overflow-hidden rounded-lg sm:h-[5.5rem] sm:w-[8.8rem]">
           {typeof cover.src === 'string' ? (
             <img
               src={cover.src}
               alt={cover.alt}
-              width="176"
+              width="282"
               height="176"
               loading="lazy"
               decoding="async"
@@ -56,9 +65,9 @@ const isDraft = post.data.draft && import.meta.env.DEV
             <Image
               src={cover.src}
               alt={cover.alt}
-              width={176}
-              widths={[176, 352]}
-              sizes="88px"
+              width={282}
+              widths={[192, 282, 564]}
+              sizes="(min-width: 640px) 141px, 96px"
               loading="lazy"
               class="media-dim size-full object-cover transition-transform duration-500 ease-spring group-hover:scale-[1.04]"
             />

@@ -36,7 +36,7 @@ const { posts } = Astro.props as { posts: Post[] }
       {`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`} with this tag.
     </PageHead>
 
-    <ul class="mx-auto mt-14 max-w-[var(--container-reading)]">
+    <ul class="post-list mx-auto mt-14 max-w-[var(--container-reading)]">
       {posts.map((post) => <PostRow {post} />)}
     </ul>
   </section>

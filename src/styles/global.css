@@ -398,6 +398,35 @@ body::before {
   letter-spacing: 0.04em;
 }
 
+/* Post list (see components/PostRow.astro).
+   Separator: the top edge of the row's hover pill — a hairline whose ends
+   follow the same corner radius and then fade out. The negative inline margin
+   matches the row link's own -mx-3.5. */
+.post-list > li + li::before {
+  content: '';
+  display: block;
+  height: 0.75rem;
+  margin-inline: -0.875rem;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent);
+  mask-image: linear-gradient(to bottom, #000, transparent);
+}
+
+/* Row metadata: the section name keeps small caps, tags fall back to
+   lowercase so the two read as different kinds of label. */
+.post-meta-cat {
+  color: color-mix(in srgb, var(--ink) 58%, var(--quiet));
+}
+/* Sized down so the lowercase x-height matches the small-caps beside it —
+   tags are the least important part of the line and should not read largest. */
+.post-meta-tags {
+  font-size: 0.86em;
+  font-variant-caps: normal;
+  letter-spacing: 0;
+}
+
 /* Sidenote (see components/Sidenote.astro) — tinted note; from xl it hangs
    into the right margin without narrowing the reading column. */
 .sidenote-ref {
