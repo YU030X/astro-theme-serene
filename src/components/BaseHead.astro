@@ -14,9 +14,17 @@ interface Props {
   /** Absolute or root-relative path to the social image. */
   ogImage?: string
   article?: ArticleMeta
+  /** Keep the page out of search results (error pages, thin routes). */
+  noindex?: boolean
 }
 
-const { title, description = siteConfig.description, ogImage, article } = Astro.props
+const {
+  title,
+  description = siteConfig.description,
+  ogImage,
+  article,
+  noindex = false
+} = Astro.props
 
 const pageTitle = title
   ? `${siteConfig.title} ${siteConfig.titleDelimiter} ${title}`
@@ -78,6 +86,7 @@ const jsonLdScript = JSON.stringify(jsonLd).replace(/</g, '\\u003c')
 <title>{pageTitle}</title>
 <meta name="description" content={description} />
 <meta name="author" content={siteConfig.author} />
+{noindex && <meta name="robots" content="noindex, follow" />}
 <link rel="canonical" href={canonical} />
 
 <link rel="icon" href="/avatar.svg" type="image/svg+xml" />
