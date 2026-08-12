@@ -411,13 +411,16 @@ const placeholderDays = Array.from({ length: 53 * 7 })
     --gh-cell: 10px;
     --gh-gap: 3px;
     position: relative;
+    /* Keeps the tooltip's z-index local instead of competing with the
+       site-wide layer scale in the root stacking context. */
+    isolation: isolate;
     min-width: 0;
   }
 
   /* Floating tooltip — shadows are reserved for overlays, and this is one. */
   .github-contributions__tooltip {
     position: absolute;
-    z-index: 30;
+    z-index: 1;
     transform: translate(-50%, calc(-100% - 8px));
     border: 1px solid var(--line);
     border-radius: var(--radius-sm);

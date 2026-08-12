@@ -364,12 +364,10 @@ function setupCodeBlocks(signal: AbortSignal) {
 
     let label = frame.querySelector<HTMLElement>('.code-language')
     if (language && !label) {
-      const label = document.createElement('span')
+      label = document.createElement('span')
       label.className = 'code-language'
       label.textContent = language
-      caption?.appendChild(label)
     }
-    label = frame.querySelector<HTMLElement>('.code-language')
     if (caption && label && label.parentElement !== caption)
       caption.appendChild(label)
 
