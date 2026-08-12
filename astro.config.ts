@@ -52,7 +52,9 @@ export default defineConfig({
     }
   },
 
-  integrations: [mdx({ remarkPlugins, rehypePlugins }), sitemap()],
+  // MDX inherits remark/rehype plugins from `markdown.processor`; passing them
+  // to mdx() as well is deprecated in @astrojs/mdx 7.
+  integrations: [mdx(), sitemap()],
 
   vite: {
     plugins: [tailwindcss()]
