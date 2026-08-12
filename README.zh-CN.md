@@ -50,7 +50,19 @@ npm run dev       # http://localhost:4321
 
 从 [`src/site.config.ts`](src/site.config.ts) 开始：修改站点信息、作者 URL、导航、社交链接、文章许可证和可选服务。然后替换 `src/content/blog/`、`src/data/projects.json`、`src/data/links.json` 与 `src/data/tools.json` 中的示例内容。
 
+`src/assets/tools/` 内置了一组可选图标，`tools.json` 的 `icon` 字段填该目录下的任意文件名即可；其中多数示例并未用到。也可以直接放入自己的 SVG。
+
+界面文案固定为英文，不随 `locale` 变化，详见[多语言](#多语言)。
+
 Waline 默认关闭。只有在填入自己的服务地址后再启用。
+
+## 多语言
+
+`site.config.ts` 中的 `locale` 与 `dateLocale` 只控制机器可读的部分：`<html lang>`、`og:locale`、JSON-LD 的 `inLanguage`、RSS 的 `<language>`，以及日期格式。
+
+**它们不会翻译界面。** "Published"、"Reading"、"On this page"、"Back to top" 这类文案是直接写在组件里的英文，所以把 `locale` 改成 `zh-CN` 只会得到一个「声明为中文、界面却是英文」的页面——对读屏软件而言比不改更糟。要中文界面，需要直接修改 `src/components/` 和 `src/pages/` 下的文案，改完再同步 `locale`。
+
+文章内容本身不受影响，用任何语言书写都可以。
 
 
 ## 目录结构
