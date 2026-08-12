@@ -66,8 +66,8 @@ const applyTip = siteConfig.links.applyTip
               <span class="min-w-0 truncate font-mono text-xs text-ink sm:text-sm">
                 {val}
               </span>
-              <span class="copy-action text-xs font-medium text-quiet" data-copy-label>
-                Copy
+              <span class="copy-action text-xs font-medium text-quiet">
+                <span data-copy-label>Copy</span>
               </span>
             </button>
           ))
@@ -103,7 +103,7 @@ const applyTip = siteConfig.links.applyTip
             try {
               await copyText(value)
               el.dataset.copied = 'true'
-              if (label) label.firstChild!.textContent = 'Copied '
+              if (label) label.textContent = 'Copied'
               if (status) status.textContent = `${name} copied to clipboard.`
               document.dispatchEvent(
                 new CustomEvent('toast', {
@@ -112,7 +112,7 @@ const applyTip = siteConfig.links.applyTip
               )
               resetTimer = window.setTimeout(() => {
                 delete el.dataset.copied
-                if (label) label.firstChild!.textContent = 'Copy '
+                if (label) label.textContent = 'Copy'
               }, 1800)
             } catch {
               if (status) status.textContent = 'Copy failed.'

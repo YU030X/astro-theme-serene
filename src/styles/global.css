@@ -246,41 +246,6 @@
     transform: scale(0.94);
   }
 
-  .pill {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--line);
-    background: var(--card);
-    padding: 0.3rem 0.75rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--quiet);
-    transition:
-      color 0.2s var(--ease-out-quart),
-      border-color 0.2s var(--ease-out-quart),
-      background-color 0.2s var(--ease-out-quart),
-      transform 0.12s var(--ease-spring);
-  }
-  .pill:hover {
-    color: var(--accent);
-    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-    background:
-      radial-gradient(
-        circle at 12% 50%,
-        color-mix(in srgb, var(--accent) 22%, transparent),
-        transparent 62%
-      ),
-      var(--card);
-  }
-  a.pill:active {
-    transform: scale(0.97);
-  }
-
   /* Skip link — off-screen until keyboard focus */
   .skip-link {
     position: fixed;

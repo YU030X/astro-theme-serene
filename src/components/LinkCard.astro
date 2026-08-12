@@ -46,7 +46,6 @@ const domain = new URL(link.url).hostname.replace(/^www\./, '')
             'absolute inset-0 size-full bg-card',
             avatarIsLogo ? 'object-contain p-[0.35rem]' : 'object-cover'
           ]}
-          onerror="this.remove()"
         />
       )
     }
@@ -85,6 +84,12 @@ const domain = new URL(link.url).hostname.replace(/^www\./, '')
   .link-card:focus-visible {
     border-color: color-mix(in srgb, var(--line) 88%, var(--card));
     background: color-mix(in srgb, var(--card) 94%, var(--link-theme-color));
+  }
+
+  /* A broken avatar uncovers the initial underneath. `data-image-error` is
+     set by setupImageLoading() in scripts/app.ts. */
+  .link-avatar :global(img[data-image-error]) {
+    display: none;
   }
 
   .link-dot {
