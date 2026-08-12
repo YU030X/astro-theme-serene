@@ -98,13 +98,22 @@ export function readingTime(body: string | undefined): number {
   )
 }
 
+const DEFAULT_DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric'
+}
+
 export function formatDate(
   date: Date,
-  options: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  }
+  options: Intl.DateTimeFormatOptions = DEFAULT_DATE_OPTIONS
 ): string {
-  return new Intl.DateTimeFormat(siteConfig.dateLocale, options).format(date)
+  // A frontmatter date parses as UTC midnight, so formatting it in the build
+  // machine's zone renders the previous day anywhere west of UTC — and the
+  // <time datetime> beside it would still say otherwise. Callers can still
+  // override the zone deliberately.
+  return new Intl.DateTimeFormat(siteConfig.dateLocale, {
+    timeZone: 'UTC',
+    ...options
+  }).format(date)
 }
