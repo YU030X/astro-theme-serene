@@ -44,7 +44,7 @@ Blockquotes can contain **emphasis**, links, and `inline code`.
 
 ### Callouts
 
-Use a blockquote marker to add a structured note. Labels are case-insensitive, and `[!tips]` maps to the `tip` style. Add a title after the marker when the default label is not enough.
+Use a blockquote marker to add a structured note. Labels are case-insensitive, and `[!tips]` maps to the `tip` style. Add a title after the marker when the default label is not enough.[^1]
 
 > [!tips]
 > Keep the main idea close to the sentence that needs it.
@@ -138,10 +138,10 @@ Local assets via relative path:
 
 ![Soft blue horizon](../../assets/posts/sea.jpg)
 
-Click the image to zoom (unless marked `data-no-zoom` on heroes).
+Click the image to zoom (unless marked `data-no-zoom` on heroes).[^2]
 
-test[^1]
+[^1]: test1
+[^2]: test2
 
 
-[^1]: 这是第一条脚注的具体解释内容。
 

@@ -788,6 +788,155 @@ html[data-theme-switching]::view-transition-old(root) {
   background-size: 100% 1.5px, 100% 1.5px;
 }
 
+.prose sup a[data-footnote-ref] {
+  position: relative;
+  display: inline-block;
+  margin-inline: 0.08em;
+  padding: 0 0.28em;
+  border-radius: 0.3em;
+  font-family: var(--font-serif);
+  font-size: 0.78em;
+  line-height: 1.6;
+  vertical-align: super;
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+  background: none;
+  transition: background-color 0.18s var(--ease-out-quart);
+}
+.prose sup a[data-footnote-ref]:hover,
+.prose sup a[data-footnote-ref]:focus-visible {
+  color: var(--accent-hover);
+  background: var(--accent-soft);
+}
+
+.prose section[data-footnotes] {
+  margin-top: 3.5rem;
+  font-size: 0.86rem;
+  line-height: 1.7;
+  color: var(--quiet);
+}
+.prose section[data-footnotes] ol {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+.prose section[data-footnotes] li {
+  padding-left: 0.35rem;
+}
+.prose section[data-footnotes] li::marker {
+  color: var(--accent);
+  font-weight: 700;
+}
+.prose section[data-footnotes] a[data-footnote-backref] {
+  margin-left: 0.35rem;
+  color: var(--quiet);
+  text-decoration: none;
+  background: none;
+}
+
+.footnote-preview {
+  position: absolute;
+  z-index: var(--layer-feedback);
+  bottom: calc(100% + 0.55rem);
+  left: 50%;
+  width: 15.5rem;
+  margin-left: -7.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  box-shadow: var(--sh-pop);
+  padding: 0.6rem 0.8rem;
+  font-family: var(--font-sans);
+  color: var(--quiet);
+  font-size: 0.78rem;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0;
+  text-align: left;
+  white-space: normal;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(4px) scale(0.98);
+  transform-origin: bottom center;
+  transition:
+    visibility 0s linear 0.24s,
+    opacity 0.2s var(--ease-out-quart),
+    transform 0.24s var(--ease-spring);
+}
+.footnote-preview > .footnote-preview-number {
+  margin-right: 0.4em;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--accent);
+}
+.prose sup a[data-footnote-ref]:hover > .footnote-preview,
+.prose sup a[data-footnote-ref]:focus-visible > .footnote-preview {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition-delay: 0s;
+}
+.footnote-preview::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 7px;
+  height: 7px;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--card);
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.prose sup a[data-footnote-ref][data-edge='right'] .footnote-preview {
+  left: auto;
+  right: -0.6rem;
+  margin-left: 0;
+  transform-origin: bottom right;
+}
+.prose sup a[data-footnote-ref][data-edge='right'] .footnote-preview::after {
+  left: auto;
+  right: 0.95rem;
+  transform: rotate(45deg);
+}
+
+@media (max-width: 899px) {
+  .prose :where(p) {
+    position: relative;
+  }
+  .prose sup a[data-footnote-ref] {
+    position: static;
+  }
+  .prose sup {
+    position: static;
+  }
+  .prose sup a[data-footnote-ref] .footnote-preview {
+    left: 50%;
+    right: auto;
+    width: min(15.5rem, calc(100vw - 4rem));
+    margin-left: 0;
+    transform: translateX(-50%) translateY(4px) scale(0.98);
+    transform-origin: bottom center;
+  }
+  .prose sup a[data-footnote-ref]:hover > .footnote-preview,
+  .prose sup a[data-footnote-ref]:focus-visible > .footnote-preview {
+    transform: translateX(-50%);
+  }
+  .prose sup a[data-footnote-ref][data-edge='right'] .footnote-preview::after {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) rotate(45deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footnote-preview {
+    transition: none;
+  }
+}
+
 /* Heading labels use a quiet, decoration-free affordance. */
 .prose :where(a.heading-anchor) {
   background: none;
