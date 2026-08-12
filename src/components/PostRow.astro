@@ -5,7 +5,7 @@ import DraftBadge from '@/components/DraftBadge.astro'
 import FormattedDate from '@/components/FormattedDate.astro'
 import { formatCategory, readingTime, type Post } from '@/lib/utils'
 
-/** Open list entry: text left, 8:5 thumbnail right, no card box. */
+/** Open list entry: text left, 4:3 thumbnail right, no card box. */
 interface Props {
   post: Post
 }
@@ -50,13 +50,13 @@ const isDraft = post.data.draft && import.meta.env.DEV
 
     {
       cover && (
-        <span class="block h-[3.75rem] w-24 shrink-0 overflow-hidden rounded-lg sm:h-[5.5rem] sm:w-[8.8rem]">
+        <span class="block h-[4.1rem] w-[5.45rem] shrink-0 overflow-hidden rounded-lg sm:h-[5.6rem] sm:w-[7.5rem]">
           {typeof cover.src === 'string' ? (
             <img
               src={cover.src}
               alt={cover.alt}
-              width="282"
-              height="176"
+              width="240"
+              height="180"
               loading="lazy"
               decoding="async"
               class="media-dim size-full object-cover transition-transform duration-500 ease-spring group-hover:scale-[1.04]"
@@ -65,9 +65,9 @@ const isDraft = post.data.draft && import.meta.env.DEV
             <Image
               src={cover.src}
               alt={cover.alt}
-              width={282}
-              widths={[192, 282, 564]}
-              sizes="(min-width: 640px) 141px, 96px"
+              width={240}
+              widths={[176, 240, 480]}
+              sizes="(min-width: 640px) 120px, 87px"
               loading="lazy"
               class="media-dim size-full object-cover transition-transform duration-500 ease-spring group-hover:scale-[1.04]"
             />

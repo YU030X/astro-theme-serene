@@ -122,8 +122,6 @@
 
   /* Page width — the single column measure every route shares. */
   --container-reading: 44rem;
-  /* Article body only — a shorter measure than the page container so the
-     line length stays near 75 characters at the prose size below. */
   --container-prose: 40rem;
 
   /* Type scale — shared semantic sizes; one-off component sizes stay local. */
@@ -405,16 +403,21 @@ body::before {
    Separator: the top edge of the row's hover pill — a hairline whose ends
    follow the same corner radius and then fade out. The negative inline margin
    matches the row link's own -mx-3.5. */
+.post-list > li {
+  position: relative;
+}
 .post-list > li + li::before {
   content: '';
-  display: block;
-  height: 0.75rem;
-  margin-inline: -0.875rem;
-  border: 1px solid var(--line);
+  position: absolute;
+  inset-inline: -0.875rem;
+  top: 0;
+  height: var(--radius-xl);
+  border: 2px dashed var(--line);
   border-bottom: 0;
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   -webkit-mask-image: linear-gradient(to bottom, #000, transparent);
   mask-image: linear-gradient(to bottom, #000, transparent);
+  pointer-events: none;
 }
 
 /* Row metadata: the section name keeps small caps, tags fall back to
@@ -1049,6 +1052,10 @@ html.medium-zoom--opened {
   padding: 0.15em 0.45em;
   font-size: 0.86em;
   font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.prose :where(p, li, h1, h2, h3, h4, h5, h6, a, blockquote, figcaption, td, th) {
+  overflow-wrap: break-word;
 }
 .prose :where(code)::before,
 .prose :where(code)::after {

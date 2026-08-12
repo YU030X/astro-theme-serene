@@ -47,6 +47,9 @@ const coverUrl = cover
     ? cover.src
     : cover.src.src
   : undefined
+const coverSource = cover?.source
+  ? { label: 'Image source', url: cover.source }
+  : null
 const minutes = readingTime(post.body)
 const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3)
 const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.depth === 3)
@@ -81,52 +84,56 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
         Blog
       </a>
 
-      {
-        cover && (
-          <figure class="mt-8">
-            <div
-              class="hero-figure relative aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[3/2]"
-              data-no-zoom
-            >
-              {typeof cover.src === 'string' ? (
-                <img
-                  src={cover.src}
-                  alt={cover.alt}
-                  width="1400"
-                  height="933"
-                  loading="eager"
-                  decoding="async"
-                  fetchpriority="high"
-                  class="media-dim block h-full w-full object-[50%_35%] object-cover"
-                />
-              ) : (
-                <Image
-                  src={cover.src}
-                  alt={cover.alt}
-                  width={1400}
-                  widths={[720, 1080, 1400]}
-                  sizes="(min-width: 800px) 768px, 94vw"
-                  loading="eager"
-                  fetchpriority="high"
-                  class="media-dim block h-full w-full object-[50%_35%] object-cover"
-                />
-              )}
-            </div>
-            {cover.source && (
-              <figcaption class="mt-2.5 text-right text-xs text-quiet">
+      {cover && (
+        <figure class="mx-auto mt-8 max-w-[var(--container-prose)]">
+          <div
+            class="hero-figure relative aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[3/2]"
+            data-no-zoom
+          >
+            {typeof cover.src === 'string' ? (
+              <img
+                src={cover.src}
+                alt={cover.alt}
+                width="1400"
+                height="933"
+                loading="eager"
+                decoding="async"
+                fetchpriority="high"
+                class="media-dim block h-full w-full object-[50%_35%] object-cover"
+              />
+            ) : (
+              <Image
+                src={cover.src}
+                alt={cover.alt}
+                width={1400}
+                widths={[720, 1080, 1400]}
+                sizes="(min-width: 800px) 768px, 94vw"
+                loading="eager"
+                fetchpriority="high"
+                class="media-dim block h-full w-full object-[50%_35%] object-cover"
+              />
+            )}
+          </div>
+          {coverSource && (
+            <figcaption class="mt-2.5 text-right text-xs text-quiet">
+              {coverSource.url ? (
                 <a
                   class="inline-flex items-center gap-1 underline decoration-line underline-offset-2 transition-colors duration-150 hover:text-accent"
-                  href={cover.source}
+                  href={coverSource.url}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Icon name="external" size={12} /> Image source
+                  <Icon name="external" size={12} /> {coverSource.label}
                 </a>
-              </figcaption>
-            )}
-          </figure>
-        )
-      }
+              ) : (
+                <span class="inline-flex items-center gap-1 text-quiet">
+                  <Icon name="external" size={12} /> {coverSource.label}
+                </span>
+              )}
+            </figcaption>
+          )}
+        </figure>
+      )}
     </div>
 
     <div class="relative">
