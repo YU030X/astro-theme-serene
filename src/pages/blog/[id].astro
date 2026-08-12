@@ -173,7 +173,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
         <dt class="text-quiet">Category</dt>
         <dd>
           <a
-            class="underline decoration-line underline-offset-3 hover:text-accent"
+            class="link-underline"
             href={`/categories/${category}`}
           >
             {formatCategory(category)}
@@ -185,7 +185,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
               <dt class="text-quiet">Tags</dt>
               <dd class="flex flex-wrap gap-x-3 gap-y-1">
                 {tags.map((tag) => (
-                  <a class="underline decoration-line underline-offset-3 hover:text-accent" href={`/tags/${tag}`}>
+                  <a class="link-underline" href={`/tags/${tag}`}>
                     {tag}
                   </a>
                 ))}
