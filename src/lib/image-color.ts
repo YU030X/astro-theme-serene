@@ -193,12 +193,20 @@ export function getAvatarThemeColor(
   return dominantColor
 }
 
+/** Remote avatars are decorative; refuse to buffer anything unreasonable. */
+const MAX_REMOTE_IMAGE_BYTES = 4 * 1024 * 1024
+
 async function getPublicImageColor(imageSource: string) {
+  let relativePath: string
+  try {
+    // A literal '%' in a filename makes this throw, which would otherwise
+    // take down the whole page render.
+    relativePath = decodeURIComponent(imageSource.slice(1))
+  } catch {
+    return undefined
+  }
   const publicDirectory = path.resolve(process.cwd(), 'public')
-  const imagePath = path.resolve(
-    publicDirectory,
-    decodeURIComponent(imageSource.slice(1))
-  )
+  const imagePath = path.resolve(publicDirectory, relativePath)
   if (!imagePath.startsWith(`${publicDirectory}${path.sep}`)) return undefined
   return extractAccentColor(imagePath)
 }
@@ -209,7 +217,10 @@ async function getRemoteImageColor(imageSource: string) {
       signal: AbortSignal.timeout(3000)
     })
     if (!response.ok) return undefined
+    const declaredLength = Number(response.headers.get('content-length'))
+    if (declaredLength > MAX_REMOTE_IMAGE_BYTES) return undefined
     const imageBuffer = Buffer.from(await response.arrayBuffer())
+    if (imageBuffer.byteLength > MAX_REMOTE_IMAGE_BYTES) return undefined
     return extractAccentColor(imageBuffer)
   } catch {
     return undefined

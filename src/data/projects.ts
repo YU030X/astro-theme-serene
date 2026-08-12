@@ -13,7 +13,13 @@ const optionalProjectWebsite = z.preprocess(
   z
     .union([
       externalUrl,
-      z.string().regex(/^\/[\w\-./]*$/, 'Use a root-relative path like /blog'),
+      z
+        .string()
+        .regex(/^\/[\w\-./]*$/, 'Use a root-relative path like /blog')
+        .refine(
+          (value) => !value.split('/').includes('..'),
+          'Root-relative paths cannot traverse with ".."'
+        ),
       z.literal('')
     ])
     .transform((url) => url || undefined)

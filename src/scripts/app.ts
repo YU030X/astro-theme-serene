@@ -96,6 +96,11 @@ const currentTheme = (): Theme =>
 
 function applyTheme(theme: Theme) {
   document.documentElement.dataset.theme = theme
+  // The browser UI colour follows the chosen theme, not the OS preference.
+  const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+  const color =
+    meta?.dataset[theme === 'dark' ? 'themeColorDark' : 'themeColorLight']
+  if (meta && color) meta.content = color
   try {
     localStorage.setItem('theme', theme)
   } catch {

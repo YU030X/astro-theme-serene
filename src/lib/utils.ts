@@ -64,14 +64,38 @@ export function groupByYear(posts: Post[]): [number, Post[]][] {
   return [...groups.entries()].sort((a, b) => b[0] - a[0])
 }
 
-/** Rough reading time from raw markdown, in minutes (always ≥ 1). */
+/** Han, kana and full-width punctuation — scripts that do not use spaces. */
+const CJK_CHARACTER =
+  /[\u2e80-\u303f\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\ufe30-\ufe4f\uff00-\uff9f]/g
+const WORDS_PER_MINUTE = 210
+const CJK_CHARACTERS_PER_MINUTE = 400
+
+/**
+ * Rough reading time from raw markdown, in minutes (always ≥ 1).
+ *
+ * CJK text carries no spaces, so word splitting alone would report every
+ * Chinese post as one minute; its characters are counted and paced separately.
+ */
 export function readingTime(body: string | undefined): number {
   if (!body) return 1
   const text = body
-    .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/[#>*_\-`[\]()!|]/g, ' ')
-  const words = text.split(/\s+/).filter(Boolean).length
-  return Math.max(1, Math.round(words / 210))
+    // Both fence styles, matched by their own opening run so the lazy scan
+    // cannot end on a shorter fence inside the block.
+    .replace(/^([`~]{3,})[\s\S]*?^\1/gm, ' ')
+    // Hyphens are left alone: stripping them turned 'state-of-the-art' into
+    // four words and inflated the estimate.
+    .replace(/[#>*_`[\]()!|]/g, ' ')
+  const cjkCharacters = text.match(CJK_CHARACTER)?.length ?? 0
+  const words = text
+    .replace(CJK_CHARACTER, ' ')
+    .split(/\s+/)
+    .filter(Boolean).length
+  return Math.max(
+    1,
+    Math.round(
+      words / WORDS_PER_MINUTE + cjkCharacters / CJK_CHARACTERS_PER_MINUTE
+    )
+  )
 }
 
 export function formatDate(
