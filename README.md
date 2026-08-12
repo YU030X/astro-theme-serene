@@ -50,6 +50,10 @@ npm run dev       # http://localhost:4321
 
 Start with [`src/site.config.ts`](src/site.config.ts): site identity, author URL, navigation, social links, article license and optional integrations. Then replace the demo content in `src/content/blog/`, `src/data/projects.json`, `src/data/links.json` and `src/data/tools.json`.
 
+`src/assets/tools/` ships a small set of icons to draw from; the `icon` field in `tools.json` takes any filename in that folder, and most of them are unused by the demo. Drop your own SVGs in alongside them.
+
+UI copy is English and is not translated by `locale` — see [Localization](#localization).
+
 Waline is disabled by default. Enable them only after adding your own server URL.
 
 
