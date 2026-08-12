@@ -1,14 +1,11 @@
 import type { Element, Root, RootContent } from 'hast'
 
 /**
- * Defers in-article images.
+ * Defers in-article images. The LCP candidate is the cover in
+ * `pages/blog/[id].astro`, which claims eager and high priority itself.
  *
- * Every image inside the prose sits below the fold — the article cover in
- * `pages/blog/[id].astro` is the LCP candidate and already claims eager +
- * high priority — so nothing here should compete with it for bandwidth.
- *
- * Note: in `.md` this runs before `rehypeRaw`, so hand-written HTML `<img>`
- * tags are still raw text at this point and pass through untouched.
+ * In `.md` this runs before `rehypeRaw`, so hand-written HTML `<img>` tags are
+ * still raw text here and pass through untouched.
  */
 export default function rehypeImageAttrs() {
   return (tree: Root) => {

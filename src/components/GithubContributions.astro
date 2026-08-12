@@ -411,8 +411,7 @@ const placeholderDays = Array.from({ length: 53 * 7 })
     --gh-cell: 10px;
     --gh-gap: 3px;
     position: relative;
-    /* Keeps the tooltip's z-index local instead of competing with the
-       site-wide layer scale in the root stacking context. */
+    /* Keeps the tooltip's z-index out of the site-wide layer scale. */
     isolation: isolate;
     min-width: 0;
   }

@@ -1,13 +1,7 @@
 ---
-/**
- * The Waline comment thread and everything it drags in.
- *
- * This lives apart from Comments.astro so that the stylesheet below is only
- * reachable when comments are switched on — imported from the shared
- * component it was linked into every article page, disabled or not.
- */
-
-// Waline styles must be imported in frontmatter — a client <script> import does not reliably inject them.
+// Split from Comments.astro so this stylesheet is only reachable when comments
+// are on. It has to be a frontmatter import; a client <script> import does not
+// reliably inject it.
 import '@waline/client/style'
 
 interface Props {

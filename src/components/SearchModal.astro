@@ -73,11 +73,9 @@ import Icon from '@/components/Icon.astro'
     overflow: hidden;
     transition: border-color 0.2s var(--ease-out-quart);
   }
-  /* The input drops its outline and the panel border carries the focus cue,
-     as the design intends. At full --accent that border clears the 3:1 a
-     focus indicator needs; the earlier 45% mix sat at 2.14:1 against --card.
-     A ring on the input itself would fire the moment ⌘K opens the dialog,
-     boxing an empty field before the reader has typed anything. */
+  /* The input drops its outline, so this border is the focus indicator and
+     needs to stay at 3:1 or better against --card. Do not ring the input
+     instead: it would fire the moment ⌘K opens the dialog. */
   .search-panel:focus-within {
     border-color: var(--accent);
   }

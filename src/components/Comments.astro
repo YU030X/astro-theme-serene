@@ -4,8 +4,8 @@ import { siteConfig } from '@/site.config'
 const { enabled, serverURL } = siteConfig.waline
 const active = enabled && serverURL.length > 0
 
-// Loaded on demand so that Waline's stylesheet and client bundle stay out of
-// the page graph entirely while comments are disabled.
+// Must stay a dynamic import: a static one puts Waline's stylesheet on every
+// page whether or not comments render.
 const WalineThread = active
   ? (await import('@/components/WalineThread.astro')).default
   : null

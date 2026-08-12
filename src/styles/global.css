@@ -40,8 +40,8 @@
   --sh-soft: 0 1px 2px rgb(15 15 15 / 0.04), 0 6px 18px -12px rgb(15 15 15 / 0.14);
   --sh-pop: 0 18px 44px -18px rgb(15 15 15 / 0.34);
 
-  /* Where an anchor target comes to rest, clear of the sticky header. Matches
-     the TOC's `sticky top-28` so both sit on the same line. */
+  /* Anchor landing point, clear of the sticky header. Matches the TOC's
+     `sticky top-28`. */
   --anchor-offset: 7rem;
 
   /* Semantic layer model: sticky tools < header < overlays. */
@@ -233,8 +233,7 @@
     width: 2rem;
     height: 2rem;
   }
-  /* After the size modifiers: a media query adds no specificity, so anything
-     declared later would win and shrink the touch target back below 44px. */
+  /* Must stay after the size modifiers: a media query adds no specificity. */
   @media (pointer: coarse) {
     .icon-btn,
     .icon-btn-sm {
@@ -571,13 +570,12 @@ html[data-theme-switching]::view-transition-old(root) {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    /* Staged reveals and the visibility hand-offs in the mobile nav, the TOC
-       and #back-to-top all lean on delays; without this they still wait. */
+    /* The visibility hand-offs in the mobile nav, the TOC and #back-to-top
+       are delay-driven and would otherwise still wait. */
     animation-delay: 0s !important;
     transition-delay: 0s !important;
   }
-  /* The view-transition pseudo-element tree is outside the document, so the
-     universal selector above never reaches it. */
+  /* A separate pseudo-element tree; the universal selector cannot reach it. */
   ::view-transition-old(*),
   ::view-transition-new(*) {
     animation: none !important;
@@ -995,26 +993,17 @@ html.medium-zoom--opened {
       var(--card) 70%
     );
   border-radius: var(--radius-lg);
-  /* Same box as .callout, so the two read as one family. */
-  padding: 1em 1.2em 1.05em;
+  padding: 1em 1.2em 1.05em; /* keep in step with .callout */
   font-family: var(--font-sans);
   font-style: italic;
-  /* CJK has no true italic, so a serif stack left the browser slanting Songti
-     by hand. Keep the slant for Latin and let CJK stay upright. */
-  font-synthesis-style: none;
+  font-synthesis-style: none; /* CJK has no italic; do not let it be faked */
   line-height: 1.75;
   color: var(--ink);
 }
-/* A real typographic quote mark instead of the stubby icon that was here.
-   Serif carries a much fuller glyph than the sans stack, and this is a
-   decorative mark rather than quoted text. line-height under 1 trims the
-   empty descender space the large size would otherwise leave above the
-   first line. */
 .prose :where(blockquote):not(:where(.not-prose *))::before {
   content: '\201C';
   display: block;
-  /* Line box plus margin comes to the 1.53rem a .callout-title occupies, so
-     both openers push their first line down by the same amount. */
+  /* Line box plus margin comes to the 1.53rem a .callout-title occupies. */
   margin-bottom: 0.28rem;
   font-family: var(--font-serif);
   font-size: 2.1rem;
@@ -1188,9 +1177,8 @@ html.medium-zoom--opened {
   .prose :where(blockquote, .callout):not(:where(.not-prose *)) {
     padding-inline: 1.05em;
   }
-  /* Collapsible callouts drive their padding through a custom property at a
-     much higher specificity, so the rule above cannot reach them — narrowing
-     the property keeps <details> and <aside> callouts on the same margin. */
+  /* Out of reach of the rule above: these set padding through a custom
+     property at much higher specificity. */
   .prose details.callout[data-collapsible='true'] {
     --callout-collapsible-pad-inline: 1.05em;
   }

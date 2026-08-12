@@ -109,8 +109,7 @@ const active = enabled && serverURL.length > 0
           }),
           keepalive: true
         })
-        // fetch only rejects on network failure, so a rejected vote would
-        // otherwise stay counted locally forever.
+        // fetch only rejects on network failure, never on a 4xx or 5xx.
         if (!response.ok) throw new Error(`Vote failed: ${response.status}`)
       } catch {
         liked = !nextLiked
@@ -178,8 +177,7 @@ const active = enabled && serverURL.length > 0
     border-color: transparent;
     background: transparent;
   }
-  /* Matches .license-action, which this button sits next to in the article
-     footer row. */
+  /* Matches .license-action, which sits beside it. */
   @media (pointer: coarse) {
     .like-button-compact .like-toggle {
       min-height: 2.75rem;
