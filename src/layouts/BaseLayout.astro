@@ -17,15 +17,16 @@ interface Props {
   description?: string
   ogImage?: string
   article?: ArticleMeta
+  noindex?: boolean
 }
 
-const { title, description, ogImage, article } = Astro.props
+const { title, description, ogImage, article, noindex } = Astro.props
 ---
 
 <!doctype html>
 <html lang={siteConfig.locale}>
   <head>
-    <BaseHead {title} {description} {ogImage} {article} />
+    <BaseHead {title} {description} {ogImage} {article} {noindex} />
     <ClientRouter />
     {/* Theme boot — runs before paint to avoid any flash */}
     <script is:inline>
