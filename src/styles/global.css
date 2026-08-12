@@ -692,7 +692,7 @@ html[data-theme-switching]::view-transition-old(root) {
   font-family: var(--font-serif);
   letter-spacing: -0.022em;
   font-weight: 600;
-  scroll-margin-top: 6rem;
+  scroll-margin-top: var(--anchor-offset);
 }
 .prose :where(h2) {
   font-size: 1.5em;
@@ -806,10 +806,6 @@ html[data-theme-switching]::view-transition-old(root) {
   padding-left: 0.35rem;
   scroll-margin-top: var(--anchor-offset);
 }
-/* Jumping to a footnote and back landed the target under the sticky header,
-   because only headings and code frames carried a scroll margin. The offset
-   matches the TOC's `sticky top-28`, so a reference comes to rest on the same
-   line as the "Table of Contents" label. */
 .prose sup a[data-footnote-ref] {
   scroll-margin-top: var(--anchor-offset);
 }
@@ -1321,7 +1317,7 @@ html.medium-zoom--opened {
   border: 1px solid var(--line);
   border-radius: var(--radius-xl);
   background: var(--card);
-  scroll-margin-top: 6rem;
+  scroll-margin-top: var(--anchor-offset);
 }
 .code-frame .astro-code {
   margin-block: 0;
