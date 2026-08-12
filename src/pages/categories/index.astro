@@ -1,4 +1,5 @@
 ---
+import EmptyState from '@/components/EmptyState.astro'
 import Icon from '@/components/Icon.astro'
 import PageHead from '@/components/PageHead.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
@@ -14,23 +15,32 @@ const categories = getCategories(posts)
       {categories.length} collections across {posts.length} posts.
     </PageHead>
 
-    <div class="mx-auto mt-14 grid max-w-[var(--container-reading)] gap-3 sm:grid-cols-2">
-      {
-        categories.map(({ category, count }, index) => (
-          <a
-            class="soft-lift no-hover-lift group flex items-center justify-between rounded-2xl border border-line bg-card px-5 py-4"
-            href={`/categories/${category}`}
-            style={`--reveal-delay: ${(index % 8) * 40}ms`}
-            data-reveal
-          >
-            <span class="flex items-center gap-3 font-medium text-ink transition-colors group-hover:text-accent">
-              <Icon name="layers" size={16} class="text-quiet" />
-              {formatCategory(category)}
-            </span>
-            <span class="font-mono text-xs text-quiet">{count}</span>
-          </a>
-        ))
-      }
-    </div>
+    {
+      categories.length > 0 ? (
+        <div class="mx-auto mt-14 grid max-w-[var(--container-reading)] gap-3 sm:grid-cols-2">
+          {categories.map(({ category, count }, index) => (
+            <a
+              class="soft-lift no-hover-lift group flex items-center justify-between rounded-2xl border border-line bg-card px-5 py-4"
+              href={`/categories/${category}`}
+              style={`--reveal-delay: ${(index % 8) * 40}ms`}
+              data-reveal
+            >
+              <span class="flex items-center gap-3 font-medium text-ink transition-colors group-hover:text-accent">
+                <Icon name="layers" size={16} class="text-quiet" />
+                {formatCategory(category)}
+              </span>
+              <span class="font-mono text-xs text-quiet">{count}</span>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="mx-auto max-w-[var(--container-reading)]">
+          <EmptyState>
+            No categories yet. Every post declares one in its{' '}
+            <code>category</code> frontmatter field.
+          </EmptyState>
+        </div>
+      )
+    }
   </section>
 </BaseLayout>

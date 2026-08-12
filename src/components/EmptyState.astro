@@ -1,0 +1,50 @@
+---
+/**
+ * Stands in for a list that has nothing in it yet — the state every reader of
+ * this theme hits the moment they delete the demo posts. Without it the index
+ * pages render a heading over blank space and look broken.
+ */
+interface Props {
+  /** Inline variant for a section inside a page, rather than a whole route. */
+  compact?: boolean
+}
+
+const { compact = false } = Astro.props
+---
+
+<p class:list={['empty-state', compact && 'is-compact']} data-pagefind-ignore>
+  <slot />
+</p>
+
+<style>
+  .empty-state {
+    margin-top: 3.5rem;
+    border-top: 1px solid var(--line);
+    padding: 2.75rem 1.25rem 0.5rem;
+    text-align: center;
+    font-family: var(--font-serif);
+    font-size: 1.02rem;
+    font-style: italic;
+    line-height: 1.9;
+    color: var(--quiet);
+    text-wrap: pretty;
+  }
+
+  .empty-state.is-compact {
+    margin-top: 0.75rem;
+    border-top: 0;
+    padding: 1.25rem 0 0.25rem;
+    text-align: left;
+    font-size: 0.95rem;
+  }
+
+  .empty-state :global(code) {
+    border-radius: var(--radius-xs);
+    background: var(--tint);
+    padding: 0.1em 0.4em;
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+    font-style: normal;
+    color: var(--ink);
+  }
+</style>

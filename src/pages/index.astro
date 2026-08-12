@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets'
 
+import EmptyState from '@/components/EmptyState.astro'
 import HomePostItem from '@/components/HomePostItem.astro'
 import Icon from '@/components/Icon.astro'
 import ProjectCardCompact from '@/components/ProjectCardCompact.astro'
@@ -83,9 +84,19 @@ const featured = projects.filter((project) => project.featured)
             </span>
           </a>
         </div>
-        <ul>
-          {posts.map((post) => <HomePostItem {post} />)}
-        </ul>
+        {
+          posts.length > 0 ? (
+            <ul>
+              {posts.map((post) => (
+                <HomePostItem {post} />
+              ))}
+            </ul>
+          ) : (
+            <EmptyState compact>
+              No posts yet — the newest seven will be listed here.
+            </EmptyState>
+          )
+        }
       </section>
 
       <section class="mt-14">
