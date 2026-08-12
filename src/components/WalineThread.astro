@@ -1,8 +1,9 @@
 ---
-// Split from Comments.astro so this stylesheet is only reachable when comments
-// are on. It has to be a frontmatter import; a client <script> import does not
-// reliably inject it.
-import '@waline/client/style'
+// Must keep `?url` and the hand-written <link> below. A plain
+// `import '@waline/client/style'` is a style side effect, and Astro collects
+// those from the whole reachable module graph — dynamic imports included — so
+// it would link 22 KB of Waline into every article with comments switched off.
+import walineStyleUrl from '@waline/client/style?url'
 
 interface Props {
   serverURL: string
@@ -10,6 +11,8 @@ interface Props {
 
 const { serverURL } = Astro.props
 ---
+
+<link rel="stylesheet" href={walineStyleUrl} />
 
 <section class="mx-auto mt-16 max-w-[var(--container-reading)]" data-pagefind-ignore>
   <h2 class="mb-5 font-serif text-section font-semibold tracking-tight text-ink">
@@ -19,8 +22,6 @@ const { serverURL } = Astro.props
 </section>
 
 <script>
-  import { init } from '@waline/client'
-
   type WalineInstance = {
     update: (opts: Record<string, unknown>) => void
     destroy: () => void
@@ -30,11 +31,20 @@ const { serverURL } = Astro.props
   const currentTheme = () =>
     document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
 
-  function mountWaline() {
+  // Imported here rather than at module scope: a static import is collected
+  // into the page's stylesheet and script even when comments are switched
+  // off, so the whole of Waline rode along on every article. Inside the
+  // function it becomes a chunk that is only fetched once a thread mounts.
+  async function mountWaline() {
     const el = document.getElementById('waline-thread')
     if (!el) return
     const serverURL = el.dataset.walineServer
     if (!serverURL) return
+
+    const { init } = await import('@waline/client')
+
+    // Guard against a soft navigation completing during the await.
+    if (!document.getElementById('waline-thread')) return
 
     walineInstance = init({
       el: '#waline-thread',
@@ -50,7 +60,7 @@ const { serverURL } = Astro.props
     walineInstance = null
   }
 
-  document.addEventListener('astro:page-load', mountWaline)
+  document.addEventListener('astro:page-load', () => void mountWaline())
   document.addEventListener('astro:before-swap', teardownWaline)
 
   new MutationObserver(() => {
