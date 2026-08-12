@@ -1,7 +1,7 @@
 ---
 title: template
 description: template
-publishDate: 2020-1-1
+publishDate: 2020-01-01
 tags:
   - template
 category: template
@@ -15,15 +15,15 @@ draft: true
 ---
 title: 
 description: 
-publishDate: 
+publishDate: YYYY-MM-DD
 tags:
   - 
 category: 
 cover:
   src: ''
   alt: ''
-  source: ''
- draft: false
+  # source: 'https://example.com/where-the-image-came-from'
+draft: false
 ---
 ```
 

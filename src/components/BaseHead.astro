@@ -65,6 +65,10 @@ const jsonLd = article
       description: siteConfig.description,
       url: new URL('/', Astro.site).toString()
     }
+
+// JSON.stringify leaves `<` intact, so a title containing `</script>` would
+// close this element early. Escaping it keeps the JSON valid either way.
+const jsonLdScript = JSON.stringify(jsonLd).replace(/</g, '\\u003c')
 ---
 
 <meta charset="utf-8" />
@@ -86,8 +90,14 @@ const jsonLd = article
   href={new URL('rss.xml', Astro.site)}
 />
 
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f5" />
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#242220" />
+{/* The theme is chosen by the user, not by the OS, so a single tag carries
+    both values and the boot script picks one. Keep in step with --canvas. */}
+<meta
+  name="theme-color"
+  content="#f7f7f5"
+  data-theme-color-light="#f7f7f5"
+  data-theme-color-dark="#242220"
+/>
 
 <meta property="og:type" content={article ? 'article' : 'website'} />
 <meta property="og:site_name" content={siteConfig.title} />
@@ -124,4 +134,4 @@ const jsonLd = article
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={socialImage} />
 
-<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+<script is:inline type="application/ld+json" set:html={jsonLdScript}></script>
