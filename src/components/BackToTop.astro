@@ -26,10 +26,14 @@ import Icon from '@/components/Icon.astro'
     opacity: 0;
     transform: translateY(14px);
     pointer-events: none;
+    /* Delayed past the fade so the button also leaves the tab order while
+       invisible — opacity alone still lets keyboard focus land on it. */
+    visibility: hidden;
     transition:
       opacity 0.2s var(--ease-out-quart),
       transform 0.22s var(--ease-spring),
-      color 0.16s;
+      color 0.16s,
+      visibility 0s linear 0.22s;
   }
   #back-to-top:hover {
     color: var(--ink);
@@ -41,5 +45,11 @@ import Icon from '@/components/Icon.astro'
     opacity: 1;
     transform: none;
     pointer-events: auto;
+    visibility: visible;
+    transition:
+      opacity 0.2s var(--ease-out-quart),
+      transform 0.22s var(--ease-spring),
+      color 0.16s,
+      visibility 0s;
   }
 </style>

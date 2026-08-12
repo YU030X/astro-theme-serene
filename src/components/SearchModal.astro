@@ -73,9 +73,18 @@ import Icon from '@/components/Icon.astro'
     overflow: hidden;
     transition: border-color 0.2s var(--ease-out-quart);
   }
-  /* The input drops its outline; the panel border carries the focus cue. */
+  /* The panel border warms up for any focus inside it. At full --accent it
+     clears the 3:1 required of a focus indicator; the earlier 45% mix sat at
+     2.14:1 against --card. */
   .search-panel:focus-within {
-    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+    border-color: var(--accent);
+  }
+  /* The input suppresses the global focus ring, so it needs its own. Drawn
+     inset because the panel clips overflow. */
+  .search-panel input[type='search']:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+    border-radius: var(--radius-xs);
   }
   @keyframes search-in {
     from {

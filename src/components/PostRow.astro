@@ -40,7 +40,7 @@ const isDraft = post.data.draft && import.meta.env.DEV
         <span class="flex items-baseline gap-2">
           <span class="post-meta-cat">{formatCategory(category)}</span>
           {tags.length > 0 && (
-            <span class="post-meta-tags opacity-70">
+            <span class="post-meta-tags">
               {tags.slice(0, 2).map((tag) => `#${tag}`).join(' ')}
             </span>
           )}
