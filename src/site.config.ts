@@ -30,10 +30,9 @@ export const siteConfig = {
   avatar,
 
   /**
-   * Machine-readable only: <html lang>, og:locale, JSON-LD inLanguage, the RSS
-   * <language> and date formatting. Interface copy is written in English
-   * inside the components and does not follow this — translate those first,
-   * then change this to match. See the Localization section of the README.
+   * Machine-readable only: <html lang>, og:locale, JSON-LD, RSS and date
+   * formatting. Interface copy is English inside the components and does not
+   * follow this — see the Localization section of the README.
    */
   locale: 'en-US',
   dateLocale: 'en-US',

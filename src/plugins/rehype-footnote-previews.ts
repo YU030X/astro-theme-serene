@@ -41,9 +41,9 @@ export default function rehypeFootnotePreviews() {
 
       const href = element.properties.href
       if (typeof href !== 'string' || !href.startsWith('#')) return
-      // `mdast-util-to-hast` percent-encodes the `<li id>` and this href with
-      // the same normalizeUri() pass, so they must be compared unmodified —
-      // decoding one side loses every non-ASCII and escaped label.
+      // Compare unmodified: `mdast-util-to-hast` encodes the `<li id>` and this
+      // href with the same normalizeUri() pass, so decoding one side would lose
+      // every non-ASCII and escaped label.
       const content = footnoteContentById.get(href.slice(1))
       if (!content) return
 

@@ -86,8 +86,7 @@ const domain = new URL(link.url).hostname.replace(/^www\./, '')
     background: color-mix(in srgb, var(--card) 94%, var(--link-theme-color));
   }
 
-  /* A broken avatar uncovers the initial underneath. `data-image-error` is
-     set by setupImageLoading() in scripts/app.ts. */
+  /* `data-image-error` is set by setupImageLoading() in scripts/app.ts. */
   .link-avatar :global(img[data-image-error]) {
     display: none;
   }

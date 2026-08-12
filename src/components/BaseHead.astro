@@ -75,7 +75,7 @@ const jsonLd = article
     }
 
 // JSON.stringify leaves `<` intact, so a title containing `</script>` would
-// close this element early. Escaping it keeps the JSON valid either way.
+// close the element early.
 const jsonLdScript = JSON.stringify(jsonLd).replace(/</g, '\\u003c')
 ---
 
@@ -99,8 +99,8 @@ const jsonLdScript = JSON.stringify(jsonLd).replace(/</g, '\\u003c')
   href={new URL('rss.xml', Astro.site)}
 />
 
-{/* The theme is chosen by the user, not by the OS, so a single tag carries
-    both values and the boot script picks one. Keep in step with --canvas. */}
+{/* One tag carrying both values; the boot script picks one, since the theme
+    follows the reader rather than the OS. Keep in step with --canvas. */}
 <meta
   name="theme-color"
   content="#f7f7f5"

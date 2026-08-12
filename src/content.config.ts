@@ -7,10 +7,8 @@ function dedupeLowercase(array: string[]) {
 }
 
 /**
- * Categories and tags become single URL segments verbatim, so anything that
- * cannot survive that trip has to be rejected here — an empty value makes
- * Astro throw `Missing parameter`, and a slash silently splits the route.
- * Non-ASCII is fine; the browser percent-encodes it.
+ * These become single URL segments verbatim. An empty value makes Astro throw
+ * `Missing parameter`; a slash splits the route. Non-ASCII is fine.
  */
 const urlSegment = (label: string) =>
   z
