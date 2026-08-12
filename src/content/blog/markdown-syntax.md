@@ -139,3 +139,9 @@ Local assets via relative path:
 ![Soft blue horizon](../../assets/posts/sea.jpg)
 
 Click the image to zoom (unless marked `data-no-zoom` on heroes).
+
+test[^1]
+
+
+[^1]: 这是第一条脚注的具体解释内容。
+
