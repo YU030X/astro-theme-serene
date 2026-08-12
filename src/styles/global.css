@@ -996,8 +996,11 @@ html.medium-zoom--opened {
     );
   border-radius: var(--radius-lg);
   padding: 1.25em 1.45em;
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-style: italic;
+  /* CJK has no true italic, so a serif stack left the browser slanting Songti
+     by hand. Keep the slant for Latin and let CJK stay upright. */
+  font-synthesis-style: none;
   line-height: 1.75;
   color: var(--ink);
 }
