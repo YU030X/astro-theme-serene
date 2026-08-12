@@ -7,11 +7,12 @@ import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
 
 import remarkCallouts from './src/plugins/remark-callouts'
+import rehypeFootnotePreviews from './src/plugins/rehype-footnote-previews'
 import rehypeImageAttrs from './src/plugins/rehype-image-attrs'
 import { siteConfig } from './src/site.config'
 
 const remarkPlugins = [remarkMath, remarkCallouts]
-const rehypePlugins = [rehypeKatex, rehypeImageAttrs]
+const rehypePlugins = [rehypeKatex, rehypeImageAttrs, rehypeFootnotePreviews]
 
 // https://astro.build/config
 export default defineConfig({
