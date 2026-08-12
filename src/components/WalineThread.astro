@@ -2,13 +2,14 @@
 /**
  * The Waline comment thread and everything it drags in.
  *
- * This lives apart from Comments.astro so that the stylesheet below is only
- * reachable when comments are switched on — imported from the shared
- * component it was linked into every article page, disabled or not.
+ * The stylesheet is imported with `?url` and linked by hand. A plain
+ * `import '@waline/client/style'` is a style side effect, and Astro collects
+ * those from the whole reachable module graph — including through the dynamic
+ * import in Comments.astro — so 22 KB of Waline rules were linked into every
+ * article even with comments switched off. `?url` yields an asset reference
+ * instead, and the <link> below only renders when this component does.
  */
-
-// Waline styles must be imported in frontmatter — a client <script> import does not reliably inject them.
-import '@waline/client/style'
+import walineStyleUrl from '@waline/client/style?url'
 
 interface Props {
   serverURL: string
@@ -16,6 +17,8 @@ interface Props {
 
 const { serverURL } = Astro.props
 ---
+
+<link rel="stylesheet" href={walineStyleUrl} />
 
 <section class="mx-auto mt-16 max-w-[var(--container-reading)]" data-pagefind-ignore>
   <h2 class="mb-5 font-serif text-section font-semibold tracking-tight text-ink">
@@ -25,8 +28,6 @@ const { serverURL } = Astro.props
 </section>
 
 <script>
-  import { init } from '@waline/client'
-
   type WalineInstance = {
     update: (opts: Record<string, unknown>) => void
     destroy: () => void
@@ -36,11 +37,20 @@ const { serverURL } = Astro.props
   const currentTheme = () =>
     document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
 
-  function mountWaline() {
+  // Imported here rather than at module scope: a static import is collected
+  // into the page's stylesheet and script even when comments are switched
+  // off, so the whole of Waline rode along on every article. Inside the
+  // function it becomes a chunk that is only fetched once a thread mounts.
+  async function mountWaline() {
     const el = document.getElementById('waline-thread')
     if (!el) return
     const serverURL = el.dataset.walineServer
     if (!serverURL) return
+
+    const { init } = await import('@waline/client')
+
+    // Guard against a soft navigation completing during the await.
+    if (!document.getElementById('waline-thread')) return
 
     walineInstance = init({
       el: '#waline-thread',
@@ -56,7 +66,7 @@ const { serverURL } = Astro.props
     walineInstance = null
   }
 
-  document.addEventListener('astro:page-load', mountWaline)
+  document.addEventListener('astro:page-load', () => void mountWaline())
   document.addEventListener('astro:before-swap', teardownWaline)
 
   new MutationObserver(() => {
