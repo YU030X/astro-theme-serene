@@ -40,6 +40,10 @@
   --sh-soft: 0 1px 2px rgb(15 15 15 / 0.04), 0 6px 18px -12px rgb(15 15 15 / 0.14);
   --sh-pop: 0 18px 44px -18px rgb(15 15 15 / 0.34);
 
+  /* Where an anchor target comes to rest, clear of the sticky header. Matches
+     the TOC's `sticky top-28` so both sit on the same line. */
+  --anchor-offset: 7rem;
+
   /* Semantic layer model: sticky tools < header < overlays. */
   --layer-sticky: 30;
   --layer-header: 40;
@@ -800,6 +804,14 @@ html[data-theme-switching]::view-transition-old(root) {
 }
 .prose section[data-footnotes] li {
   padding-left: 0.35rem;
+  scroll-margin-top: var(--anchor-offset);
+}
+/* Jumping to a footnote and back landed the target under the sticky header,
+   because only headings and code frames carried a scroll margin. The offset
+   matches the TOC's `sticky top-28`, so a reference comes to rest on the same
+   line as the "Table of Contents" label. */
+.prose sup a[data-footnote-ref] {
+  scroll-margin-top: var(--anchor-offset);
 }
 .prose section[data-footnotes] li::marker {
   color: var(--accent);
