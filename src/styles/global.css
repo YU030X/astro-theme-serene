@@ -1013,11 +1013,13 @@ html.medium-zoom--opened {
 .prose :where(blockquote):not(:where(.not-prose *))::before {
   content: '\201C';
   display: block;
-  margin-bottom: 0.3rem;
+  /* Line box plus margin comes to the 1.53rem a .callout-title occupies, so
+     both openers push their first line down by the same amount. */
+  margin-bottom: 0.28rem;
   font-family: var(--font-serif);
-  font-size: 2.75rem;
+  font-size: 2.1rem;
   font-style: normal;
-  line-height: 0.62;
+  line-height: 0.6;
   color: color-mix(in srgb, var(--accent) 42%, var(--quiet));
   user-select: none;
 }
