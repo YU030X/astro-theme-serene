@@ -69,9 +69,17 @@ function splitAtFirstBreak(children: MdastNode[]) {
   return { titleChildren, bodyChildren }
 }
 
+/**
+ * Flattens a title to text for `aria-label`. Raw `html` nodes are skipped
+ * rather than unwrapped — their `value` is markup source, which a screen
+ * reader would otherwise spell out tag by tag.
+ */
 function plainText(nodes: MdastNode[]): string {
   return nodes
-    .map((node) => node.value ?? (node.children ? plainText(node.children) : ''))
+    .map((node) => {
+      if (node.type === 'html') return ''
+      return node.value ?? (node.children ? plainText(node.children) : '')
+    })
     .join('')
     .trim()
 }

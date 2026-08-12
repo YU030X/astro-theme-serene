@@ -225,8 +225,15 @@
       color 0.2s var(--ease-out-quart),
       transform 0.12s var(--ease-spring);
   }
+  .icon-btn-sm {
+    width: 2rem;
+    height: 2rem;
+  }
+  /* After the size modifiers: a media query adds no specificity, so anything
+     declared later would win and shrink the touch target back below 44px. */
   @media (pointer: coarse) {
-    .icon-btn {
+    .icon-btn,
+    .icon-btn-sm {
       width: 2.75rem;
       height: 2.75rem;
     }
@@ -272,10 +279,6 @@
   }
   a.pill:active {
     transform: scale(0.97);
-  }
-  .icon-btn-sm {
-    width: 2rem;
-    height: 2rem;
   }
 
   /* Skip link — off-screen until keyboard focus */
@@ -599,6 +602,16 @@ html[data-theme-switching]::view-transition-old(root) {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    /* Staged reveals and the visibility hand-offs in the mobile nav, the TOC
+       and #back-to-top all lean on delays; without this they still wait. */
+    animation-delay: 0s !important;
+    transition-delay: 0s !important;
+  }
+  /* The view-transition pseudo-element tree is outside the document, so the
+     universal selector above never reaches it. */
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
   [data-reveal] {
     opacity: 1;
@@ -1191,6 +1204,12 @@ html.medium-zoom--opened {
 @media (max-width: 640px) {
   .prose :where(blockquote, .callout):not(:where(.not-prose *)) {
     padding-inline: 1.05em;
+  }
+  /* Collapsible callouts drive their padding through a custom property at a
+     much higher specificity, so the rule above cannot reach them — narrowing
+     the property keeps <details> and <aside> callouts on the same margin. */
+  .prose details.callout[data-collapsible='true'] {
+    --callout-collapsible-pad-inline: 1.05em;
   }
 }
 

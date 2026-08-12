@@ -178,6 +178,13 @@ const active = enabled && serverURL.length > 0
     border-color: transparent;
     background: transparent;
   }
+  /* Matches .license-action, which this button sits next to in the article
+     footer row. */
+  @media (pointer: coarse) {
+    .like-button-compact .like-toggle {
+      min-height: 2.75rem;
+    }
+  }
   .like-button-compact .like-toggle:hover,
   .like-button-compact .like-toggle:focus-visible {
     border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
