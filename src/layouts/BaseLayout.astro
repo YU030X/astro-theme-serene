@@ -43,7 +43,15 @@ const { title, description, ogImage, article } = Astro.props
             : 'light'
         }
         function apply() {
-          root.dataset.theme = preferred()
+          var theme = preferred()
+          root.dataset.theme = theme
+          var meta = document.querySelector('meta[name="theme-color"]')
+          if (meta) {
+            var color = meta.dataset[
+              theme === 'dark' ? 'themeColorDark' : 'themeColorLight'
+            ]
+            if (color) meta.setAttribute('content', color)
+          }
         }
         apply()
         // Re-apply after every view-transition swap (before first paint)

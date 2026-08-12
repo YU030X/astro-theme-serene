@@ -99,7 +99,7 @@ const active = enabled && serverURL.length > 0
       try {
         const url = new URL('api/article', `${base}/`)
         url.searchParams.set('lang', navigator.language)
-        await fetch(url, {
+        const response = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -109,6 +109,9 @@ const active = enabled && serverURL.length > 0
           }),
           keepalive: true
         })
+        // fetch only rejects on network failure, so a rejected vote would
+        // otherwise stay counted locally forever.
+        if (!response.ok) throw new Error(`Vote failed: ${response.status}`)
       } catch {
         liked = !nextLiked
         count = Math.max(0, count + (nextLiked ? -1 : 1))
