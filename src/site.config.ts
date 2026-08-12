@@ -28,6 +28,13 @@ export const siteConfig = {
   motto: 'Quiet reading, by design.',
   bio: 'Editorial structure, system type, and calm motion — everything defers to the sentence you are reading.',
   avatar,
+
+  /**
+   * Machine-readable only: <html lang>, og:locale, JSON-LD inLanguage, the RSS
+   * <language> and date formatting. Interface copy is written in English
+   * inside the components and does not follow this — translate those first,
+   * then change this to match. See the Localization section of the README.
+   */
   locale: 'en-US',
   dateLocale: 'en-US',
 

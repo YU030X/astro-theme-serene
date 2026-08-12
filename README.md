@@ -56,6 +56,21 @@ UI copy is English and is not translated by `locale` — see [Localization](#loc
 
 Waline is disabled by default. Enable them only after adding your own server URL.
 
+## Localization
+
+`locale` and `dateLocale` in `site.config.ts` drive the machine-readable side
+of the site: `<html lang>`, `og:locale`, the JSON-LD `inLanguage`, the RSS
+`<language>`, and how dates are formatted.
+
+**They do not translate the interface.** Labels like "Published", "Reading",
+"On this page" and "Back to top" are written in English directly in the
+components, so setting `locale: 'zh-CN'` gives you a page announced as Chinese
+whose chrome is still English — worse for screen readers than leaving it
+alone. Translate by editing the components under `src/components/` and
+`src/pages/`, and set `locale` to match once you do.
+
+Post content itself is unaffected; write in any language you like.
+
 
 ## Project structure
 
