@@ -69,7 +69,7 @@ const primaryLink = project.href ?? project.repo
     </article>
   ) : (
     <article
-      class="pcc group relative isolate overflow-hidden rounded-2xl border border-line bg-card px-4 py-3.5 transition-colors duration-200 hover:border-[color-mix(in_srgb,var(--line)_88%,var(--card))] sm:px-5 sm:py-4"
+      class="pcc group relative isolate flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-line bg-card p-4 transition-colors duration-200 hover:border-[color-mix(in_srgb,var(--line)_88%,var(--card))]"
       style={`--pa: ${project.gradient[0]}; --pb: ${project.gradient[1]}`}
     >
       {primaryLink && (
@@ -85,14 +85,14 @@ const primaryLink = project.href ?? project.repo
       <span class="pcc-glow" aria-hidden="true" />
 
       <span class="block text-[1.05rem] font-semibold leading-snug text-ink">{project.name}</span>
-      <span class="mt-1 line-clamp-2 block max-w-[85%] text-sm leading-relaxed text-quiet">
+      <span class="mt-1.5 line-clamp-3 block text-sm leading-[1.65] text-quiet">
         {project.description}
       </span>
-      <span class="mt-1.5 flex items-center justify-between gap-3">
-        <span class="min-w-0 truncate font-mono text-[0.62rem] uppercase tracking-[0.08em] text-quiet">
+      <span class="mt-auto flex min-h-8 items-center justify-between gap-3 pt-3">
+        <span class="min-w-0 truncate font-mono text-[0.62rem] leading-none uppercase tracking-[0.08em] text-quiet">
           {project.tags.join(' · ')}
         </span>
-        <span class="relative z-20 flex gap-0.5">
+        <span class="relative z-20 flex items-center gap-0.5">
           {project.repo && (
             <a
               class="icon-btn icon-btn-sm"

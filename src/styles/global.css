@@ -124,7 +124,8 @@
     'Songti SC', 'Noto Serif SC', 'Source Han Serif SC', 'Source Han Serif',
     serif;
 
-  /* Page width — the single column measure every route shares. */
+  /* Reading and navigation measures. */
+  --container-header: 46rem;
   --container-reading: 44rem;
   --container-prose: 40rem;
 
@@ -607,7 +608,7 @@ html[data-theme-switching]::view-transition-old(root) {
 
 .header-shell {
   width: calc(100% - 2rem);
-  max-width: var(--container-reading);
+  max-width: var(--container-header);
   margin-inline: auto;
   border: 1px solid transparent;
   border-radius: var(--radius-xl);
@@ -624,7 +625,7 @@ html[data-theme-switching]::view-transition-old(root) {
 }
 #site-header.scrolled .header-shell {
   width: calc(100% - 2rem);
-  max-width: var(--container-reading);
+  max-width: var(--container-header);
   transform: translateY(2px);
   background: color-mix(in srgb, var(--card) 92%, transparent);
   -webkit-backdrop-filter: blur(14px) saturate(1.15);
