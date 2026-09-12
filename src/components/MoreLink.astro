@@ -1,0 +1,21 @@
+---
+import Icon from '@/components/Icon.astro'
+
+interface Props {
+  href: string
+  ariaLabel: string
+}
+
+const { href, ariaLabel } = Astro.props
+---
+
+<a
+  href={href}
+  aria-label={ariaLabel}
+  class="group inline-flex items-center text-[0.8125rem] text-quiet transition-colors duration-150 hover:text-accent"
+>
+  <span class="inline-flex items-center gap-1.5 transition-transform duration-300 ease-out group-hover:translate-x-0.5 motion-reduce:transform-none">
+    More
+    <Icon name="arrow-right" size={13} class="shrink-0" />
+  </span>
+</a>

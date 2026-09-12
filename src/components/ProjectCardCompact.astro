@@ -6,9 +6,10 @@ import type { Project } from '@/data/projects'
 interface Props {
   project: Project
   variant?: 'card' | 'open'
+  density?: 'compact' | 'comfortable'
 }
 
-const { project, variant = 'card' } = Astro.props
+const { project, variant = 'card', density = 'comfortable' } = Astro.props
 const primaryLink = project.href ?? project.repo
 ---
 
@@ -32,7 +33,7 @@ const primaryLink = project.href ?? project.repo
           <span class="min-w-0 truncate text-[0.95rem] font-medium text-ink">
             {project.name}
           </span>
-          <span class="min-w-0 truncate font-mono text-[0.62rem] uppercase tracking-[0.08em] text-quiet">
+          <span class="min-w-0 truncate font-mono text-[0.6875rem] uppercase tracking-[0.04em] text-quiet">
             {project.tags.join(' · ')}
           </span>
         </span>
@@ -69,7 +70,10 @@ const primaryLink = project.href ?? project.repo
     </article>
   ) : (
     <article
-      class="pcc group relative isolate flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-line bg-card p-4 transition-colors duration-200 hover:border-[color-mix(in_srgb,var(--line)_88%,var(--card))]"
+      class:list={[
+        'pcc group relative isolate flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-line bg-card p-4 transition-colors duration-200 hover:border-[color-mix(in_srgb,var(--line)_88%,var(--card))]',
+        { 'pcc--compact': density === 'compact' },
+      ]}
       style={`--pa: ${project.gradient[0]}; --pb: ${project.gradient[1]}`}
     >
       {primaryLink && (
@@ -85,11 +89,16 @@ const primaryLink = project.href ?? project.repo
       <span class="pcc-glow" aria-hidden="true" />
 
       <span class="block text-[1.05rem] font-semibold leading-snug text-ink">{project.name}</span>
-      <span class="mt-2 line-clamp-3 block text-sm leading-[1.65] text-quiet">
+      <span
+        class:list={[
+          'pcc-description mt-2 text-sm leading-[1.65] text-quiet',
+          { 'pcc-description--compact': density === 'compact' },
+        ]}
+      >
         {project.description}
       </span>
-      <span class="flex min-h-8 items-center justify-between gap-3">
-        <span class="min-w-0 truncate font-mono text-[0.62rem] leading-none uppercase tracking-[0.08em] text-quiet">
+      <span class="pcc-actions flex h-11 items-center justify-between gap-3">
+        <span class="min-w-0 truncate font-mono text-[0.6875rem] leading-none uppercase tracking-[0.04em] text-quiet">
           {project.tags.join(' · ')}
         </span>
         <span class="relative z-20 flex items-center gap-0.5">
@@ -161,6 +170,30 @@ const primaryLink = project.href ?? project.repo
       transform 0.5s var(--ease-spring);
   }
 
+  .pcc-description {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .pcc-description--compact {
+    -webkit-line-clamp: 2;
+  }
+
+  .pcc-actions :global(.icon-btn) {
+    width: 44px;
+    height: 44px;
+  }
+
+  .pcc--compact .pcc-glow::after {
+    opacity: 0.14;
+  }
+
+  :global([data-theme='dark']) .pcc--compact .pcc-glow::after {
+    opacity: 0.11;
+  }
+
   :global([data-theme='dark']) .pcc-glow::after {
     opacity: 0.18;
   }
@@ -170,8 +203,16 @@ const primaryLink = project.href ?? project.repo
     transform: translate(4px, -50%);
   }
 
+  .pcc--compact:hover .pcc-glow::after {
+    opacity: 0.22;
+  }
+
   :global([data-theme='dark']) .pcc:hover .pcc-glow::after {
     opacity: 0.3;
+  }
+
+  :global([data-theme='dark']) .pcc--compact:hover .pcc-glow::after {
+    opacity: 0.18;
   }
 
   @media (prefers-reduced-motion: reduce) {
