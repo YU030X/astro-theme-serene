@@ -15,7 +15,7 @@ const isDraft = post.data.draft && import.meta.env.DEV
 <li>
   <a
     href={`/blog/${post.id}`}
-    class="group -mx-3 grid grid-cols-[auto_minmax(0,1fr)_2rem] items-baseline gap-x-3 rounded-lg px-3 py-2 transition-colors duration-150 hover:bg-tint sm:grid-cols-[5.75rem_minmax(0,1fr)_5.75rem]"
+    class="group grid min-h-11 grid-cols-[5.5rem_minmax(0,1fr)_1rem] items-center gap-x-2 rounded-[0.9rem] border border-line bg-card px-3.5 py-2 transition-colors duration-150 hover:border-accent/25 hover:bg-tint sm:grid-cols-[5.75rem_minmax(0,1fr)_1rem] sm:gap-x-4 sm:px-4"
   >
     <FormattedDate
       date={post.data.publishDate}
@@ -23,7 +23,7 @@ const isDraft = post.data.draft && import.meta.env.DEV
       class="col-start-1 row-start-1 whitespace-nowrap font-mono text-[0.72rem] tabular-nums text-quiet"
     />
     <span
-      class="col-start-2 row-start-1 flex min-w-0 items-center justify-center gap-2 text-center text-[0.94rem] leading-snug text-ink transition-colors duration-150 group-hover:text-accent"
+      class="col-start-2 row-start-1 flex min-w-0 items-center gap-2 text-left text-[0.875rem] leading-snug text-ink transition-colors duration-150 group-hover:text-accent sm:text-[0.9rem]"
     >
       <span class="min-w-0 truncate">{post.data.title}</span>
       {isDraft && <DraftBadge />}
