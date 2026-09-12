@@ -69,7 +69,7 @@ const primaryLink = project.href ?? project.repo
     </article>
   ) : (
     <article
-      class="pcc group relative isolate overflow-hidden rounded-2xl border border-line bg-card px-3.5 py-3 transition-colors duration-200 hover:border-[color-mix(in_srgb,var(--line)_88%,var(--card))]"
+      class="pcc group relative isolate overflow-hidden rounded-2xl border border-line bg-card px-4 py-3.5 transition-colors duration-200 hover:border-[color-mix(in_srgb,var(--line)_88%,var(--card))] sm:px-5 sm:py-4"
       style={`--pa: ${project.gradient[0]}; --pb: ${project.gradient[1]}`}
     >
       {primaryLink && (
@@ -84,7 +84,7 @@ const primaryLink = project.href ?? project.repo
 
       <span class="pcc-glow" aria-hidden="true" />
 
-      <span class="block text-[0.95rem] font-medium text-ink">{project.name}</span>
+      <span class="block text-[1.05rem] font-semibold leading-snug text-ink">{project.name}</span>
       <span class="mt-1 line-clamp-2 block max-w-[85%] text-sm leading-relaxed text-quiet">
         {project.description}
       </span>
