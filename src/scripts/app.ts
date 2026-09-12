@@ -516,7 +516,11 @@ function setupImageZoom(signal: AbortSignal) {
       height: `${rect.height}px`,
       borderRadius: style.borderRadius,
       objectFit: style.objectFit,
-      objectPosition: style.objectPosition
+      objectPosition: style.objectPosition,
+      // HTML images may carry an inline `zoom` (for example, `zoom: 25%` in
+      // an article). The clone uses viewport coordinates, so it must render
+      // at its explicit dimensions without inheriting that authoring scale.
+      zoom: '1'
     })
 
     document.body.append(overlay, zoomed)
