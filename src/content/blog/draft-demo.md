@@ -12,8 +12,8 @@ This post has `draft: true` in frontmatter.
 
 ## Expected behavior
 
-- In `npm run dev` it appears in lists with a **Draft** badge.
-- In `npm run build` it is omitted from the blog index, archive, tags, categories, RSS, and Pagefind.
+- In `pnpm run dev` it appears in lists with a **Draft** badge.
+- In `pnpm run build` it is omitted from the blog index, archive, tags, categories, RSS, and Pagefind.
 
 Remove `draft` or set `draft: false` to publish.
 

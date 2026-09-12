@@ -63,10 +63,10 @@ Each JSON file has a Zod adapter so invalid data fails the build early.
 ## 5. Commands
 
 ```bash
-npm install
-npm run dev      # http://localhost:4321
-npm run build    # static site + Pagefind index
-npm run preview  # serve dist/
+pnpm install
+pnpm run dev      # http://localhost:4321
+pnpm run build    # static site + Pagefind index
+pnpm run preview  # serve dist/
 ```
 
 Pagefind only has results after `build` / `preview`, not during bare `dev`.

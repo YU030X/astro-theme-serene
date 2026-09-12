@@ -7,15 +7,15 @@ progressive enhancement.
 ## Local setup
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 Before opening a pull request, run:
 
 ```bash
-npm run check
-npm run build
+pnpm run check
+pnpm run build
 ```
 
 The build also generates the Pagefind index in `dist/`.

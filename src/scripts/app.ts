@@ -691,7 +691,7 @@ function setupSearch(signal: AbortSignal) {
     void loadPagefind().then((pf) => {
       hint.textContent =
         pf === null
-          ? 'Search is available after `npm run build` — Pagefind indexes the built site.'
+          ? 'Search is available after `pnpm run build` — Pagefind indexes the built site.'
           : 'Type to search posts and pages.'
     })
   }

@@ -30,21 +30,21 @@
 
 ## 快速开始
 
-需要 [Node.js](https://nodejs.org/) **22.12+**。
+需要 [Node.js](https://nodejs.org/) **22.12+** 和 [pnpm](https://pnpm.io/installation) **12**。
 
 ```bash
 git clone https://github.com/yu030x/astro-theme-serene.git my-blog
 cd my-blog
-npm install
-npm run dev       # http://localhost:4321
+pnpm install
+pnpm run dev       # http://localhost:4321
 ```
 
 | 命令 | 作用 |
 |------|------|
-| `npm run dev` | 本地开发与热更新 |
-| `npm run check` | Astro 类型与模板检查 |
-| `npm run build` | 静态构建并生成 Pagefind 索引 |
-| `npm run preview` | 预览生产构建 |
+| `pnpm run dev` | 本地开发与热更新 |
+| `pnpm run check` | Astro 类型与模板检查 |
+| `pnpm run build` | 静态构建并生成 Pagefind 索引 |
+| `pnpm run preview` | 预览生产构建 |
 
 ## 自定义
 
@@ -86,6 +86,8 @@ astro-theme-serene/
 │   └── site.config.ts   # 站点配置
 ├── astro.config.ts      # Astro 集成与 Vite 配置
 ├── package.json         # 脚本与依赖
+├── pnpm-lock.yaml       # 可复现的依赖锁定
+├── pnpm-workspace.yaml  # pnpm 构建脚本权限
 ├── tsconfig.json        # TypeScript 配置
 ├── CONTRIBUTING.md      # 贡献检查说明
 └── LICENSE              # MIT 许可证
@@ -93,7 +95,7 @@ astro-theme-serene/
 
 ## 参与贡献
 
-提交 PR 前运行 `npm run check` 和 `npm run build`。完整约定见 [`CONTRIBUTING.md`](CONTRIBUTING.md)。
+提交 PR 前运行 `pnpm run check` 和 `pnpm run build`。完整约定见 [`CONTRIBUTING.md`](CONTRIBUTING.md)。
 
 ## 致谢
 

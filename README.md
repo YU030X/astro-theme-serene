@@ -30,21 +30,21 @@ English | [简体中文](./README.zh-CN.md) · **[Live demo →](https://astro-t
 
 ## Quick start
 
-Requires [Node.js](https://nodejs.org/) **22.12+**.
+Requires [Node.js](https://nodejs.org/) **22.12+** and [pnpm](https://pnpm.io/installation) **12**.
 
 ```bash
 git clone https://github.com/yu030x/astro-theme-serene.git my-blog
 cd my-blog
-npm install
-npm run dev       # http://localhost:4321
+pnpm install
+pnpm run dev       # http://localhost:4321
 ```
 
 | Command | Purpose |
 |---------|---------|
-| `npm run dev` | Development server with hot reload |
-| `npm run check` | Astro type and template diagnostics |
-| `npm run build` | Static build plus Pagefind index |
-| `npm run preview` | Preview the production build |
+| `pnpm run dev` | Development server with hot reload |
+| `pnpm run check` | Astro type and template diagnostics |
+| `pnpm run build` | Static build plus Pagefind index |
+| `pnpm run preview` | Preview the production build |
 
 ## Customize
 
@@ -93,6 +93,8 @@ astro-theme-serene/
 │   └── site.config.ts   # Site settings
 ├── astro.config.ts      # Astro integrations and Vite setup
 ├── package.json         # Scripts and dependencies
+├── pnpm-lock.yaml       # Reproducible dependency graph
+├── pnpm-workspace.yaml  # pnpm build-script permissions
 ├── tsconfig.json        # TypeScript configuration
 ├── CONTRIBUTING.md      # Contribution checks
 └── LICENSE              # MIT license
@@ -100,7 +102,7 @@ astro-theme-serene/
 
 ## Contributing
 
-Run `npm run check` and `npm run build` before opening a pull request. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full checklist.
+Run `pnpm run check` and `pnpm run build` before opening a pull request. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full checklist.
 
 ## Thanks
 
