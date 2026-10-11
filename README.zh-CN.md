@@ -1,6 +1,6 @@
 # Serene
 
-[![Astro](https://img.shields.io/badge/Astro-6.x-BC52EE?logo=astro)](https://astro.build) [![Tailwind](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss)](https://tailwindcss.com) [![Vercel](https://img.shields.io/github/deployments/yu030x/astro-theme-serene/production?style=flat&logo=vercel&label=vercel)](https://github.com/yu030x/astro-theme-serene/deployments) [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Astro](https://img.shields.io/badge/Astro-7-BC52EE?logo=astro)](https://astro.build) [![Tailwind](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss)](https://tailwindcss.com) [![Vercel](https://img.shields.io/github/deployments/yu030x/astro-theme-serene/production?style=flat&logo=vercel&label=vercel)](https://github.com/yu030x/astro-theme-serene/deployments) [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 基于 **Astro** 的宁静编辑式博客主题：静态优先、系统字体、克制动效，以及适合长文阅读的窄阅读列。
 
@@ -33,18 +33,22 @@
 需要 [Node.js](https://nodejs.org/) **22.12+** 和 [pnpm](https://pnpm.io/installation) **12**。
 
 ```bash
-git clone https://github.com/yu030x/astro-theme-serene.git my-blog
-cd my-blog
-pnpm install
-pnpm run dev       # http://localhost:4321
+git clone https://github.com/yu030x/astro-theme-serene.git my-blog && cd my-blog && pnpm install --frozen-lockfile && pnpm run dev
 ```
 
 | 命令 | 作用 |
 |------|------|
 | `pnpm run dev` | 本地开发与热更新 |
 | `pnpm run check` | Astro 类型与模板检查 |
-| `pnpm run build` | 静态构建并生成 Pagefind 索引 |
+| `pnpm run build:astro` | 仅执行 Astro 静态构建，不生成 Pagefind 索引 |
+| `pnpm run build:search` | 为已有的 `dist/` 生成 Pagefind 索引 |
+| `pnpm run build` | Astro 静态构建后生成 Pagefind 索引 |
 | `pnpm run preview` | 预览生产构建 |
+| `pnpm run test:browser` | 在生产构建上执行 Chromium 搜索回归检查 |
+
+`pnpm run dev` 使用没有生产 Pagefind 索引的开发站点，这是预期行为，不能用开发模式判断生产搜索是否就绪。要部署生产站点，请运行 `pnpm run build`（或先运行 `pnpm run build:astro`，再运行 `pnpm run build:search`），确保 `dist/` 含有 Pagefind 索引后再运行 `pnpm run preview` 或部署。
+
+首页最大宽度 `44rem`、文章正文 `40rem`、顶端导航 `68rem`、桌面滚动导航 `46rem`。项目卡片支持 `compact` 和 `comfortable` 密度，描述分别限制为两行和三行，操作按钮点击区域为 44px。
 
 ## 自定义
 
@@ -90,12 +94,21 @@ astro-theme-serene/
 ├── pnpm-workspace.yaml  # pnpm 构建脚本权限
 ├── tsconfig.json        # TypeScript 配置
 ├── CONTRIBUTING.md      # 贡献检查说明
+├── GIT规范.md           # Git、分支与验证约定
 └── LICENSE              # MIT 许可证
 ```
 
 ## 参与贡献
 
-提交 PR 前运行 `pnpm run check` 和 `pnpm run build`。完整约定见 [`CONTRIBUTING.md`](CONTRIBUTING.md)。
+提交 PR 前运行 `pnpm run check` 和 `pnpm run build`。完整检查见 [`CONTRIBUTING.md`](CONTRIBUTING.md)，仓库约定见 [`GIT规范.md`](GIT规范.md)。
+
+修改搜索交互后，安装 Chromium 并在最新生产构建上测试：
+
+```bash
+pnpm exec playwright install chromium && pnpm run build && pnpm run test:browser
+```
+
+测试会在 4399 端口启动独立生产预览，覆盖可控的延迟/错误响应和真实 Pagefind 搜索；报告和截图保存在本地 `docs/browser-evidence/`，不代表已部署站点的验收结果。
 
 ## 致谢
 

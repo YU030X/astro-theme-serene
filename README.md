@@ -1,6 +1,6 @@
 # Serene
 
-[![Astro](https://img.shields.io/badge/Astro-6.x-BC52EE?logo=astro)](https://astro.build) [![Tailwind](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss)](https://tailwindcss.com) [![Vercel](https://img.shields.io/github/deployments/yu030x/astro-theme-serene/production?style=flat&logo=vercel&label=vercel)](https://github.com/yu030x/astro-theme-serene/deployments) [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Astro](https://img.shields.io/badge/Astro-7-BC52EE?logo=astro)](https://astro.build) [![Tailwind](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss)](https://tailwindcss.com) [![Vercel](https://img.shields.io/github/deployments/yu030x/astro-theme-serene/production?style=flat&logo=vercel&label=vercel)](https://github.com/yu030x/astro-theme-serene/deployments) [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 A quiet, editorial blog theme for **Astro**. It is static by default, uses system fonts, and keeps the reading column deliberately small.
 
@@ -33,18 +33,22 @@ English | [简体中文](./README.zh-CN.md) · **[Live demo →](https://astro-t
 Requires [Node.js](https://nodejs.org/) **22.12+** and [pnpm](https://pnpm.io/installation) **12**.
 
 ```bash
-git clone https://github.com/yu030x/astro-theme-serene.git my-blog
-cd my-blog
-pnpm install
-pnpm run dev       # http://localhost:4321
+git clone https://github.com/yu030x/astro-theme-serene.git my-blog && cd my-blog && pnpm install --frozen-lockfile && pnpm run dev
 ```
 
 | Command | Purpose |
 |---------|---------|
 | `pnpm run dev` | Development server with hot reload |
 | `pnpm run check` | Astro type and template diagnostics |
-| `pnpm run build` | Static build plus Pagefind index |
+| `pnpm run build:astro` | Astro static build only; does not generate a Pagefind index |
+| `pnpm run build:search` | Generate the Pagefind index in the existing `dist/` |
+| `pnpm run build` | Astro static build followed by Pagefind index generation |
 | `pnpm run preview` | Preview the production build |
+| `pnpm run test:browser` | Run Chromium search regression checks against a production build |
+
+`pnpm run dev` serves the development site without a production Pagefind index; this is expected, and search is not a production-readiness check in that mode. For a deployable production site, run `pnpm run build` (or run `pnpm run build:astro` followed by `pnpm run build:search`) so `dist/` contains the Pagefind index before `pnpm run preview` or deployment.
+
+The home page is capped at `44rem`, article content at `40rem`, the top navigation at `68rem`, and the desktop scrolling navigation at `46rem`. Project cards support `compact` and `comfortable` density, with descriptions limited to two and three lines respectively and 44px action targets.
 
 ## Customize
 
@@ -97,12 +101,21 @@ astro-theme-serene/
 ├── pnpm-workspace.yaml  # pnpm build-script permissions
 ├── tsconfig.json        # TypeScript configuration
 ├── CONTRIBUTING.md      # Contribution checks
+├── GIT规范.md           # Git, branch and verification conventions
 └── LICENSE              # MIT license
 ```
 
 ## Contributing
 
-Run `pnpm run check` and `pnpm run build` before opening a pull request. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full checklist.
+Run `pnpm run check` and `pnpm run build` before opening a pull request. See [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`GIT规范.md`](GIT规范.md) for the full checklist and repository conventions.
+
+For search interaction changes, install Chromium and test the freshly built site:
+
+```bash
+pnpm exec playwright install chromium && pnpm run build && pnpm run test:browser
+```
+
+The suite starts its own production preview on port 4399. It covers controlled delayed/error responses and real Pagefind searches; reports and screenshots are saved locally under `docs/browser-evidence/`. It does not verify a deployed site.
 
 ## Thanks
 
