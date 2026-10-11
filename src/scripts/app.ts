@@ -676,18 +676,40 @@ async function loadPagefind(): Promise<Pagefind | null> {
   return pagefindPromise
 }
 
-const escapeHtml = (value: string) =>
-  value.replace(
-    /[&<>"']/g,
-    (c) =>
-      ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      })[c] as string
-  )
+const safeSearchUrl = (value: string) => {
+  try {
+    const url = new URL(value, window.location.href)
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return null
+    return url.href
+  } catch {
+    return null
+  }
+}
+
+const appendSafeExcerpt = (target: HTMLElement, excerpt: string) => {
+  const template = document.createElement('template')
+  template.innerHTML = excerpt
+  const append = (node: Node, parent: HTMLElement) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      parent.append(document.createTextNode(node.textContent ?? ''))
+      return
+    }
+    if (node.nodeType !== Node.ELEMENT_NODE) return
+    const element = node as Element
+    const tag = element.tagName.toLowerCase()
+    if (['script', 'style', 'iframe', 'object', 'svg', 'math', 'template'].includes(tag)) return
+    if (tag === 'mark') {
+      const mark = document.createElement('mark')
+      for (const child of element.childNodes) append(child, mark)
+      parent.append(mark)
+      return
+    }
+    // Pagefind excerpts only need text plus mark highlighting. Discard all
+    // other elements, but retain their text content safely.
+    for (const child of element.childNodes) append(child, parent)
+  }
+  for (const child of template.content.childNodes) append(child, target)
+}
 
 function setupSearch(signal: AbortSignal) {
   const dialog = document.getElementById(
@@ -704,6 +726,7 @@ function setupSearch(signal: AbortSignal) {
   let lastOpener: HTMLElement | null = null
   let generation = 0
   let timer: ReturnType<typeof setTimeout> | undefined
+  let composing = false
 
   const valid = (id: number) =>
     id === generation && dialog.open && !signal.aborted
@@ -784,7 +807,7 @@ function setupSearch(signal: AbortSignal) {
   closeButton?.addEventListener('click', close, { signal })
   dialog.addEventListener('cancel', (event) => {
     event.preventDefault()
-    close()
+    if (!composing) close()
   }, { signal })
 
   for (const opener of document.querySelectorAll('[data-search-open]'))
@@ -808,6 +831,23 @@ function setupSearch(signal: AbortSignal) {
   document.addEventListener(
     'keydown',
     (e) => {
+      if (e.isComposing || composing) return
+      if (e.key === 'Tab' && dialog.open) {
+        const stops = [...dialog.querySelectorAll<HTMLElement>(
+          'a[href], button:not(:disabled), input:not(:disabled), [tabindex="0"]'
+        )].filter(element => element.getClientRects().length > 0)
+        const first = stops[0]
+        const last = stops[stops.length - 1]
+        if (first && last) {
+          if (!dialog.contains(document.activeElement) ||
+              (e.shiftKey && document.activeElement === first) ||
+              (!e.shiftKey && document.activeElement === last)) {
+            e.preventDefault()
+            const next = e.shiftKey ? last : first
+            next.focus()
+          }
+        }
+      }
       // Search inputs can consume the first Escape to clear their value.
       // Match the dialog's advertised shortcut regardless of input contents.
       if (e.key === 'Escape' && dialog.open) {
@@ -850,14 +890,34 @@ function setupSearch(signal: AbortSignal) {
       const top = await Promise.all(found.results.slice(0, 8).map((r) => r.data()))
       if (!valid(id)) return
       hint.hidden = true
-      results.innerHTML = top.length
-        ? top.map((item) => `
-                <a href="${item.url}" class="search-result">
-                  <span class="search-result-title">${escapeHtml(item.meta.title ?? 'Untitled')}</span>
-                  <span class="search-result-excerpt">${item.excerpt}</span>
-                </a>`).join('')
-        : `<p class="search-empty">No results for “${escapeHtml(query)}”.</p>`
-      announce(top.length ? `${top.length} search results.` : `No results for “${query}”.`)
+      results.replaceChildren()
+      if (top.length) {
+        for (const item of top) {
+          const url = safeSearchUrl(item.url)
+          if (!url) continue
+          const link = document.createElement('a')
+          link.href = url
+          link.className = 'search-result'
+          const title = document.createElement('span')
+          title.className = 'search-result-title'
+          title.textContent = item.meta.title ?? 'Untitled'
+          const excerpt = document.createElement('span')
+          excerpt.className = 'search-result-excerpt'
+          appendSafeExcerpt(excerpt, item.excerpt)
+          link.append(title, excerpt)
+          results.append(link)
+        }
+      }
+      if (!results.childElementCount) {
+        const empty = document.createElement('p')
+        empty.className = 'search-empty'
+        empty.textContent = `No results for “${query}”.`
+        results.append(empty)
+      }
+      const resultCount = results.querySelectorAll('.search-result').length
+      announce(resultCount
+        ? `${resultCount} search ${resultCount === 1 ? 'result' : 'results'}.`
+        : `No results for “${query}”.`)
     } catch {
       if (!valid(id)) return
       setHint('Search failed. Please retry.')
@@ -878,6 +938,7 @@ function setupSearch(signal: AbortSignal) {
   input.addEventListener(
     'input',
     () => {
+      if (composing) return
       clearTimeout(timer)
       const id = ++generation
       const query = input.value.trim()
@@ -895,6 +956,14 @@ function setupSearch(signal: AbortSignal) {
     },
     { signal }
   )
+  input.addEventListener('compositionstart', () => {
+    composing = true
+    clearSearch()
+  }, { signal })
+  input.addEventListener('compositionend', () => {
+    composing = false
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+  }, { signal })
 }
 
 function setupHeadingAnchors() {

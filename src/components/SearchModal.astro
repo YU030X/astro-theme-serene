@@ -10,6 +10,7 @@ import Icon from '@/components/Icon.astro'
         type="search"
         placeholder="Search posts and pages…"
         aria-label="Search posts and pages"
+        aria-controls="search-results"
         autocomplete="off"
         spellcheck="false"
         class="h-14 min-w-0 w-full bg-transparent text-[15px] text-ink outline-none placeholder:text-quiet"
@@ -32,7 +33,7 @@ import Icon from '@/components/Icon.astro'
       <p id="search-hint" class="px-3 py-8 text-center text-sm text-quiet">
         Type to search posts and pages.
       </p>
-      <p id="search-status" class="sr-only" role="status" aria-live="polite"></p>
+      <p id="search-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
       <button type="button" data-search-retry class="search-retry" hidden>Retry search</button>
       <div id="search-results"></div>
     </div>
