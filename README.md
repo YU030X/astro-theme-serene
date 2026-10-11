@@ -44,7 +44,7 @@ git clone https://github.com/yu030x/astro-theme-serene.git my-blog && cd my-blog
 | `pnpm run build:search` | Generate the Pagefind index in the existing `dist/` |
 | `pnpm run build` | Astro static build followed by Pagefind index generation |
 | `pnpm run preview` | Preview the production build |
-| `pnpm run test:browser` | Run Chromium search regression checks against a production build |
+| `pnpm run test:browser` | Run Chromium search and reading-interaction regression checks |
 
 `pnpm run dev` serves the development site without a production Pagefind index; this is expected, and search is not a production-readiness check in that mode. For a deployable production site, run `pnpm run build` (or run `pnpm run build:astro` followed by `pnpm run build:search`) so `dist/` contains the Pagefind index before `pnpm run preview` or deployment.
 
@@ -109,13 +109,13 @@ astro-theme-serene/
 
 Run `pnpm run check` and `pnpm run build` before opening a pull request. See [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`GIT规范.md`](GIT规范.md) for the full checklist and repository conventions.
 
-For search interaction changes, install Chromium and test the freshly built site:
+For interaction changes, install Chromium and test the freshly built site:
 
 ```bash
 pnpm exec playwright install chromium && pnpm run build && pnpm run test:browser
 ```
 
-The suite starts its own production preview on port 4399. It covers controlled delayed/error responses and real Pagefind searches; reports and screenshots are saved locally under `docs/browser-evidence/`. It does not verify a deployed site.
+The suite starts its own production preview on port 4399. It covers search timing, keyboard navigation, excerpt rendering and real Pagefind searches, plus responsive layouts, mobile menus, table of contents, image zoom, theme switching and soft navigation. Third-party contribution responses are mocked. Reports and screenshots are saved locally under `docs/browser-evidence/`; screen-reader and deployed-site checks require separate validation.
 
 ## Thanks
 

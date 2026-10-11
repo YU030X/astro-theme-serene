@@ -44,7 +44,7 @@ git clone https://github.com/yu030x/astro-theme-serene.git my-blog && cd my-blog
 | `pnpm run build:search` | 为已有的 `dist/` 生成 Pagefind 索引 |
 | `pnpm run build` | Astro 静态构建后生成 Pagefind 索引 |
 | `pnpm run preview` | 预览生产构建 |
-| `pnpm run test:browser` | 在生产构建上执行 Chromium 搜索回归检查 |
+| `pnpm run test:browser` | 在生产构建上执行 Chromium 搜索与阅读交互回归检查 |
 
 `pnpm run dev` 使用没有生产 Pagefind 索引的开发站点，这是预期行为，不能用开发模式判断生产搜索是否就绪。要部署生产站点，请运行 `pnpm run build`（或先运行 `pnpm run build:astro`，再运行 `pnpm run build:search`），确保 `dist/` 含有 Pagefind 索引后再运行 `pnpm run preview` 或部署。
 
@@ -102,13 +102,13 @@ astro-theme-serene/
 
 提交 PR 前运行 `pnpm run check` 和 `pnpm run build`。完整检查见 [`CONTRIBUTING.md`](CONTRIBUTING.md)，仓库约定见 [`GIT规范.md`](GIT规范.md)。
 
-修改搜索交互后，安装 Chromium 并在最新生产构建上测试：
+修改交互后，安装 Chromium 并在最新生产构建上测试：
 
 ```bash
 pnpm exec playwright install chromium && pnpm run build && pnpm run test:browser
 ```
 
-测试会在 4399 端口启动独立生产预览，覆盖可控的延迟/错误响应和真实 Pagefind 搜索；报告和截图保存在本地 `docs/browser-evidence/`，不代表已部署站点的验收结果。
+测试会在 4399 端口启动独立生产预览，覆盖搜索时序、键盘操作、摘要渲染、真实 Pagefind 搜索，以及响应式排版、移动菜单、目录、图片放大、主题切换和软导航。贡献图使用模拟响应。报告和截图保存在本地 `docs/browser-evidence/`；读屏软件和已部署站点需要单独验收。
 
 ## 致谢
 
