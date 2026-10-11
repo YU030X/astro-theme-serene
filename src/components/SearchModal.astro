@@ -32,6 +32,8 @@ import Icon from '@/components/Icon.astro'
       <p id="search-hint" class="px-3 py-8 text-center text-sm text-quiet">
         Type to search posts and pages.
       </p>
+      <p id="search-status" class="sr-only" role="status" aria-live="polite"></p>
+      <button type="button" data-search-retry class="search-retry" hidden>Retry search</button>
       <div id="search-results"></div>
     </div>
     <div
@@ -142,5 +144,21 @@ import Icon from '@/components/Icon.astro'
     text-align: center;
     font-size: 0.875rem;
     color: var(--quiet);
+  }
+  .search-retry {
+    display: block;
+    margin: 0.5rem auto 1rem;
+    border-radius: var(--radius-md);
+    padding: 0.45rem 0.8rem;
+    background: var(--tint);
+    color: var(--ink);
+    font-size: 0.8rem;
+  }
+  .search-retry[hidden] {
+    display: none;
+  }
+  .search-retry:hover,
+  .search-retry:focus-visible {
+    background: var(--accent-soft);
   }
 </style>

@@ -639,24 +639,41 @@ interface PagefindResult {
   data(): Promise<{ url: string; excerpt: string; meta: { title?: string } }>
 }
 interface Pagefind {
-  init?(): void
+  init?(): void | Promise<void>
   search(query: string): Promise<{ results: PagefindResult[] }>
 }
 
-let pagefind: Pagefind | null | undefined
+let pagefind: Pagefind | undefined
+let pagefindPromise: Promise<Pagefind | null> | undefined
+let pagefindImportFailed = false
+let pagefindRetryToken = 0
 
 async function loadPagefind(): Promise<Pagefind | null> {
   if (pagefind !== undefined) return pagefind
-  try {
-    const base = import.meta.env.BASE_URL.replace(/\/$/, '')
-    pagefind = (await import(
-      /* @vite-ignore */ `${base}/pagefind/pagefind.js`
-    )) as Pagefind
-    pagefind.init?.()
-  } catch {
-    pagefind = null
-  }
-  return pagefind
+  if (pagefindPromise) return pagefindPromise
+  pagefindPromise = (async () => {
+    let imported = false
+    try {
+      const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+      const retry = pagefindImportFailed
+        ? `?retry=${++pagefindRetryToken}`
+        : ''
+      const loaded = (await import(
+        /* @vite-ignore */ `${base}/pagefind/pagefind.js${retry}`
+      )) as Pagefind
+      imported = true
+      pagefindImportFailed = false
+      await loaded.init?.()
+      pagefind = loaded
+      return loaded
+    } catch {
+      // A failed load/init must remain retryable rather than poisoning the cache.
+      if (!imported) pagefindImportFailed = true
+      pagefindPromise = undefined
+      return null
+    }
+  })()
+  return pagefindPromise
 }
 
 const escapeHtml = (value: string) =>
@@ -680,26 +697,95 @@ function setupSearch(signal: AbortSignal) {
   const input = dialog.querySelector<HTMLInputElement>('input[type="search"]')
   const results = dialog.querySelector<HTMLElement>('#search-results')
   const hint = dialog.querySelector<HTMLElement>('#search-hint')
+  const status = dialog.querySelector<HTMLElement>('#search-status')
+  const retry = dialog.querySelector<HTMLButtonElement>('[data-search-retry]')
   const closeButton = dialog.querySelector<HTMLButtonElement>('[data-search-close]')
   if (!input || !results || !hint) return
   let lastOpener: HTMLElement | null = null
+  let generation = 0
+  let timer: ReturnType<typeof setTimeout> | undefined
+
+  const valid = (id: number) =>
+    id === generation && dialog.open && !signal.aborted
+  const announce = (message: string) => {
+    if (status) status.textContent = message
+  }
+  const unavailableMessage = import.meta.env.DEV
+    ? 'Search needs a production index. Build the site, then open the production preview.'
+    : 'Search is temporarily unavailable. Please retry.'
+  const setHint = (message: string, visible = true) => {
+    hint.textContent = message
+    hint.hidden = !visible
+  }
+  const invalidate = () => {
+    generation++
+    clearTimeout(timer)
+  }
+  const clearSearch = () => {
+    invalidate()
+    results.innerHTML = ''
+    retry && (retry.hidden = true)
+    setHint('Type to search posts and pages.')
+    announce('Search cleared.')
+  }
+
+  const loadForRetry = (id: number) => {
+    if (!valid(id)) return
+    results.innerHTML = ''
+    retry && (retry.hidden = true)
+    setHint('Loading search index.')
+    announce('Loading search index.')
+    void loadPagefind().then((pf) => {
+      if (!valid(id)) return
+      if (!pf) {
+        setHint(unavailableMessage)
+        retry && (retry.hidden = false)
+        announce('Search index unavailable. Retry search.')
+      } else if (!input.value.trim()) {
+        setHint('Type to search posts and pages.')
+        announce('Search ready.')
+      } else {
+        void runSearch(id, input.value.trim())
+      }
+    })
+  }
 
   const open = (opener?: HTMLElement) => {
+    if (dialog.open) return
     lastOpener = opener ?? (document.activeElement as HTMLElement | null)
     if (!dialog.open) dialog.showModal()
     input.select()
+    const id = ++generation
+    results.innerHTML = ''
+    retry && (retry.hidden = true)
+    setHint('Loading search index.')
+    announce('Loading search index.')
     void loadPagefind().then((pf) => {
-      hint.textContent =
-        pf === null
-          ? 'Search is available after `pnpm run build` — Pagefind indexes the built site.'
-          : 'Type to search posts and pages.'
+      if (!valid(id)) return
+      if (pf === null) {
+        setHint(unavailableMessage)
+        retry && (retry.hidden = false)
+        announce('Search index unavailable. Retry search.')
+      } else if (!input.value.trim()) {
+        setHint('Type to search posts and pages.')
+        announce('Search ready.')
+      } else {
+        void runSearch(id, input.value.trim())
+      }
     })
   }
   const close = () => {
-    if (dialog.open) dialog.close()
+    if (dialog.open) {
+      invalidate()
+      dialog.close()
+    }
   }
 
   closeButton?.addEventListener('click', close, { signal })
+  dialog.addEventListener('cancel', (event) => {
+    event.preventDefault()
+    close()
+  }, { signal })
 
   for (const opener of document.querySelectorAll('[data-search-open]'))
     opener.addEventListener(
@@ -710,13 +796,25 @@ function setupSearch(signal: AbortSignal) {
 
   dialog.addEventListener(
     'close',
-    () => lastOpener?.focus({ preventScroll: true }),
+    () => {
+      if (!dialog.open) {
+        invalidate()
+        lastOpener?.focus({ preventScroll: true })
+      }
+    },
     { signal }
   )
 
   document.addEventListener(
     'keydown',
     (e) => {
+      // Search inputs can consume the first Escape to clear their value.
+      // Match the dialog's advertised shortcut regardless of input contents.
+      if (e.key === 'Escape' && dialog.open) {
+        e.preventDefault()
+        close()
+        return
+      }
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault()
         dialog.open ? close() : open()
@@ -732,37 +830,67 @@ function setupSearch(signal: AbortSignal) {
     { signal }
   )
 
-  let timer: ReturnType<typeof setTimeout> | undefined
-  signal.addEventListener('abort', () => clearTimeout(timer), { once: true })
+  const runSearch = async (id: number, query: string) => {
+    if (!valid(id)) return
+    results.innerHTML = ''
+    retry && (retry.hidden = true)
+    setHint('Searching…')
+    announce('Searching.')
+    try {
+      const pf = await loadPagefind()
+      if (!valid(id)) return
+      if (!pf) {
+        setHint(unavailableMessage)
+        retry && (retry.hidden = false)
+        announce('Search index unavailable. Retry search.')
+        return
+      }
+      const found = await pf.search(query)
+      if (!valid(id)) return
+      const top = await Promise.all(found.results.slice(0, 8).map((r) => r.data()))
+      if (!valid(id)) return
+      hint.hidden = true
+      results.innerHTML = top.length
+        ? top.map((item) => `
+                <a href="${item.url}" class="search-result">
+                  <span class="search-result-title">${escapeHtml(item.meta.title ?? 'Untitled')}</span>
+                  <span class="search-result-excerpt">${item.excerpt}</span>
+                </a>`).join('')
+        : `<p class="search-empty">No results for “${escapeHtml(query)}”.</p>`
+      announce(top.length ? `${top.length} search results.` : `No results for “${query}”.`)
+    } catch {
+      if (!valid(id)) return
+      setHint('Search failed. Please retry.')
+      retry && (retry.hidden = false)
+      announce('Search failed. Retry search.')
+    }
+  }
+
+  retry?.addEventListener('click', () => {
+    invalidate()
+    const id = generation
+    if (!input.value.trim()) return loadForRetry(id)
+    results.innerHTML = ''
+    retry.hidden = true
+    void runSearch(id, input.value.trim())
+  }, { signal })
+  signal.addEventListener('abort', () => invalidate(), { once: true })
   input.addEventListener(
     'input',
     () => {
       clearTimeout(timer)
-      timer = setTimeout(async () => {
-        const query = input.value.trim()
-        if (!query) {
-          results.innerHTML = ''
-          hint.hidden = false
-          return
-        }
-        const pf = await loadPagefind()
-        if (!pf) return
-        const found = await pf.search(query)
-        const top = await Promise.all(
-          found.results.slice(0, 8).map((r) => r.data())
-        )
-        hint.hidden = true
-        results.innerHTML = top.length
-          ? top
-              .map(
-                (item) => `
-                <a href="${item.url}" class="search-result">
-                  <span class="search-result-title">${escapeHtml(item.meta.title ?? 'Untitled')}</span>
-                  <span class="search-result-excerpt">${item.excerpt}</span>
-                </a>`
-              )
-              .join('')
-          : `<p class="search-empty">No results for “${escapeHtml(query)}”.</p>`
+      const id = ++generation
+      const query = input.value.trim()
+      if (!query) {
+        clearSearch()
+        return
+      }
+      results.innerHTML = ''
+      retry && (retry.hidden = true)
+      setHint('Searching…')
+      announce('Searching.')
+      timer = setTimeout(() => {
+        void runSearch(id, query)
       }, 160)
     },
     { signal }

@@ -20,6 +20,7 @@
     "build:astro": "astro build",
     "build:search": "pagefind --site dist",
     "build": "astro build && pagefind --site dist",
+    "test:browser": "playwright test",
     "preview": "astro preview",
     "check": "astro check",
     "astro": "astro"
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@playwright/test": "^1.64.0",
     "@tailwindcss/typography": "^0.5.15",
     "@tailwindcss/vite": "^4.1.0",
     "pagefind": "^1.5.2",
