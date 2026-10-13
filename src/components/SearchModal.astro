@@ -1,15 +1,16 @@
 ---
 import Icon from '@/components/Icon.astro'
+import { t } from '@/lib/ui'
 ---
 
-<dialog id="search-dialog" class="search-dialog" aria-label="Search">
+<dialog id="search-dialog" class="search-dialog" aria-label={t('search.title')}>
   <div class="search-panel">
     <div class="flex items-center gap-3 border-b border-line px-4">
       <Icon name="search" size={18} class="shrink-0 text-quiet" />
       <input
         type="search"
-        placeholder="Search posts and pages…"
-        aria-label="Search posts and pages"
+        placeholder={t('search.placeholder')}
+        aria-label={t('search.input')}
         aria-controls="search-results"
         autocomplete="off"
         spellcheck="false"
@@ -23,28 +24,28 @@ import Icon from '@/components/Icon.astro'
         type="button"
         class="icon-btn shrink-0"
         data-search-close
-        aria-label="Close search"
-        title="Close search"
+        aria-label={t('search.close')}
+        title={t('search.close')}
       >
         <Icon name="close" size={17} />
       </button>
     </div>
     <div class="max-h-[min(60vh,26rem)] overflow-y-auto overscroll-contain p-2">
       <p id="search-hint" class="px-3 py-8 text-center text-sm text-quiet">
-        Type to search posts and pages.
+        {t('search.hint')}
       </p>
       <p id="search-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
-      <button type="button" data-search-retry class="search-retry" hidden>Retry search</button>
+      <button type="button" data-search-retry class="search-retry" hidden>{t('search.retry')}</button>
       <div id="search-results"></div>
     </div>
     <div
       class="flex items-center justify-between border-t border-line px-4 py-2.5 text-[11px] text-quiet"
     >
       <span class="flex items-center gap-1">
-        <Icon name="command" size={11} /> K to open · esc to close
+        <Icon name="command" size={11} /> {t('search.shortcuts')}
       </span>
       <span>
-        Search by <a
+        {t('search.by')} <a
           href="https://pagefind.app"
           target="_blank"
           rel="noopener noreferrer"

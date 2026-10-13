@@ -20,7 +20,7 @@
     "build:astro": "astro build",
     "build:search": "pagefind --site dist",
     "build": "astro build && pagefind --site dist",
-    "build:fixtures": "astro build --config tests/fixtures/astro.config.ts",
+    "build:fixtures": "astro build --config tests/fixtures/astro.config.ts && astro build --config tests/fixtures/localized.config.ts && pagefind --site docs/browser-localized-dist",
     "test:browser": "pnpm run build:fixtures && playwright test",
     "preview": "astro preview",
     "check": "astro check",

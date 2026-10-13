@@ -1,4 +1,5 @@
 import avatar from './assets/avatar.svg'
+import type { MessageKey, UiLocale } from './lib/i18n'
 
 /**
  * Serene — site configuration.
@@ -6,7 +7,8 @@ import avatar from './assets/avatar.svg'
  */
 
 export interface NavItem {
-  label: string
+  label?: string
+  labelKey?: MessageKey
   href: string
 }
 
@@ -30,12 +32,12 @@ export const siteConfig = {
   avatar,
 
   /**
-   * Machine-readable only: <html lang>, og:locale, JSON-LD, RSS and date
-   * formatting. Interface copy is English inside the components and does not
-   * follow this — see the Localization section of the README.
+   * Content/document language and date formatting are independent of UI copy.
+   * Custom navigation labels and authored content are never translated.
    */
   locale: 'en-US',
   dateLocale: 'en-US',
+  uiLocale: 'en' as UiLocale,
 
   postsPerPage: 8,
 
@@ -68,10 +70,10 @@ export const siteConfig = {
   },
 
   nav: [
-    { label: 'Blog', href: '/blog' },
-    { label: 'Projects', href: '/projects' },
-    { label: 'Links', href: '/links' },
-    { label: 'About', href: '/about' }
+    { labelKey: 'nav.blog', href: '/blog' },
+    { labelKey: 'nav.projects', href: '/projects' },
+    { labelKey: 'nav.links', href: '/links' },
+    { labelKey: 'nav.about', href: '/about' }
   ] satisfies NavItem[],
 
   socials: [

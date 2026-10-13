@@ -23,5 +23,10 @@ export default defineConfig({
     url: 'http://127.0.0.1:4400',
     reuseExistingServer: false,
     timeout: 30_000
+  }, {
+    command: 'node tests/browser/preview-server.mjs --localized',
+    url: 'http://127.0.0.1:4401',
+    reuseExistingServer: false,
+    timeout: 30_000
   }]
 })

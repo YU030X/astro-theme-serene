@@ -11,6 +11,7 @@ import LikeButton from '@/components/LikeButton.astro'
 import PostLicense from '@/components/PostLicense.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { formatCategory, getPosts, readingTime, type Post } from '@/lib/utils'
+import { t } from '@/lib/ui'
 
 export async function getStaticPaths() {
   const posts = await getPosts()
@@ -48,7 +49,7 @@ const coverUrl = cover
     : cover.src.src
   : undefined
 const coverSource = cover?.source
-  ? { label: 'Image source', url: cover.source }
+  ? { label: t('post.imageSource'), url: cover.source }
   : null
 const minutes = readingTime(post.body)
 const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3)
@@ -81,7 +82,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
           size={15}
           class="transition-transform duration-300 group-hover:-translate-x-0.5"
         />
-        Blog
+        {t('nav.blog')}
       </a>
 
       {cover && (
@@ -158,19 +159,19 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
       </p>
 
       <dl class="mt-8 grid grid-cols-[5.5rem_minmax(0,1fr)] gap-x-5 gap-y-2.5 text-sm">
-        <dt class="text-quiet">Published</dt>
+        <dt class="text-quiet">{t('post.published')}</dt>
         <dd class="os-nums"><FormattedDate date={publishDate} /></dd>
         {
           updatedDate && (
             <>
-              <dt class="text-quiet">Updated</dt>
+              <dt class="text-quiet">{t('post.updated')}</dt>
               <dd class="os-nums"><FormattedDate date={updatedDate} /></dd>
             </>
           )
         }
-        <dt class="text-quiet">Reading</dt>
-        <dd class="os-nums">{minutes} min</dd>
-        <dt class="text-quiet">Category</dt>
+        <dt class="text-quiet">{t('post.reading')}</dt>
+        <dd class="os-nums">{t('post.minutes', { count: minutes })}</dd>
+        <dt class="text-quiet">{t('post.category')}</dt>
         <dd>
           <a
             class="link-underline"
@@ -182,7 +183,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
         {
           tags.length > 0 && (
             <>
-              <dt class="text-quiet">Tags</dt>
+              <dt class="text-quiet">{t('nav.tags')}</dt>
               <dd class="flex flex-wrap gap-x-3 gap-y-1">
                 {tags.map((tag) => (
                   <a class="link-underline" href={`/tags/${tag}`}>
@@ -199,7 +200,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
     {
       hasToc && (
         <details class="mx-auto mt-8 max-w-[var(--container-reading)] rounded-2xl border border-line bg-card px-5 py-4 shadow-soft xl:hidden">
-          <summary class="cursor-pointer text-sm font-medium">On this page</summary>
+          <summary class="cursor-pointer text-sm font-medium">{t('post.onPage')}</summary>
           <ol class="mt-3 space-y-2 border-t border-line pt-3 text-sm text-quiet">
             {tocHeadings.map((heading) => (
               <li class:list={[heading.depth === 3 && 'pl-4']}>
@@ -234,7 +235,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
                       size={13}
                       class="shrink-0"
                     />
-                    Previous post
+                    {t('post.previous')}
                   </span>
                   <span class="mt-2 line-clamp-2 block font-medium leading-snug text-ink transition-colors group-hover:text-accent">
                     {older.data.title}
@@ -251,7 +252,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
                   href={`/blog/${newer.id}`}
                 >
                   <span class="flex items-center justify-end gap-1.5 text-xs font-medium text-quiet">
-                    Next post
+                    {t('post.next')}
                     <Icon
                       name="arrow-right"
                       size={13}

@@ -56,24 +56,25 @@ Start with [`src/site.config.ts`](src/site.config.ts): site identity, author URL
 
 `src/assets/tools/` ships a small set of icons to draw from; the `icon` field in `tools.json` takes any filename in that folder, and most of them are unused by the demo. Drop your own SVGs in alongside them.
 
-UI copy is English and is not translated by `locale` — see [Localization](#localization).
+UI copy defaults to English; set `uiLocale: 'zh-CN'` for Simplified Chinese — see [Localization](#localization).
 
 Waline is disabled by default. Enable it only after adding your own server URL. Failed comment requests show a retry status; stalled loading stops after 15 seconds. Contribution requests time out after 10 seconds and retain stale cached data when a refresh fails.
 
 ## Localization
 
-`locale` and `dateLocale` in `site.config.ts` drive the machine-readable side
-of the site: `<html lang>`, `og:locale`, the JSON-LD `inLanguage`, the RSS
-`<language>`, and how dates are formatted.
+Three independent settings live in `src/site.config.ts`:
 
-**They do not translate the interface.** Labels like "Published", "Reading",
-"On this page" and "Back to top" are written in English directly in the
-components, so setting `locale: 'zh-CN'` gives you a page announced as Chinese
-whose chrome is still English — worse for screen readers than leaving it
-alone. Translate by editing the components under `src/components/` and
-`src/pages/`, and set `locale` to match once you do.
+| Setting | Purpose | Default |
+| --- | --- | --- |
+| `uiLocale` | Built-in interface labels, accessible names and client status messages (`en` or `zh-CN`) | `en` |
+| `locale` | Document/content language: HTML, Open Graph, JSON-LD and RSS | `en-US` |
+| `dateLocale` | Displayed article dates | `en-US` |
 
-Post content itself is unaffected; write in any language you like.
+Changing only `uiLocale` translates the built-in interface without changing dates or URLs. Set `locale` to match your content and document language separately. Article text, the About demo prose, site identity, project/link/tool data and custom labels remain authored content.
+
+Default navigation entries use translation keys, such as `{ labelKey: 'nav.blog', href: '/blog' }`. Existing custom entries like `{ label: 'My writing', href: '/blog' }` still work; an explicit `label` takes priority over `labelKey`.
+
+Astro components and browser scripts share `src/lib/i18n.ts`. Missing translated keys fall back to English, and parameters are rendered as text. This feature does not add multilingual content routes or translate articles.
 
 
 ## Project structure
@@ -115,7 +116,7 @@ For interaction changes, install Chromium and test the freshly built site:
 pnpm exec playwright install chromium && pnpm run build && pnpm run test:browser
 ```
 
-The suite starts production previews on ports 4399 (normal build) and 4400 (test fixtures); both ports must be available. `test:browser` first builds the fixtures into `docs/browser-fixture-dist/`, leaving the deployable `dist/` unchanged. It covers search, responsive reading interactions, contribution cache/error/timeout behavior, and enabled/disabled comments across soft navigation. Third-party responses are controlled locally; no personal token or real comment submission is needed. Reports and screenshots are saved under `docs/browser-evidence/`; screen-reader and deployed-site checks require separate validation.
+The suite starts production previews on ports 4399 (normal build), 4400 (comment fixtures) and 4401 (Chinese configuration); all three ports must be available. `test:browser` first builds isolated fixtures under `docs/`, leaving the deployable `dist/` unchanged. It covers search, responsive reading interactions, contribution cache/error/timeout behavior, enabled/disabled comments, Chinese UI and custom labels across soft navigation. Third-party responses are controlled locally; no personal token or real comment submission is needed. Reports and screenshots are saved under `docs/browser-evidence/`; screen-reader and deployed-site checks require separate validation.
 
 ## Thanks
 

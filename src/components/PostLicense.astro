@@ -2,6 +2,7 @@
 import FormattedDate from '@/components/FormattedDate.astro'
 import Icon from '@/components/Icon.astro'
 import { siteConfig } from '@/site.config'
+import { t } from '@/lib/ui'
 
 interface Props {
   title: string
@@ -46,17 +47,17 @@ const active =
 
         <dl class="license-meta">
           <div>
-            <dt>Author</dt>
+            <dt>{t('post.author')}</dt>
             <dd>{siteConfig.author}</dd>
           </div>
           <div>
-            <dt>Published</dt>
+            <dt>{t('post.published')}</dt>
             <dd>
               <FormattedDate date={publishDate} />
             </dd>
           </div>
           <div>
-            <dt>Copyright</dt>
+            <dt>{t('post.copyright')}</dt>
             <dd>
               <a href={articleLicense.url} target="_blank" rel="license noopener noreferrer">
                 {articleLicense.name}
@@ -67,17 +68,17 @@ const active =
       </div>
 
       <footer class="license-footer">
-        <p class="license-note">Images are sourced from the internet. Please contact me for removal if necessary.</p>
+        <p class="license-note">{t('post.imageNote')}</p>
 
-        <div class="license-actions" role="group" aria-label="Article actions">
+        <div class="license-actions" role="group" aria-label={t('post.actions')}>
           <slot name="article-actions" />
           <button
             type="button"
             class="icon-btn license-action"
             data-copy-article
             data-url={permalink}
-            aria-label="Copy article link"
-            title="Copy article link"
+            aria-label={t('post.copyLink')}
+            title={t('post.copyLink')}
           >
             <Icon name="link" size={16} />
           </button>
@@ -87,8 +88,8 @@ const active =
             data-share-article
             data-url={permalink}
             data-title={title}
-            aria-label="Share article"
-            title="Share article"
+            aria-label={t('post.share')}
+            title={t('post.share')}
           >
             <Icon name="share" size={16} />
           </button>
@@ -97,8 +98,8 @@ const active =
             href={xShareUrl}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Share on X"
-            title="Share on X"
+            aria-label={t('post.shareX')}
+            title={t('post.shareX')}
           >
             <Icon name="x" size={13} />
           </a>
@@ -111,6 +112,7 @@ const active =
 {!active && <div class="article-actions-fallback"><slot name="article-actions" /></div>}
 
 <script>
+  import { t } from '@/lib/client-i18n'
   function toast(message: string) {
     document.dispatchEvent(
       new CustomEvent('toast', { detail: { message } })
@@ -120,9 +122,9 @@ const active =
   async function copyArticleLink(url: string) {
     try {
       await navigator.clipboard.writeText(url)
-      toast('Article link copied')
+      toast(t('post.linkCopied'))
     } catch {
-      toast('Copy failed')
+      toast(t('common.copyFailed'))
     }
   }
 
@@ -150,10 +152,10 @@ const active =
 
         try {
           await navigator.share({ title, url })
-          toast('Article shared')
+          toast(t('post.shared'))
         } catch (error) {
           if (error instanceof DOMException && error.name === 'AbortError') return
-          toast('Sharing unavailable — try copying the link')
+          toast(t('post.shareFailed'))
         }
       })
     })

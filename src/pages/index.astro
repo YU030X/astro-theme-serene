@@ -10,6 +10,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import { getPosts } from '@/lib/utils'
 import { projects } from '@/data/projects'
 import { siteConfig } from '@/site.config'
+import { t } from '@/lib/ui'
 
 const posts = (await getPosts()).slice(0, 7)
 const featured = projects.filter((project) => project.featured)
@@ -20,7 +21,7 @@ const featured = projects.filter((project) => project.featured)
     <section class="mt-10 text-center sm:mt-14" data-reveal="masthead">
       <Image
         src={siteConfig.avatar}
-        alt={`${siteConfig.title} avatar`}
+        alt={t('home.avatar', { title: siteConfig.title })}
         width={144}
         densities={[1, 2]}
         loading="eager"
@@ -51,7 +52,7 @@ const featured = projects.filter((project) => project.featured)
         <a
           class="inline-flex items-center gap-1.5 transition-colors duration-150 hover:text-accent"
           href="/rss.xml"
-          aria-label="RSS feed"
+          aria-label={t('common.rss')}
         >
           <Icon name="rss" size={15} />
           <span>RSS</span>
@@ -61,20 +62,20 @@ const featured = projects.filter((project) => project.featured)
 
     <div class="mt-12 space-y-12 sm:mt-20 sm:space-y-14" data-reveal="content">
       <section class="grid gap-y-4 md:grid-cols-[5rem_minmax(0,1fr)] md:gap-x-6">
-        <h2 class="text-lg font-semibold tracking-tight">About</h2>
+        <h2 class="text-lg font-semibold tracking-tight">{t('nav.about')}</h2>
         <div class="min-w-0">
           <p class="text-sm font-medium text-ink">{siteConfig.tagline}</p>
           <p class="mt-2 text-[0.95rem] leading-[1.8] text-quiet">
             {siteConfig.bio}
           </p>
           <div class="mt-3 flex justify-end">
-            <MoreLink href="/about" ariaLabel="More about me" />
+            <MoreLink href="/about" ariaLabel={t('home.moreAbout')} />
           </div>
         </div>
       </section>
 
       <section class="grid gap-y-4 md:grid-cols-[5rem_minmax(0,1fr)] md:gap-x-6">
-        <h2 class="text-lg font-semibold tracking-tight">Posts</h2>
+        <h2 class="text-lg font-semibold tracking-tight">{t('home.posts')}</h2>
         <div class="min-w-0">
           {
             posts.length > 0 ? (
@@ -85,24 +86,24 @@ const featured = projects.filter((project) => project.featured)
               </ul>
             ) : (
               <EmptyState compact>
-                No posts yet — the newest seven will be listed here.
+                {t('home.empty')}
               </EmptyState>
             )
           }
           <div class="mt-3 flex justify-end">
-            <MoreLink href="/blog" ariaLabel="More posts" />
+            <MoreLink href="/blog" ariaLabel={t('home.morePosts')} />
           </div>
         </div>
       </section>
 
       <section class="grid gap-y-4 md:grid-cols-[5rem_minmax(0,1fr)] md:gap-x-6">
-        <h2 class="text-lg font-semibold tracking-tight">Projects</h2>
+        <h2 class="text-lg font-semibold tracking-tight">{t('nav.projects')}</h2>
         <div class="min-w-0">
           <div class="space-y-3">
             {featured.map((project) => <ProjectCardCompact {project} variant="card" density="compact" />)}
           </div>
           <div class="mt-3 flex justify-end">
-            <MoreLink href="/projects" ariaLabel="More projects" />
+            <MoreLink href="/projects" ariaLabel={t('home.moreProjects')} />
           </div>
         </div>
       </section>

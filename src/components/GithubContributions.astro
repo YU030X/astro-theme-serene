@@ -1,4 +1,5 @@
 ---
+import { t } from '@/lib/ui'
 /**
  * GitHub contribution calendar — Serene edition.
  *
@@ -32,7 +33,7 @@ const placeholderDays = Array.from({ length: 53 * 7 })
         data-contribution-grid
         data-loading
         role="img"
-        aria-label={`Loading GitHub contributions for ${username}`}
+        aria-label={t('github.loading', { username })}
       >
         {
           placeholderDays.map(() => (
@@ -52,18 +53,19 @@ const placeholderDays = Array.from({ length: 53 * 7 })
 
   <div class="github-contributions__footer">
     <div class="github-contributions__legend" aria-hidden="true">
-      <span class="github-contributions__legend-label">Less</span>
+      <span class="github-contributions__legend-label">{t('github.less')}</span>
       {
         [0, 1, 2, 3, 4].map((level) => (
           <span class="github-contributions__day" data-level={level} />
         ))
       }
-      <span class="github-contributions__legend-label">More</span>
+      <span class="github-contributions__legend-label">{t('github.more')}</span>
     </div>
   </div>
 </div>
 
 <script>
+  import { t } from '@/lib/client-i18n'
   interface ContributionDay {
     date: string
     count: number
@@ -169,7 +171,7 @@ const placeholderDays = Array.from({ length: 53 * 7 })
     }
 
     if (data.contributions.length === 0) {
-      showContributionMessage(root, 'No contribution activity available.', 'empty')
+      showContributionMessage(root, t('github.empty'), 'empty')
       return
     }
 
@@ -200,13 +202,13 @@ const placeholderDays = Array.from({ length: 53 * 7 })
       const day = document.createElement('button')
       const countLabel =
         contribution.count === 0
-          ? 'No contributions'
+          ? t('github.zero')
           : contribution.count === 1
-            ? '1 contribution'
-            : `${contribution.count.toLocaleString(locale)} contributions`
-      const label = `${countLabel} on ${dateFormatter.format(
-        parseCalendarDate(contribution.date)
-      )}`
+            ? t('github.one')
+            : t('github.many', { count: contribution.count.toLocaleString(locale) })
+      const label = t('github.day', {
+        count: countLabel, date: dateFormatter.format(parseCalendarDate(contribution.date))
+      })
 
       day.type = 'button'
       day.className = 'github-contributions__day'
@@ -226,7 +228,7 @@ const placeholderDays = Array.from({ length: 53 * 7 })
     grid.setAttribute('role', 'group')
     grid.setAttribute(
       'aria-label',
-      `GitHub contributions for ${username} in the last year`
+      t('github.label', { username })
     )
 
     root.dataset.state = 'ready'
@@ -348,7 +350,7 @@ const placeholderDays = Array.from({ length: 53 * 7 })
     const username = root.dataset.username
     const locale = root.dataset.locale ?? 'en-US'
     if (!username) {
-      showContributionMessage(root, 'Contribution data unavailable.', 'error')
+      showContributionMessage(root, t('github.error'), 'error')
       return
     }
 
@@ -387,7 +389,7 @@ const placeholderDays = Array.from({ length: 53 * 7 })
       writeCachedContributions(cacheKey, data)
     } catch {
       if (isCurrent() && !cachedResponse) {
-        showContributionMessage(root, 'Contribution data unavailable.', 'error')
+        showContributionMessage(root, t('github.error'), 'error')
       }
     } finally {
       window.clearTimeout(timeout)

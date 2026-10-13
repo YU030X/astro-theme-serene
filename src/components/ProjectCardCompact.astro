@@ -1,6 +1,7 @@
 ---
 import Icon from '@/components/Icon.astro'
 import type { Project } from '@/data/projects'
+import { t } from '@/lib/ui'
 
 /** Project card, with an optional open-row treatment for the home page. */
 interface Props {
@@ -49,7 +50,7 @@ const primaryLink = project.href ?? project.repo
             href={project.repo}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`${project.name} repository`}
+            aria-label={t('projects.repository', { name: project.name })}
           >
             <Icon name="github" size={15} />
           </a>
@@ -60,7 +61,7 @@ const primaryLink = project.href ?? project.repo
             href={project.href}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`${project.name} website`}
+            aria-label={t('projects.website', { name: project.name })}
           >
             <Icon name="external" size={15} />
           </a>
@@ -108,7 +109,7 @@ const primaryLink = project.href ?? project.repo
               href={project.repo}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`${project.name} repository`}
+              aria-label={t('projects.repository', { name: project.name })}
             >
               <Icon name="github" size={15} />
             </a>
@@ -119,7 +120,7 @@ const primaryLink = project.href ?? project.repo
               href={project.href}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`${project.name} website`}
+              aria-label={t('projects.website', { name: project.name })}
             >
               <Icon name="external" size={15} />
             </a>

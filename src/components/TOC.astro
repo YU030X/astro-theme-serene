@@ -1,5 +1,6 @@
 ---
 import type { MarkdownHeading } from 'astro'
+import { t } from '@/lib/ui'
 
 interface Props {
   headings: MarkdownHeading[]
@@ -25,9 +26,9 @@ for (const heading of items) {
 
 {
   items.length > 0 && (
-    <nav id="toc" class="text-sm" aria-label="Table of contents" data-pagefind-ignore>
+    <nav id="toc" class="text-sm" aria-label={t('post.toc')} data-pagefind-ignore>
       <p class="mb-3 font-mono text-[10px] uppercase tracking-[0.12em] text-quiet">
-        Table of Contents
+        {t('post.tocTitle')}
       </p>
       <div class="relative">
         <div class="toc-marker" aria-hidden="true" />

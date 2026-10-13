@@ -4,6 +4,7 @@
 // those from the whole reachable module graph — dynamic imports included — so
 // it would link 22 KB of Waline into every article with comments switched off.
 import walineStyleUrl from '@waline/client/style?url'
+import { t } from '@/lib/ui'
 
 interface Props {
   serverURL: string
@@ -16,13 +17,14 @@ const { serverURL } = Astro.props
 
 <section class="mx-auto mt-16 max-w-[var(--container-reading)]" data-pagefind-ignore>
   <h2 class="mb-5 font-serif text-section font-semibold tracking-tight text-ink">
-    Comments
+    {t('comments.title')}
   </h2>
-  <p data-waline-status role="status" class="text-sm text-muted">Loading comments…</p>
+  <p data-waline-status role="status" class="text-sm text-muted">{t('comments.loading')}</p>
   <div id="waline-thread" data-waline-server={serverURL} aria-busy="true"></div>
 </section>
 
 <script>
+  import { t } from '@/lib/client-i18n'
   type WalineInstance = {
     update: (opts: Record<string, unknown>) => void
     destroy: () => void
@@ -58,7 +60,7 @@ const { serverURL } = Astro.props
       el.dataset.state = 'error'
       if (status) {
         status.hidden = false
-        status.textContent = 'Comments unavailable. Reload the page to retry.'
+        status.textContent = t('comments.error')
       }
     }
     if (!serverURL) { fail(); return }
@@ -72,7 +74,8 @@ const { serverURL } = Astro.props
         path,
         dark: currentTheme() === 'dark',
         reaction: false,
-        locale: { refresh: 'Retry comments' }
+        lang: document.documentElement.dataset.uiLocale === 'zh-CN' ? 'zh-CN' : 'en-US',
+        locale: { refresh: t('comments.retry') }
       }) as WalineInstance | null
       if (!walineInstance) throw new Error('Comments could not initialize')
       // Waline v3 exposes request state through the list's loading / retry UI.
@@ -83,7 +86,7 @@ const { serverURL } = Astro.props
         const list = el.querySelector('[data-waline]')
         if (!list) return
         const loading = !!list.querySelector(':scope > .wl-loading')
-        const retry = list.querySelector(':scope > .wl-operation > button')?.textContent === 'Retry comments'
+        const retry = list.querySelector(':scope > .wl-operation > button')?.textContent === t('comments.retry')
         el.setAttribute('aria-busy', String(loading))
         el.dataset.state = loading ? 'loading' : retry ? 'error' : 'ready'
         if (loading) {
@@ -94,7 +97,7 @@ const { serverURL } = Astro.props
         }
         if (status) {
           status.hidden = !loading && !retry
-          status.textContent = loading ? 'Loading comments…' : 'Comments unavailable. Try the retry button below.'
+          status.textContent = t(loading ? 'comments.loading' : 'comments.retryHint')
         }
       }
       contentObserver = new MutationObserver(reflectState)

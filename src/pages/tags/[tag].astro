@@ -4,6 +4,7 @@ import PageHead from '@/components/PageHead.astro'
 import PostRow from '@/components/PostRow.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { getPosts, getTags, type Post } from '@/lib/utils'
+import { t, postCount } from '@/lib/ui'
 
 export async function getStaticPaths() {
   const posts = await getPosts()
@@ -17,7 +18,7 @@ const { tag } = Astro.params
 const { posts } = Astro.props as { posts: Post[] }
 ---
 
-<BaseLayout title={`#${tag}`} description={`Posts tagged with #${tag}.`}>
+<BaseLayout title={`#${tag}`} description={t('tags.detail', { tag: tag ?? '' })}>
   <section class="pt-14 sm:pt-16">
     <PageHead>
       <a
@@ -30,10 +31,10 @@ const { posts } = Astro.props as { posts: Post[] }
           size={15}
           class="transition-transform duration-300 group-hover:-translate-x-0.5"
         />
-        All tags
+        {t('tags.all')}
       </a>
       <Fragment slot="title"><span class="text-quiet">#</span>{tag}</Fragment>
-      {`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`} with this tag.
+      {t('tags.count', { posts: postCount(posts.length) })}
     </PageHead>
 
     <ul class="post-list mx-auto mt-14 max-w-[var(--container-reading)]">

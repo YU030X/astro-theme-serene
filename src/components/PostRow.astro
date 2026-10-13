@@ -4,6 +4,7 @@ import { Image } from 'astro:assets'
 import DraftBadge from '@/components/DraftBadge.astro'
 import FormattedDate from '@/components/FormattedDate.astro'
 import { formatCategory, readingTime, type Post } from '@/lib/utils'
+import { t } from '@/lib/ui'
 
 /** Open list entry: text left, 4:3 thumbnail right, no card box. */
 interface Props {
@@ -35,7 +36,7 @@ const isDraft = post.data.draft && import.meta.env.DEV
         <span class="post-meta-date flex items-baseline gap-1.5">
           <FormattedDate date={publishDate} />
           <span class="opacity-45" aria-hidden="true">·</span>
-          <span>{minutes} min</span>
+          <span>{t('post.minutes', { count: minutes })}</span>
         </span>
         <span class="flex items-baseline gap-2">
           <span class="post-meta-cat">{formatCategory(category)}</span>

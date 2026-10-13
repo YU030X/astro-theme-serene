@@ -1,12 +1,13 @@
 ---
 import Icon from '@/components/Icon.astro'
+import { t } from '@/lib/ui'
 ---
 
 <button
   class="icon-btn theme-toggle"
   data-theme-toggle
   type="button"
-  aria-label="Switch to dark theme"
+  aria-label={t('theme.dark')}
   aria-pressed="false"
 >
   <Icon name="sun" size={19} class="icon-sun" />

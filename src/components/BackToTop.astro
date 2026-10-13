@@ -1,8 +1,9 @@
 ---
 import Icon from '@/components/Icon.astro'
+import { t } from '@/lib/ui'
 ---
 
-<button id="back-to-top" type="button" aria-label="Back to top">
+<button id="back-to-top" type="button" aria-label={t('common.backTop')}>
   <Icon name="arrow-up" size={18} />
 </button>
 

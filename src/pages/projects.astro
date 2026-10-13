@@ -5,19 +5,20 @@ import ProjectCardCompact from '@/components/ProjectCardCompact.astro'
 import { projects, projectsDescription } from '@/data/projects'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { siteConfig } from '@/site.config'
+import { t } from '@/lib/ui'
 ---
 
 <BaseLayout
-  title="Projects"
-  description="Selected side projects — small, sharp tools built with care."
+  title={t('nav.projects')}
+  description={t('projects.description')}
 >
   <section class="mx-auto max-w-[var(--container-reading)] pt-14 sm:pt-16" data-pagefind-body>
-    <PageHead title="Projects">{projectsDescription}</PageHead>
+    <PageHead title={t('nav.projects')}>{projectsDescription}</PageHead>
 
     {
       siteConfig.githubContributions.enabled && (
         <div class="mt-14" data-reveal>
-          <h2 class="text-lg font-semibold tracking-tight">Activities</h2>
+          <h2 class="text-lg font-semibold tracking-tight">{t('projects.activities')}</h2>
           <div class="mt-4">
             <GithubContributions
               username={siteConfig.githubContributions.username}
@@ -34,7 +35,7 @@ import { siteConfig } from '@/site.config'
       ]}
       data-reveal="content"
     >
-      <h2 class="text-lg font-semibold tracking-tight">Programs</h2>
+      <h2 class="text-lg font-semibold tracking-tight">{t('projects.programs')}</h2>
       <div class="mt-4 grid gap-3 sm:grid-cols-2">
         {projects.map((project) => <ProjectCardCompact {project} />)}
       </div>

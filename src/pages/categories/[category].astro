@@ -3,6 +3,7 @@ import Icon from '@/components/Icon.astro'
 import PageHead from '@/components/PageHead.astro'
 import PostRow from '@/components/PostRow.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
+import { t, postCount } from '@/lib/ui'
 import {
   formatCategory,
   getCategories,
@@ -27,7 +28,7 @@ const categoryLabel = formatCategory(category)
 
 <BaseLayout
   title={categoryLabel}
-  description={`Posts filed in the ${categoryLabel} category.`}
+  description={t('categories.detail', { category: categoryLabel })}
 >
   <section class="pt-14 sm:pt-16">
     <PageHead title={categoryLabel}>
@@ -41,9 +42,9 @@ const categoryLabel = formatCategory(category)
           size={15}
           class="transition-transform duration-300 group-hover:-translate-x-0.5"
         />
-        All categories
+        {t('categories.all')}
       </a>
-      {`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`} in this category.
+      {t('categories.count', { posts: postCount(posts.length) })}
     </PageHead>
 
     <ul class="post-list mx-auto mt-14 max-w-[var(--container-reading)]">

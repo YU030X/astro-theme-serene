@@ -3,6 +3,7 @@ import type { Page } from 'astro'
 
 import Icon from '@/components/Icon.astro'
 import type { Post } from '@/lib/utils'
+import { t } from '@/lib/ui'
 
 interface Props {
   page: Page<Post>
@@ -13,17 +14,17 @@ const { page } = Astro.props
 
 <nav
   class="mt-14 flex items-center justify-between"
-  aria-label="Pagination"
+  aria-label={t('common.pagination')}
   data-pagefind-ignore
 >
   {
     page.url.prev ? (
       <a class="btn btn-ghost" href={page.url.prev}>
-        <Icon name="arrow-left" size={16} /> Previous
+        <Icon name="arrow-left" size={16} /> {t('common.previous')}
       </a>
     ) : (
       <span class="btn btn-ghost pointer-events-none opacity-35">
-        <Icon name="arrow-left" size={16} /> Previous
+        <Icon name="arrow-left" size={16} /> {t('common.previous')}
       </span>
     )
   }
@@ -33,11 +34,11 @@ const { page } = Astro.props
   {
     page.url.next ? (
       <a class="btn btn-ghost" href={page.url.next}>
-        Next <Icon name="arrow-right" size={16} />
+        {t('common.next')} <Icon name="arrow-right" size={16} />
       </a>
     ) : (
       <span class="btn btn-ghost pointer-events-none opacity-35">
-        Next <Icon name="arrow-right" size={16} />
+        {t('common.next')} <Icon name="arrow-right" size={16} />
       </span>
     )
   }

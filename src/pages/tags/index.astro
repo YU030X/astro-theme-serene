@@ -3,16 +3,17 @@ import EmptyState from '@/components/EmptyState.astro'
 import PageHead from '@/components/PageHead.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { getPosts, getTags } from '@/lib/utils'
+import { t } from '@/lib/ui'
 
 const posts = await getPosts()
 const tags = getTags(posts)
 const max = tags[0]?.count ?? 1
 ---
 
-<BaseLayout title="Tags" description="Browse every topic on this blog.">
+<BaseLayout title={t('nav.tags')} description={t('tags.description')}>
   <section class="pt-14 sm:pt-16">
-    <PageHead title="Tags">
-      {tags.length} topics across {posts.length} posts.
+    <PageHead title={t('nav.tags')}>
+      {t('tags.summary', { count: tags.length, posts: posts.length })}
     </PageHead>
 
     {
@@ -37,7 +38,7 @@ const max = tags[0]?.count ?? 1
       ) : (
         <div class="mx-auto max-w-[var(--container-reading)]">
           <EmptyState>
-            No tags yet. Add a <code>tags</code> list to a post's frontmatter.
+            {t('tags.empty')}
           </EmptyState>
         </div>
       )

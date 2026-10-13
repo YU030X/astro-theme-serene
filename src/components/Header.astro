@@ -2,6 +2,7 @@
 import Icon from '@/components/Icon.astro'
 import ThemeToggle from '@/components/ThemeToggle.astro'
 import { siteConfig } from '@/site.config'
+import { t, navLabel } from '@/lib/ui'
 
 const { pathname } = Astro.url
 const normalized = pathname.replace(/\/$/, '') || '/'
@@ -17,7 +18,7 @@ const isActive = (href: string) =>
       <a
         href="/"
         class="header-brand font-medium text-ink"
-        aria-label={`${siteConfig.title} — home`}
+        aria-label={t('nav.home', { title: siteConfig.title })}
       >
         <span class="text-[1rem]">{siteConfig.title}</span>
       </a>
@@ -26,7 +27,7 @@ const isActive = (href: string) =>
       <div class="flex items-center gap-1.5">
         <nav
           class="hidden items-center gap-1 md:flex"
-          aria-label="Main navigation"
+          aria-label={t('nav.main')}
         >
           {
             siteConfig.nav.map((item) => (
@@ -36,7 +37,7 @@ const isActive = (href: string) =>
                 aria-current={isActive(item.href) ? 'page' : undefined}
                 data-astro-prefetch
               >
-                {item.label}
+                {navLabel(item)}
               </a>
             ))
           }
@@ -47,7 +48,7 @@ const isActive = (href: string) =>
             class="icon-btn"
             type="button"
             data-search-open
-            aria-label="Search (⌘K)"
+            aria-label={t('search.open')}
           >
             <Icon name="search" size={18} />
           </button>
@@ -58,7 +59,7 @@ const isActive = (href: string) =>
             type="button"
             aria-expanded="false"
             aria-controls="mobile-nav"
-            aria-label="Menu"
+            aria-label={t('nav.menu')}
           >
             <span class="menu-lines" aria-hidden="true"><i></i><i></i></span>
           </button>
@@ -68,7 +69,7 @@ const isActive = (href: string) =>
       <div id="mobile-nav" class="md:hidden">
         <nav
           class="surface rounded-2xl p-2 shadow-pop"
-          aria-label="Mobile navigation"
+          aria-label={t('nav.mobile')}
         >
           {
             siteConfig.nav.map((item, i) => (
@@ -78,7 +79,7 @@ const isActive = (href: string) =>
                 style={`--i: ${i}`}
                 aria-current={isActive(item.href) ? 'page' : undefined}
               >
-                {item.label}
+                {navLabel(item)}
               </a>
             ))
           }
@@ -89,7 +90,7 @@ const isActive = (href: string) =>
             style={`--i: ${siteConfig.nav.length}`}
             aria-current={isActive('/archive') ? 'page' : undefined}
           >
-            Archive
+            {t('nav.archive')}
           </a>
         </nav>
       </div>

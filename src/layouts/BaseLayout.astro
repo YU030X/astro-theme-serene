@@ -11,6 +11,7 @@ import Mist from '@/components/Mist.astro'
 import SearchModal from '@/components/SearchModal.astro'
 import Toast from '@/components/Toast.astro'
 import { siteConfig } from '@/site.config'
+import { t } from '@/lib/ui'
 
 interface Props {
   title?: string
@@ -24,7 +25,7 @@ const { title, description, ogImage, article, noindex } = Astro.props
 ---
 
 <!doctype html>
-<html lang={siteConfig.locale}>
+<html lang={siteConfig.locale} data-ui-locale={siteConfig.uiLocale}>
   <head>
     <BaseHead {title} {description} {ogImage} {article} {noindex} />
     <ClientRouter />
@@ -62,7 +63,7 @@ const { title, description, ogImage, article, noindex } = Astro.props
   </head>
 
   <body class="flex min-h-dvh flex-col bg-canvas text-ink">
-    <a href="#main" class="skip-link btn btn-primary">Skip to content</a>
+    <a href="#main" class="skip-link btn btn-primary">{t('common.skip')}</a>
 
     <Mist />
 

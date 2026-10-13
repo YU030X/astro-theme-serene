@@ -4,22 +4,23 @@ import FormattedDate from '@/components/FormattedDate.astro'
 import PageHead from '@/components/PageHead.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { getPosts, groupByYear } from '@/lib/utils'
+import { t, postCount } from '@/lib/ui'
 
 const posts = await getPosts()
 const years = groupByYear(posts)
 ---
 
 <BaseLayout
-  title="Archive"
-  description="Every post on this blog, in chronological order."
+  title={t('nav.archive')}
+  description={t('archive.description')}
 >
   <section class="pt-14 sm:pt-16">
-    <PageHead title="Archive">{posts.length} posts and counting.</PageHead>
+    <PageHead title={t('nav.archive')}>{t('archive.summary', { count: posts.length })}</PageHead>
 
     <div class="mx-auto mt-14 max-w-[var(--container-reading)]">
       {years.length === 0 && (
         <EmptyState>
-          Nothing archived yet. Published posts are grouped by year here.
+          {t('archive.empty')}
         </EmptyState>
       )}
       {
@@ -29,7 +30,7 @@ const years = groupByYear(posts)
               <h2 class="year">{year}</h2>
               <span class="rule" aria-hidden="true" />
               <span class="count">
-                {list.length} {list.length === 1 ? 'post' : 'posts'}
+                {postCount(list.length)}
               </span>
             </div>
             <ul class="toc-list">

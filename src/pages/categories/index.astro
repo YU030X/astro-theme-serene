@@ -4,15 +4,16 @@ import Icon from '@/components/Icon.astro'
 import PageHead from '@/components/PageHead.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { formatCategory, getCategories, getPosts } from '@/lib/utils'
+import { t } from '@/lib/ui'
 
 const posts = await getPosts()
 const categories = getCategories(posts)
 ---
 
-<BaseLayout title="Categories" description="Browse posts by their primary category.">
+<BaseLayout title={t('nav.categories')} description={t('categories.description')}>
   <section class="pt-14 sm:pt-16">
-    <PageHead title="Categories">
-      {categories.length} collections across {posts.length} posts.
+    <PageHead title={t('nav.categories')}>
+      {t('categories.summary', { count: categories.length, posts: posts.length })}
     </PageHead>
 
     {
@@ -36,8 +37,7 @@ const categories = getCategories(posts)
       ) : (
         <div class="mx-auto max-w-[var(--container-reading)]">
           <EmptyState>
-            No categories yet. Every post declares one in its{' '}
-            <code>category</code> frontmatter field.
+            {t('categories.empty')}
           </EmptyState>
         </div>
       )

@@ -1,11 +1,12 @@
 ---
 import Icon from '@/components/Icon.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
+import { t } from '@/lib/ui'
 ---
 
 <BaseLayout
-  title="Page not found"
-  description="This page is not in this book."
+  title={t('notFound.title')}
+  description={t('notFound.description')}
   noindex
 >
   <section class="grid min-h-[62vh] place-items-center py-16 text-center">
@@ -13,11 +14,11 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
       <div
         class="leaf a-in mx-auto"
         role="img"
-        aria-label="An intentionally blank page, folio 404"
+        aria-label={t('notFound.label')}
       >
-        <p class="document-eyebrow folio">Serene · Page 404</p>
+        <p class="document-eyebrow folio">{t('notFound.folio')}</p>
         <div class="blank">
-          <p>This page is<br />intentionally left blank.</p>
+          <p>{t('notFound.blankStart')}<br />{t('notFound.blankEnd')}</p>
         </div>
         <span class="seal" aria-hidden="true"></span>
       </div>
@@ -26,21 +27,20 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
         class="a-in mt-9 font-serif text-2xl font-semibold tracking-tight sm:text-3xl"
         style="--d: 80ms"
       >
-        Page not found
+        {t('notFound.title')}
       </h1>
       <p class="a-in mx-auto mt-3 max-w-md text-quiet" style="--d: 140ms">
-        The link may be broken, or the page may have moved. Head back home,
-        or search the site.
+        {t('notFound.help')}
       </p>
       <div
         class="a-in mt-8 flex flex-wrap items-center justify-center gap-3"
         style="--d: 200ms"
       >
         <a class="btn btn-primary" href="/">
-          <Icon name="arrow-left" size={15} /> Back home
+          <Icon name="arrow-left" size={15} /> {t('notFound.home')}
         </a>
         <button class="btn btn-ghost" type="button" data-search-open>
-          <Icon name="search" size={15} /> Search the site
+          <Icon name="search" size={15} /> {t('notFound.search')}
         </button>
       </div>
     </div>

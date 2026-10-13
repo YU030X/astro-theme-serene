@@ -2,9 +2,11 @@ import { preview } from 'astro'
 
 // The public API creates an isolated preview without replacing a user's CLI server.
 const fixtures = process.argv.includes('--fixtures')
-const port = fixtures ? 4400 : 4399
+const localized = process.argv.includes('--localized')
+const port = localized ? 4401 : fixtures ? 4400 : 4399
 const server = await preview({
-  ...(fixtures ? { configFile: './tests/fixtures/astro.config.ts' } : {}),
+  ...(localized ? { configFile: './tests/fixtures/localized.config.ts' }
+    : fixtures ? { configFile: './tests/fixtures/astro.config.ts' } : {}),
   server: { host: '127.0.0.1', port }
 })
 if (server.port !== port) {

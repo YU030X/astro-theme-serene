@@ -56,17 +56,25 @@ git clone https://github.com/yu030x/astro-theme-serene.git my-blog && cd my-blog
 
 `src/assets/tools/` 内置了一组可选图标，`tools.json` 的 `icon` 字段填该目录下的任意文件名即可；其中多数示例并未用到。也可以直接放入自己的 SVG。
 
-界面文案固定为英文，不随 `locale` 变化，详见[多语言](#多语言)。
+界面文案默认英文；设置 `uiLocale: 'zh-CN'` 即可切换简体中文，详见[多语言](#多语言)。
 
 Waline 默认关闭。填入自己的服务地址后再启用。评论请求失败会显示重试状态，持续加载超过 15 秒后停止；贡献图请求超过 10 秒后停止，刷新失败时保留过期缓存。
 
 ## 多语言
 
-`site.config.ts` 中的 `locale` 与 `dateLocale` 只控制机器可读的部分：`<html lang>`、`og:locale`、JSON-LD 的 `inLanguage`、RSS 的 `<language>`，以及日期格式。
+`src/site.config.ts` 中提供三个独立设置：
 
-**它们不会翻译界面。** "Published"、"Reading"、"On this page"、"Back to top" 这类文案是直接写在组件里的英文，所以把 `locale` 改成 `zh-CN` 只会得到一个「声明为中文、界面却是英文」的页面——对读屏软件而言比不改更糟。要中文界面，需要直接修改 `src/components/` 和 `src/pages/` 下的文案，改完再同步 `locale`。
+| 设置 | 用途 | 默认值 |
+| --- | --- | --- |
+| `uiLocale` | 主题界面文案、可访问名称和客户端状态，支持 `en` / `zh-CN` | `en` |
+| `locale` | 文档 / 内容语言，用于 HTML、Open Graph、JSON-LD 和 RSS | `en-US` |
+| `dateLocale` | 文章日期的显示格式 | `en-US` |
 
-文章内容本身不受影响，用任何语言书写都可以。
+只修改 `uiLocale` 即可切换主题自带界面，日期和 URL 保持不变。请另外将 `locale` 设为实际文档 / 内容语言。文章正文、About 示例正文、站点信息、项目 / 友链 / 工具数据与自定义标签仍由作者维护。
+
+默认导航使用翻译键，例如 `{ labelKey: 'nav.blog', href: '/blog' }`。已有的 `{ label: '我的随笔', href: '/blog' }` 仍可使用；显式 `label` 优先于 `labelKey`，不会被自动翻译。
+
+Astro 组件与浏览器脚本共用 `src/lib/i18n.ts`，缺失的翻译键回退到英文，插值参数按文本显示。此功能不增加多语言文章路由，也不自动翻译文章。
 
 
 ## 目录结构
@@ -108,7 +116,7 @@ astro-theme-serene/
 pnpm exec playwright install chromium && pnpm run build && pnpm run test:browser
 ```
 
-测试会在 4399（正式构建）与 4400（测试页面）端口启动独立生产预览，两个端口都需空闲。`test:browser` 先将测试页面构建到 `docs/browser-fixture-dist/`，不改变用于部署的 `dist/`。覆盖搜索、响应式阅读交互、贡献图缓存 / 错误 / 超时，以及评论启用和禁用时的软导航行为。第三方响应在本地控制，无需个人 token 或真实评论提交。报告和截图保存在 `docs/browser-evidence/`；读屏软件和已部署站点需要单独验收。
+测试会在 4399（正式构建）、4400（评论测试页面）与 4401（中文配置）端口启动独立生产预览，三个端口都需空闲。`test:browser` 先将隔离测试页面构建到 `docs/` 下，不改变用于部署的 `dist/`。覆盖搜索、响应式阅读交互、贡献图缓存 / 错误 / 超时、评论启用和禁用、中文界面和自定义标签的软导航行为。第三方响应在本地控制，无需个人 token 或真实评论提交。报告和截图保存在 `docs/browser-evidence/`；读屏软件和已部署站点需要单独验收。
 
 ## 致谢
 

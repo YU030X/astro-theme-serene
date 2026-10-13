@@ -2,6 +2,7 @@
 import Icon from '@/components/Icon.astro'
 import type { FriendLink } from '@/data/links'
 import { getAvatarThemeColor } from '@/lib/image-color'
+import { t } from '@/lib/ui'
 
 interface Props {
   link: FriendLink
@@ -25,7 +26,7 @@ const domain = new URL(link.url).hostname.replace(/^www\./, '')
   rel="noopener noreferrer"
   class="link-card group grid min-h-[6.75rem] min-w-0 grid-cols-[2.25rem_minmax(0,1fr)_0.875rem] grid-rows-[auto_1fr_auto] items-start gap-x-2.5 gap-y-1 overflow-hidden rounded-xl border border-line/75 bg-card px-3.5 py-3"
   style={`--link-theme-color: ${themeColor}`}
-  aria-label={`Visit ${link.name} (opens in a new tab)`}
+  aria-label={t('link.visit', { name: link.name })}
 >
   <span
     class="link-avatar relative row-span-3 grid size-9 select-none place-items-center self-start overflow-hidden rounded-full border border-line bg-tint text-xs font-medium text-ink"

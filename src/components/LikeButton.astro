@@ -1,6 +1,7 @@
 ---
 import Icon from '@/components/Icon.astro'
 import { siteConfig } from '@/site.config'
+import { t } from '@/lib/ui'
 
 interface Props {
   /** Render as one action in the article license footer. */
@@ -24,7 +25,7 @@ const active = enabled && serverURL.length > 0
         data-like
         data-waline-server={serverURL}
         aria-pressed="false"
-        aria-label="Like this post"
+        aria-label={t('post.like')}
       >
         <Icon name="heart" size={18} class="like-heart" />
         <span class="like-count" data-like-count aria-live="polite">0</span>

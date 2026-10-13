@@ -1,4 +1,5 @@
 /** Serene — the site's only client script, re-initialized on every Astro view-transition navigation. */
+import { t } from '@/lib/client-i18n'
 
 let controller: AbortController | undefined
 let revealObserver: IntersectionObserver | undefined
@@ -148,7 +149,7 @@ function setupThemeToggle(signal: AbortSignal) {
     button.setAttribute('aria-pressed', String(isDark))
     button.setAttribute(
       'aria-label',
-      isDark ? 'Switch to light theme' : 'Switch to dark theme'
+      t(isDark ? 'theme.light' : 'theme.dark')
     )
   }
 
@@ -376,7 +377,7 @@ function setupCodeBlocks(signal: AbortSignal) {
       copyButton = document.createElement('button')
       copyButton.className = 'code-copy'
       copyButton.type = 'button'
-      copyButton.setAttribute('aria-label', 'Copy code')
+      copyButton.setAttribute('aria-label', t('code.copy'))
       copyButton.innerHTML = COPY_ICON + CHECK_ICON
       controlContainer.appendChild(copyButton)
     }
@@ -427,10 +428,10 @@ function setupCodeBlocks(signal: AbortSignal) {
       toggle.setAttribute('aria-expanded', String(expanded))
       toggle.setAttribute(
         'aria-label',
-        expanded ? 'Collapse code block' : 'Show all code'
+        t(expanded ? 'code.collapseBlock' : 'code.expand')
       )
       const label = toggle.querySelector('span')
-      if (label) label.textContent = expanded ? 'Collapse code' : 'Show all code'
+      if (label) label.textContent = t(expanded ? 'code.collapse' : 'code.expand')
     }
 
     updateToggle()
@@ -506,7 +507,7 @@ function setupImageZoom(signal: AbortSignal) {
     zoomed.className = 'medium-zoom-image medium-zoom-image--clone'
     zoomed.tabIndex = 0
     zoomed.setAttribute('role', 'button')
-    zoomed.setAttribute('aria-label', 'Close enlarged image')
+    zoomed.setAttribute('aria-label', t('image.close'))
 
     const style = getComputedStyle(image)
     Object.assign(zoomed.style, {
@@ -557,7 +558,7 @@ function setupImageZoom(signal: AbortSignal) {
     image.setAttribute('role', 'button')
     image.setAttribute(
       'aria-label',
-      image.alt ? `Enlarge image: ${image.alt}` : 'Enlarge image'
+      image.alt ? t('image.enlargeNamed', { alt: image.alt }) : t('image.enlarge')
     )
     image.addEventListener('click', () => open(image), { signal })
     image.addEventListener(
@@ -734,8 +735,8 @@ function setupSearch(signal: AbortSignal) {
     if (status) status.textContent = message
   }
   const unavailableMessage = import.meta.env.DEV
-    ? 'Search needs a production index. Build the site, then open the production preview.'
-    : 'Search is temporarily unavailable. Please retry.'
+    ? t('search.dev')
+    : t('search.unavailable')
   const setHint = (message: string, visible = true) => {
     hint.textContent = message
     hint.hidden = !visible
@@ -748,25 +749,25 @@ function setupSearch(signal: AbortSignal) {
     invalidate()
     results.innerHTML = ''
     retry && (retry.hidden = true)
-    setHint('Type to search posts and pages.')
-    announce('Search cleared.')
+    setHint(t('search.hint'))
+    announce(t('search.cleared'))
   }
 
   const loadForRetry = (id: number) => {
     if (!valid(id)) return
     results.innerHTML = ''
     retry && (retry.hidden = true)
-    setHint('Loading search index.')
-    announce('Loading search index.')
+    setHint(t('search.loading'))
+    announce(t('search.loading'))
     void loadPagefind().then((pf) => {
       if (!valid(id)) return
       if (!pf) {
         setHint(unavailableMessage)
         retry && (retry.hidden = false)
-        announce('Search index unavailable. Retry search.')
+        announce(t('search.indexError'))
       } else if (!input.value.trim()) {
-        setHint('Type to search posts and pages.')
-        announce('Search ready.')
+        setHint(t('search.hint'))
+        announce(t('search.ready'))
       } else {
         void runSearch(id, input.value.trim())
       }
@@ -781,17 +782,17 @@ function setupSearch(signal: AbortSignal) {
     const id = ++generation
     results.innerHTML = ''
     retry && (retry.hidden = true)
-    setHint('Loading search index.')
-    announce('Loading search index.')
+    setHint(t('search.loading'))
+    announce(t('search.loading'))
     void loadPagefind().then((pf) => {
       if (!valid(id)) return
       if (pf === null) {
         setHint(unavailableMessage)
         retry && (retry.hidden = false)
-        announce('Search index unavailable. Retry search.')
+        announce(t('search.indexError'))
       } else if (!input.value.trim()) {
-        setHint('Type to search posts and pages.')
-        announce('Search ready.')
+        setHint(t('search.hint'))
+        announce(t('search.ready'))
       } else {
         void runSearch(id, input.value.trim())
       }
@@ -874,15 +875,15 @@ function setupSearch(signal: AbortSignal) {
     if (!valid(id)) return
     results.innerHTML = ''
     retry && (retry.hidden = true)
-    setHint('Searching…')
-    announce('Searching.')
+    setHint(t('search.searching'))
+    announce(t('search.searchingStatus'))
     try {
       const pf = await loadPagefind()
       if (!valid(id)) return
       if (!pf) {
         setHint(unavailableMessage)
         retry && (retry.hidden = false)
-        announce('Search index unavailable. Retry search.')
+        announce(t('search.indexError'))
         return
       }
       const found = await pf.search(query)
@@ -900,7 +901,7 @@ function setupSearch(signal: AbortSignal) {
           link.className = 'search-result'
           const title = document.createElement('span')
           title.className = 'search-result-title'
-          title.textContent = item.meta.title ?? 'Untitled'
+          title.textContent = item.meta.title ?? t('search.untitled')
           const excerpt = document.createElement('span')
           excerpt.className = 'search-result-excerpt'
           appendSafeExcerpt(excerpt, item.excerpt)
@@ -911,18 +912,18 @@ function setupSearch(signal: AbortSignal) {
       if (!results.childElementCount) {
         const empty = document.createElement('p')
         empty.className = 'search-empty'
-        empty.textContent = `No results for “${query}”.`
+        empty.textContent = t('search.empty', { query })
         results.append(empty)
       }
       const resultCount = results.querySelectorAll('.search-result').length
       announce(resultCount
-        ? `${resultCount} search ${resultCount === 1 ? 'result' : 'results'}.`
-        : `No results for “${query}”.`)
+        ? t(resultCount === 1 ? 'search.result' : 'search.results', { count: resultCount })
+        : t('search.empty', { query }))
     } catch {
       if (!valid(id)) return
-      setHint('Search failed. Please retry.')
+      setHint(t('search.failed'))
       retry && (retry.hidden = false)
-      announce('Search failed. Retry search.')
+      announce(t('search.failedStatus'))
     }
   }
 
@@ -948,8 +949,8 @@ function setupSearch(signal: AbortSignal) {
       }
       results.innerHTML = ''
       retry && (retry.hidden = true)
-      setHint('Searching…')
-      announce('Searching.')
+      setHint(t('search.searching'))
+      announce(t('search.searchingStatus'))
       timer = setTimeout(() => {
         void runSearch(id, query)
       }, 160)
@@ -976,7 +977,7 @@ function setupHeadingAnchors() {
     anchor.className = 'heading-anchor'
     anchor.href = `#${heading.id}`
     anchor.textContent = heading.tagName.toLowerCase()
-    anchor.setAttribute('aria-label', `Link to “${heading.textContent ?? ''}”`)
+    anchor.setAttribute('aria-label', t('heading.link', { heading: heading.textContent ?? '' }))
     heading.append(anchor)
   }
 }
