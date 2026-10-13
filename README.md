@@ -129,13 +129,15 @@ For repeatable local resource measurements, run `pnpm run measure:performance ba
 
 Run `pnpm run check` and `pnpm run build` before opening a pull request. See [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`GIT规范.md`](GIT规范.md) for the full checklist and repository conventions.
 
+For theme upgrades and releases, use [UPGRADING.md](UPGRADING.md), [CHANGELOG.md](CHANGELOG.md) and [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md). Preserve personal configuration/content; local validation is not remote CI or deployment evidence.
+
 For interaction changes, install Chromium and test the freshly built site:
 
 ```bash
 pnpm exec playwright install chromium && pnpm run build && pnpm run test:browser
 ```
 
-The suite starts production previews on ports 4399 (normal build), 4400 (comment fixtures) and 4401 (Chinese configuration); all three ports must be available. `test:browser` first builds isolated fixtures under `docs/`, leaving the deployable `dist/` unchanged. It covers search, responsive reading interactions, contribution cache/error/timeout behavior, enabled/disabled comments, Chinese UI and custom labels across soft navigation. Third-party responses are controlled locally; no personal token or real comment submission is needed. Reports and screenshots are saved under `docs/browser-evidence/`; screen-reader and deployed-site checks require separate validation.
+The suite starts production previews on ports 4399 (normal build), 4400 (integration/series fixtures) and 4401 (Chinese configuration); all three ports must be available. `test:browser` first builds isolated fixtures under `docs/`, including a no-series configuration, leaving the deployable `dist/` unchanged. It covers search, responsive reading, cover sizing, contributions, comments, localization, series and generated canonical/RSS/sitemap/robots/Pagefind artifacts. Third-party responses are controlled locally; no personal token or real comment submission is needed. Reports and screenshots are saved under `docs/browser-evidence/`; screen-reader and deployed-site checks require separate validation.
 
 ## Thanks
 

@@ -4,8 +4,22 @@ All notable changes to Serene are documented here.
 
 ## Unreleased
 
+This section describes local theme work; no version tag or public release has been created.
+
+### Added
+
+- Configurable English / Simplified Chinese interface copy with shared server/client messages and English fallback.
+- Optional article series with explicit order, index/detail pages, current position and series previous/next navigation.
+- Chromium regression coverage for search, responsive reading, optional integrations, localization and series.
+- Repeatable performance measurement and release artifact checks, with upgrade and release checklists.
+
 ### Fixed
 
+- Search races after edits, clearing, closing and soft navigation; recoverable index/query failures and safe result rendering.
+- Search keyboard/focus behavior and accessible status markup; composition events do not issue preedit queries.
+- Contribution requests and late comment imports are bounded to the current page lifecycle; errors and stalled loading have readable fallbacks.
+- Responsive homepage and card spacing, scrolling-navigation width, image zoom cleanup and footer spacing.
+- Article cover size declarations now match the existing reading column, avoiding oversized responsive-image downloads.
 - Footnote previews now match the percent-encoded ids that
   `mdast-util-to-hast` emits. Non-ASCII labels such as `[^注一]` had silently
   lost their preview, and a literal `%` in a label threw a `URIError` that
@@ -52,6 +66,22 @@ All notable changes to Serene are documented here.
 - Post meta tags dropped an opacity that put them at 2.86:1
 - Collapsible and non-collapsible callouts share the same narrow-screen
   padding
+
+### Configuration and compatibility
+
+- New `uiLocale: 'en' | 'zh-CN'` defaults to English; `locale` and `dateLocale` keep independent meanings.
+- Navigation supports `labelKey`; existing explicit labels retain priority.
+- New optional `series: { id, title, order }` requires no migration for ordinary posts. Series IDs determine `/series/<id>` URLs.
+- Series articles use reading order instead of chronological bottom navigation; production drafts remain excluded.
+- pnpm is the package manager; use the committed lockfile and repository version pin.
+- No newly enabled external service. Waline remains off; the existing demo contribution widget must be configured or disabled by the site owner.
+
+### Verification limits
+
+- Local automated browser checks do not certify a real screen reader, remote CI, a production host, or third-party service availability.
+- Human screen-reader acceptance remains open. See the local roadmap evidence and [release checklist](RELEASE_CHECKLIST.md).
+
+Before a future release, move these entries under the actual version/date, add any intervening changes and record its real verification evidence. Do not infer a released version from `package.json` alone.
 
 ## 1.0.0 — 2026-07-27
 

@@ -129,13 +129,15 @@ astro-theme-serene/
 
 提交 PR 前运行 `pnpm run check` 和 `pnpm run build`。完整检查见 [`CONTRIBUTING.md`](CONTRIBUTING.md)，仓库约定见 [`GIT规范.md`](GIT规范.md)。
 
+主题升级与发布请按 [UPGRADING.md](UPGRADING.md)、[CHANGELOG.md](CHANGELOG.md) 和 [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) 执行。保留个人配置与内容；本地验证不等于远端 CI 或部署验收。
+
 修改交互后，安装 Chromium 并在最新生产构建上测试：
 
 ```bash
 pnpm exec playwright install chromium && pnpm run build && pnpm run test:browser
 ```
 
-测试会在 4399（正式构建）、4400（评论测试页面）与 4401（中文配置）端口启动独立生产预览，三个端口都需空闲。`test:browser` 先将隔离测试页面构建到 `docs/` 下，不改变用于部署的 `dist/`。覆盖搜索、响应式阅读交互、贡献图缓存 / 错误 / 超时、评论启用和禁用、中文界面和自定义标签的软导航行为。第三方响应在本地控制，无需个人 token 或真实评论提交。报告和截图保存在 `docs/browser-evidence/`；读屏软件和已部署站点需要单独验收。
+测试会在 4399（正式构建）、4400（集成 / 系列测试页面）与 4401（中文配置）端口启动独立生产预览，三个端口都需空闲。`test:browser` 先将隔离测试页面（含无系列配置）构建到 `docs/` 下，不改变用于部署的 `dist/`。覆盖搜索、响应式阅读、封面尺寸、贡献图、评论、界面语言、系列文章，以及 canonical / RSS / sitemap / robots / Pagefind 产物。第三方响应在本地控制，无需个人 token 或真实评论提交。报告和截图保存在 `docs/browser-evidence/`；读屏软件和已部署站点需要单独验收。
 
 ## 致谢
 
