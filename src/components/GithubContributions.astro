@@ -82,6 +82,8 @@ const placeholderDays = Array.from({ length: 53 * 7 })
 
   const CACHE_DURATION_MILLISECONDS = 60 * 60 * 1000
   const API_ENDPOINT = 'https://github-contributions-api.jogruber.de/v4/'
+  const REQUEST_TIMEOUT = 10_000
+  const pendingRequests = new Map<HTMLElement, AbortController>()
 
   function isContributionResponse(
     value: unknown
@@ -95,8 +97,11 @@ const placeholderDays = Array.from({ length: 53 * 7 })
         (contribution) =>
           contribution &&
           typeof contribution.date === 'string' &&
-          typeof contribution.count === 'number' &&
-          typeof contribution.level === 'number'
+          /^\d{4}-\d{2}-\d{2}$/.test(contribution.date) &&
+          Number.isFinite(parseCalendarDate(contribution.date).getTime()) &&
+          parseCalendarDate(contribution.date).toISOString().slice(0, 10) === contribution.date &&
+          Number.isInteger(contribution.count) && contribution.count >= 0 &&
+          Number.isInteger(contribution.level) && contribution.level >= 0 && contribution.level <= 4
       )
     )
   }
@@ -113,6 +118,7 @@ const placeholderDays = Array.from({ length: 53 * 7 })
       ) as Partial<CachedContributionResponse>
       if (
         typeof parsedValue.cachedAt !== 'number' ||
+        !Number.isFinite(parsedValue.cachedAt) || parsedValue.cachedAt < 0 || parsedValue.cachedAt > Date.now() ||
         !isContributionResponse(parsedValue.data)
       ) {
         localStorage.removeItem(cacheKey)
@@ -158,12 +164,13 @@ const placeholderDays = Array.from({ length: 53 * 7 })
     const scroller = root.querySelector<HTMLElement>(
       '[data-contribution-scroller]'
     )
-    if (
-      !grid ||
-      !scroller ||
-      data.contributions.length === 0
-    ) {
+    if (!grid || !scroller) {
       throw new Error('Contribution data is incomplete')
+    }
+
+    if (data.contributions.length === 0) {
+      showContributionMessage(root, 'No contribution activity available.', 'empty')
+      return
     }
 
     const sortedContributions = [...data.contributions].sort((first, second) =>
@@ -229,13 +236,14 @@ const placeholderDays = Array.from({ length: 53 * 7 })
     requestAnimationFrame(() => scrollToLatest(scroller))
   }
 
-  function showContributionError(root: HTMLElement): void {
+  function showContributionMessage(root: HTMLElement, text: string, state: string): void {
     const message = document.createElement('p')
     message.className = 'github-contributions__error'
-    message.textContent = 'Contribution data unavailable.'
+    message.textContent = text
+    message.setAttribute('role', 'status')
 
     root.replaceChildren(message)
-    root.dataset.state = 'error'
+    root.dataset.state = state
     root.setAttribute('aria-busy', 'false')
   }
 
@@ -340,7 +348,7 @@ const placeholderDays = Array.from({ length: 53 * 7 })
     const username = root.dataset.username
     const locale = root.dataset.locale ?? 'en-US'
     if (!username) {
-      showContributionError(root)
+      showContributionMessage(root, 'Contribution data unavailable.', 'error')
       return
     }
 
@@ -349,6 +357,7 @@ const placeholderDays = Array.from({ length: 53 * 7 })
     const cacheIsFresh =
       cachedResponse !== null &&
       Date.now() - cachedResponse.cachedAt < CACHE_DURATION_MILLISECONDS
+    if (!cacheIsFresh && cachedResponse?.data.contributions.length === 0) cachedResponse = null
 
     if (cachedResponse) {
       try {
@@ -359,9 +368,13 @@ const placeholderDays = Array.from({ length: 53 * 7 })
       }
     }
 
+    const controller = new AbortController()
+    pendingRequests.set(root, controller)
+    const isCurrent = () => root.isConnected && pendingRequests.get(root) === controller
+    const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT)
     try {
       const endpoint = `${API_ENDPOINT}${encodeURIComponent(username)}?y=last`
-      const response = await fetch(endpoint)
+      const response = await fetch(endpoint, { signal: controller.signal })
       if (!response.ok) throw new Error(`GitHub API returned ${response.status}`)
 
       const data: unknown = await response.json()
@@ -369,10 +382,16 @@ const placeholderDays = Array.from({ length: 53 * 7 })
         throw new Error('GitHub API returned an unexpected response')
       }
 
-      writeCachedContributions(cacheKey, data)
+      if (!isCurrent() || controller.signal.aborted) return
       renderContributionCalendar(root, data, username, locale)
+      writeCachedContributions(cacheKey, data)
     } catch {
-      if (!cachedResponse) showContributionError(root)
+      if (isCurrent() && !cachedResponse) {
+        showContributionMessage(root, 'Contribution data unavailable.', 'error')
+      }
+    } finally {
+      window.clearTimeout(timeout)
+      if (pendingRequests.get(root) === controller) pendingRequests.delete(root)
     }
   }
 
@@ -400,6 +419,10 @@ const placeholderDays = Array.from({ length: 53 * 7 })
   }
 
   initializeGithubContributionCalendars()
+  document.addEventListener('astro:before-swap', () => {
+    pendingRequests.forEach(controller => controller.abort())
+    pendingRequests.clear()
+  })
   document.addEventListener(
     'astro:page-load',
     initializeGithubContributionCalendars

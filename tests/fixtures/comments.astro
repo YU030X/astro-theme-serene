@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../src/layouts/BaseLayout.astro'
+import WalineThread from '../../src/components/WalineThread.astro'
+---
+<BaseLayout title="Comment integration fixture" noindex>
+  <article class="mx-auto max-w-[40rem] pt-16">
+    <h1>Readable article</h1>
+    <p>Reading and navigation remain available when comments fail.</p>
+    <a href="/__fixtures/comments/first">First thread</a>
+    <a href="/__fixtures/comments/second">Second thread</a>
+    <a href="/blog/">Leave comments</a>
+    <WalineThread serverURL="https://comments.example.test" />
+  </article>
+</BaseLayout>

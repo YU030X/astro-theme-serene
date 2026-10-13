@@ -18,7 +18,8 @@ const { serverURL } = Astro.props
   <h2 class="mb-5 font-serif text-section font-semibold tracking-tight text-ink">
     Comments
   </h2>
-  <div id="waline-thread" data-waline-server={serverURL}></div>
+  <p data-waline-status role="status" class="text-sm text-muted">Loading comments…</p>
+  <div id="waline-thread" data-waline-server={serverURL} aria-busy="true"></div>
 </section>
 
 <script>
@@ -27,6 +28,11 @@ const { serverURL } = Astro.props
     destroy: () => void
   }
   let walineInstance: WalineInstance | null = null
+  let activeElement: HTMLElement | null = null
+  let generation = 0
+  let themeObserver: MutationObserver | null = null
+  let contentObserver: MutationObserver | null = null
+  let loadingTimer: number | undefined
 
   const currentTheme = () =>
     document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
@@ -37,38 +43,91 @@ const { serverURL } = Astro.props
   // function it becomes a chunk that is only fetched once a thread mounts.
   async function mountWaline() {
     const el = document.getElementById('waline-thread')
-    if (!el) return
+    if (!el || el === activeElement) return
     const serverURL = el.dataset.walineServer
-    if (!serverURL) return
-
-    const { init } = await import('@waline/client')
-
-    // Guard against a soft navigation completing during the await.
-    if (!document.getElementById('waline-thread')) return
-
-    walineInstance = init({
-      el: '#waline-thread',
-      serverURL,
-      path: window.location.pathname,
-      dark: "[data-theme='dark']",
-      reaction: false
-    }) as WalineInstance | null
+    teardownWaline()
+    activeElement = el
+    const ownGeneration = generation
+    const path = window.location.pathname
+    const status = el.parentElement?.querySelector<HTMLElement>('[data-waline-status]')
+    const isCurrent = () => generation === ownGeneration && el.isConnected && activeElement === el
+    const fail = () => {
+      if (!isCurrent()) return
+      teardownWaline()
+      el.setAttribute('aria-busy', 'false')
+      el.dataset.state = 'error'
+      if (status) {
+        status.hidden = false
+        status.textContent = 'Comments unavailable. Reload the page to retry.'
+      }
+    }
+    if (!serverURL) { fail(); return }
+    loadingTimer = window.setTimeout(fail, 15_000)
+    try {
+      const { init } = await import('@waline/client')
+      if (!isCurrent()) return
+      walineInstance = init({
+        el,
+        serverURL,
+        path,
+        dark: currentTheme() === 'dark',
+        reaction: false,
+        locale: { refresh: 'Retry comments' }
+      }) as WalineInstance | null
+      if (!walineInstance) throw new Error('Comments could not initialize')
+      // Waline v3 exposes request state through the list's loading / retry UI.
+      // Observe only that list (not the editor's emoji loader). Integration
+      // tests exercise real Waline DOM so an upstream markup change is caught.
+      const reflectState = () => {
+        if (!isCurrent()) return
+        const list = el.querySelector('[data-waline]')
+        if (!list) return
+        const loading = !!list.querySelector(':scope > .wl-loading')
+        const retry = list.querySelector(':scope > .wl-operation > button')?.textContent === 'Retry comments'
+        el.setAttribute('aria-busy', String(loading))
+        el.dataset.state = loading ? 'loading' : retry ? 'error' : 'ready'
+        if (loading) {
+          loadingTimer ??= window.setTimeout(fail, 15_000)
+        } else {
+          window.clearTimeout(loadingTimer)
+          loadingTimer = undefined
+        }
+        if (status) {
+          status.hidden = !loading && !retry
+          status.textContent = loading ? 'Loading comments…' : 'Comments unavailable. Try the retry button below.'
+        }
+      }
+      contentObserver = new MutationObserver(reflectState)
+      contentObserver.observe(el, { childList: true, subtree: true })
+      reflectState()
+      themeObserver = new MutationObserver(() => {
+        if (isCurrent()) walineInstance?.update({ dark: currentTheme() === 'dark' })
+      })
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+      })
+    } catch {
+      fail()
+    }
   }
 
   function teardownWaline() {
+    generation += 1
+    window.clearTimeout(loadingTimer)
+    loadingTimer = undefined
+    themeObserver?.disconnect()
+    themeObserver = null
+    contentObserver?.disconnect()
+    contentObserver = null
     walineInstance?.destroy()
     walineInstance = null
+    activeElement = null
   }
 
   document.addEventListener('astro:page-load', () => void mountWaline())
   document.addEventListener('astro:before-swap', teardownWaline)
-
-  new MutationObserver(() => {
-    walineInstance?.update({ dark: currentTheme() === 'dark' })
-  }).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme']
-  })
+  void mountWaline()
 </script>
 
 {/* Waline's DOM is runtime-injected and never gets Astro's scoped attribute — must stay is:global. */}

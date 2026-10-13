@@ -58,7 +58,7 @@ Start with [`src/site.config.ts`](src/site.config.ts): site identity, author URL
 
 UI copy is English and is not translated by `locale` — see [Localization](#localization).
 
-Waline is disabled by default. Enable them only after adding your own server URL.
+Waline is disabled by default. Enable it only after adding your own server URL. Failed comment requests show a retry status; stalled loading stops after 15 seconds. Contribution requests time out after 10 seconds and retain stale cached data when a refresh fails.
 
 ## Localization
 
@@ -115,7 +115,7 @@ For interaction changes, install Chromium and test the freshly built site:
 pnpm exec playwright install chromium && pnpm run build && pnpm run test:browser
 ```
 
-The suite starts its own production preview on port 4399. It covers search timing, keyboard navigation, excerpt rendering and real Pagefind searches, plus responsive layouts, mobile menus, table of contents, image zoom, theme switching and soft navigation. Third-party contribution responses are mocked. Reports and screenshots are saved locally under `docs/browser-evidence/`; screen-reader and deployed-site checks require separate validation.
+The suite starts production previews on ports 4399 (normal build) and 4400 (test fixtures); both ports must be available. `test:browser` first builds the fixtures into `docs/browser-fixture-dist/`, leaving the deployable `dist/` unchanged. It covers search, responsive reading interactions, contribution cache/error/timeout behavior, and enabled/disabled comments across soft navigation. Third-party responses are controlled locally; no personal token or real comment submission is needed. Reports and screenshots are saved under `docs/browser-evidence/`; screen-reader and deployed-site checks require separate validation.
 
 ## Thanks
 

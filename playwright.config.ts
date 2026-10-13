@@ -13,10 +13,15 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     ...devices['Desktop Chrome']
   },
-  webServer: {
+  webServer: [{
     command: 'node tests/browser/preview-server.mjs',
     url: 'http://127.0.0.1:4399',
     reuseExistingServer: false,
     timeout: 30_000
-  }
+  }, {
+    command: 'node tests/browser/preview-server.mjs --fixtures',
+    url: 'http://127.0.0.1:4400',
+    reuseExistingServer: false,
+    timeout: 30_000
+  }]
 })

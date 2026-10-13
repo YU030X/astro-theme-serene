@@ -58,7 +58,7 @@ git clone https://github.com/yu030x/astro-theme-serene.git my-blog && cd my-blog
 
 界面文案固定为英文，不随 `locale` 变化，详见[多语言](#多语言)。
 
-Waline 默认关闭。只有在填入自己的服务地址后再启用。
+Waline 默认关闭。填入自己的服务地址后再启用。评论请求失败会显示重试状态，持续加载超过 15 秒后停止；贡献图请求超过 10 秒后停止，刷新失败时保留过期缓存。
 
 ## 多语言
 
@@ -108,7 +108,7 @@ astro-theme-serene/
 pnpm exec playwright install chromium && pnpm run build && pnpm run test:browser
 ```
 
-测试会在 4399 端口启动独立生产预览，覆盖搜索时序、键盘操作、摘要渲染、真实 Pagefind 搜索，以及响应式排版、移动菜单、目录、图片放大、主题切换和软导航。贡献图使用模拟响应。报告和截图保存在本地 `docs/browser-evidence/`；读屏软件和已部署站点需要单独验收。
+测试会在 4399（正式构建）与 4400（测试页面）端口启动独立生产预览，两个端口都需空闲。`test:browser` 先将测试页面构建到 `docs/browser-fixture-dist/`，不改变用于部署的 `dist/`。覆盖搜索、响应式阅读交互、贡献图缓存 / 错误 / 超时，以及评论启用和禁用时的软导航行为。第三方响应在本地控制，无需个人 token 或真实评论提交。报告和截图保存在 `docs/browser-evidence/`；读屏软件和已部署站点需要单独验收。
 
 ## 致谢
 
