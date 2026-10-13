@@ -112,8 +112,8 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
                 src={cover.src}
                 alt={cover.alt}
                 width={1400}
-                widths={[720, 1080, 1400]}
-                sizes="(min-width: 800px) 768px, 94vw"
+                widths={[640, 720, 1080, 1280, 1400]}
+                sizes="(min-width: 696px) 640px, (min-width: 640px) calc(100vw - 56px), calc(100vw - 32px)"
                 loading="eager"
                 fetchpriority="high"
                 class="media-dim block h-full w-full object-[50%_35%] object-cover"

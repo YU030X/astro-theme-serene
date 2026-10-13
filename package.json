@@ -22,6 +22,7 @@
     "build": "astro build && pagefind --site dist",
     "build:fixtures": "astro build --config tests/fixtures/astro.config.ts && astro build --config tests/fixtures/localized.config.ts && pagefind --site docs/browser-localized-dist && astro build --config tests/fixtures/no-series.config.ts",
     "test:browser": "pnpm run build:fixtures && playwright test",
+    "measure:performance": "astro build --config tests/fixtures/performance.config.ts && node tests/performance/measure.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "astro": "astro"

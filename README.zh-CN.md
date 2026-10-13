@@ -125,6 +125,8 @@ astro-theme-serene/
 
 ## 参与贡献
 
+可用 `pnpm run measure:performance baseline` 复测本地资源基线；固定流程、适用边界及前后对照见 [PERFORMANCE.md](PERFORMANCE.md)。
+
 提交 PR 前运行 `pnpm run check` 和 `pnpm run build`。完整检查见 [`CONTRIBUTING.md`](CONTRIBUTING.md)，仓库约定见 [`GIT规范.md`](GIT规范.md)。
 
 修改交互后，安装 Chromium 并在最新生产构建上测试：

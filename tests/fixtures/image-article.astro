@@ -1,0 +1,20 @@
+---
+import { Image } from 'astro:assets'
+import BaseLayout from '../../src/layouts/BaseLayout.astro'
+import dawn from '../../src/assets/posts/dawn.jpg'
+import sage from '../../src/assets/posts/sage.jpg'
+import sea from '../../src/assets/posts/sea.jpg'
+import slate from '../../src/assets/posts/slate.jpg'
+const images = [dawn, sage, sea, slate, dawn, sea, sage, slate]
+---
+<BaseLayout title="Image-heavy measurement fixture" noindex>
+  <article class="prose mx-auto max-w-[var(--container-prose)] pt-14">
+    <h1>Image-heavy measurement fixture</h1>
+    <p>This synthetic article exercises eight image elements, repeated assets, lazy loading and image zoom. It is not shipped demo content.</p>
+    {images.map((src, index) => <section>
+      <h2>Image {index + 1}</h2>
+      <p>A quiet image in a reading column. Every image reserves its intrinsic aspect ratio before decoding. Scroll through the entire article to measure deferred requests separately from the first viewport.</p>
+      <Image src={src} alt={`Measurement landscape ${index + 1}`} width={1280} widths={[640, 1280]} sizes="(min-width: 696px) 640px, calc(100vw - 32px)" loading="lazy" decoding="async" />
+    </section>)}
+  </article>
+</BaseLayout>

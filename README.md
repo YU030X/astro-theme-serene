@@ -125,6 +125,8 @@ astro-theme-serene/
 
 ## Contributing
 
+For repeatable local resource measurements, run `pnpm run measure:performance baseline`; see [PERFORMANCE.md](PERFORMANCE.md) for the fixed protocol, limitations and before/after comparison.
+
 Run `pnpm run check` and `pnpm run build` before opening a pull request. See [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`GIT规范.md`](GIT规范.md) for the full checklist and repository conventions.
 
 For interaction changes, install Chromium and test the freshly built site:
