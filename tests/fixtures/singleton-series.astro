@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../../src/layouts/BaseLayout.astro'
+import SeriesNav from '../../src/components/SeriesNav.astro'
+const series = { id: 'single-part', title: 'A single-part series', posts: [
+  { id: 'single-part', data: { title: 'Only part', series: { id: 'single-part', title: 'A single-part series', order: 10 } } }
+] }
+---
+<BaseLayout title="Singleton series fixture" noindex>
+  <SeriesNav {series} currentId="single-part" />
+</BaseLayout>

@@ -9,6 +9,7 @@ export default defineConfig({
     name: 'serene-browser-fixtures',
     hooks: {
       'astro:config:setup': ({ injectRoute }) => {
+        injectRoute({ pattern: '/__fixtures/series/singleton', entrypoint: './tests/fixtures/singleton-series.astro' })
         for (const name of ['first', 'second']) {
           injectRoute({
             pattern: `/__fixtures/comments/${name}`,

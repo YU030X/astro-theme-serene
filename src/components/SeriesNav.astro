@@ -1,0 +1,31 @@
+---
+import type { PostSeries } from '@/lib/series'
+import { t } from '@/lib/ui'
+
+interface Props { series: PostSeries; currentId: string }
+const { series, currentId } = Astro.props
+const index = series.posts.findIndex(post => post.id === currentId)
+const previous = series.posts[index - 1]
+const next = series.posts[index + 1]
+---
+
+{index >= 0 && (
+  <nav class="mt-12 rounded-xl border border-line p-5" aria-label={t('series.navigation')} data-pagefind-ignore>
+    <a class="font-medium text-ink underline decoration-line underline-offset-4 break-words" href={`/series/${series.id}`}>
+      {series.title}
+    </a>
+    <p class="mt-2 text-sm text-quiet">{t('series.position', { current: index + 1, total: series.posts.length })}</p>
+    {(previous || next) && (
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        {previous && <a class="min-w-0 rounded-lg py-2 text-sm hover:text-accent" href={`/blog/${previous.id}`} rel="prev">
+          <span class="block text-xs text-quiet">{t('series.previous')}</span>
+          <span class="mt-1 block break-words">{previous.data.title}</span>
+        </a>}
+        {next && <a class="min-w-0 rounded-lg py-2 text-sm hover:text-accent sm:col-start-2 sm:text-right" href={`/blog/${next.id}`} rel="next">
+          <span class="block text-xs text-quiet">{t('series.next')}</span>
+          <span class="mt-1 block break-words">{next.data.title}</span>
+        </a>}
+      </div>
+    )}
+  </nav>
+)}

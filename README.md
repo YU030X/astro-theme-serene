@@ -77,6 +77,23 @@ Default navigation entries use translation keys, such as `{ labelKey: 'nav.blog'
 Astro components and browser scripts share `src/lib/i18n.ts`. Missing translated keys fall back to English, and parameters are rendered as text. This feature does not add multilingual content routes or translate articles.
 
 
+## Series
+
+Existing articles need no migration. To group a post, add this optional frontmatter object:
+
+```yaml
+series:
+  id: writing-a-series
+  title: Writing a small series
+  order: 1
+```
+
+`id` is a stable lowercase slug (letters, digits and single hyphens) used in `/series/<id>`. Every part must use the same nonempty `title` and a unique positive integer `order`. Ordering follows `order`, not dates or filenames; gaps are allowed. Missing fields, invalid values, duplicate orders and conflicting titles fail validation with an error. Single-post series are supported.
+
+The blog index shows a Series link only when a visible series exists. Series articles show their position and previous/next parts instead of chronological navigation; ordinary articles keep their existing navigation. Production excludes drafts from series routes, counts and links. Development includes drafts and validates them against published parts; the content schema validates each draft's fields in either mode.
+
+The `series-planning.md`, `series-building.md` and `series-draft.md` examples deliberately use dates that differ from reading order. Remove or replace them with your own content. Renaming a series `id` changes its URL; keep IDs stable or configure redirects on your host. Series titles and article text are authored content, while navigation labels follow `uiLocale`.
+
 ## Project structure
 
 ```text

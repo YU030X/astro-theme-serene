@@ -1,0 +1,27 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageHead from '@/components/PageHead.astro'
+import PostRow from '@/components/PostRow.astro'
+import { getPosts, type Post } from '@/lib/utils'
+import { getSeries, type PostSeries } from '@/lib/series'
+import { t, postCount } from '@/lib/ui'
+
+export async function getStaticPaths() {
+  return getSeries(await getPosts(), import.meta.env.DEV).map(series => ({
+    params: { series: series.id }, props: { series }
+  }))
+}
+interface Props { series: PostSeries<Post> }
+const { series } = Astro.props
+---
+<BaseLayout title={series.title} description={t('series.detail', { title: series.title })}>
+  <section class="mx-auto max-w-[var(--container-reading)] pt-14 sm:pt-16">
+    <PageHead title={series.title}>
+      <a slot="eyebrow" class="link-underline text-sm text-quiet" href="/series">{t('series.all')}</a>
+      {postCount(series.posts.length)}
+    </PageHead>
+    <ol class="post-list mt-14" aria-label={t('series.ordered')}>
+      {series.posts.map(post => <PostRow {post} />)}
+    </ol>
+  </section>
+</BaseLayout>

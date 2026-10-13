@@ -12,15 +12,19 @@ import PostLicense from '@/components/PostLicense.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { formatCategory, getPosts, readingTime, type Post } from '@/lib/utils'
 import { t } from '@/lib/ui'
+import SeriesNav from '@/components/SeriesNav.astro'
+import { getSeries, type PostSeries } from '@/lib/series'
 
 export async function getStaticPaths() {
   const posts = await getPosts()
+  const series = getSeries(posts, import.meta.env.DEV)
   return posts.map((post, i) => ({
     params: { id: post.id },
     props: {
       post,
       newer: posts[i - 1] ?? null,
-      older: posts[i + 1] ?? null
+      older: posts[i + 1] ?? null,
+      series: series.find(group => group.id === post.data.series?.id) ?? null
     }
   }))
 }
@@ -29,9 +33,10 @@ interface Props {
   post: Post
   newer: Post | null
   older: Post | null
+  series: PostSeries<Post> | null
 }
 
-const { post, newer, older } = Astro.props
+const { post, newer, older, series } = Astro.props
 const { Content, headings } = await render(post)
 const {
   title,
@@ -224,7 +229,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
           <LikeButton compact slot="article-actions" />
         </PostLicense>
 
-        <footer class="mt-12" data-pagefind-ignore>
+        {series ? <SeriesNav {series} currentId={post.id} /> : <footer class="mt-12" data-pagefind-ignore>
           <div class="grid gap-4 sm:grid-cols-2">
             {
               older ? (
@@ -266,7 +271,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
               )
             }
           </div>
-        </footer>
+        </footer>}
 
         <Comments />
       </div>

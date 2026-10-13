@@ -2,6 +2,10 @@
 export const en = {
   'nav.blog': 'Blog', 'nav.projects': 'Projects', 'nav.links': 'Links', 'nav.about': 'About',
   'nav.archive': 'Archive', 'nav.categories': 'Categories', 'nav.tags': 'Tags',
+  'series.title': 'Series', 'series.description': 'Follow a topic in its intended reading order.',
+  'series.empty': 'No series yet.', 'series.detail': 'Read {title} in order.', 'series.all': 'All series',
+  'series.ordered': 'Articles in reading order', 'series.navigation': 'Series navigation',
+  'series.position': 'Part {current} of {total}', 'series.previous': 'Previous in series', 'series.next': 'Next in series',
   'nav.home': '{title} — home', 'nav.main': 'Main navigation', 'nav.mobile': 'Mobile navigation',
   'nav.menu': 'Menu', 'nav.indexes': 'Blog indexes', 'nav.footer': 'Footer',
   'common.skip': 'Skip to content', 'common.rss': 'RSS feed', 'common.more': 'More',
@@ -87,6 +91,10 @@ export type MessageParams = Record<string, string | number>
 export const zhCN: Partial<Record<MessageKey, string>> = {
   'nav.blog': '文章', 'nav.projects': '项目', 'nav.links': '友链', 'nav.about': '关于',
   'nav.archive': '归档', 'nav.categories': '分类', 'nav.tags': '标签',
+  'series.title': '系列', 'series.description': '按阅读顺序探索一个主题。',
+  'series.empty': '暂无系列文章。', 'series.detail': '按顺序阅读“{title}”。', 'series.all': '全部系列',
+  'series.ordered': '按阅读顺序排列的文章', 'series.navigation': '系列导航',
+  'series.position': '第 {current} 篇，共 {total} 篇', 'series.previous': '系列上一篇', 'series.next': '系列下一篇',
   'nav.home': '{title} — 首页', 'nav.main': '主导航', 'nav.mobile': '移动端导航',
   'nav.menu': '菜单', 'nav.indexes': '文章索引', 'nav.footer': '页脚导航',
   'common.skip': '跳转到正文', 'common.rss': 'RSS 订阅', 'common.more': '更多',

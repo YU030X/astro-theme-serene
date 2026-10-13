@@ -1,6 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content'
 
 import { siteConfig } from '@/site.config'
+import { getSeries } from './series'
 
 export type Post = CollectionEntry<'blog'>
 
@@ -9,6 +10,8 @@ export async function getPosts(): Promise<Post[]> {
   const posts = await getCollection('blog', ({ data }) =>
     import.meta.env.PROD ? !data.draft : true
   )
+  // Fail builds with actionable cross-document errors, before any page is emitted.
+  getSeries(posts, !import.meta.env.PROD)
   return posts.sort(
     (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
   )

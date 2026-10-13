@@ -1,0 +1,23 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageHead from '@/components/PageHead.astro'
+import EmptyState from '@/components/EmptyState.astro'
+import { getPosts } from '@/lib/utils'
+import { getSeries } from '@/lib/series'
+import { t, postCount } from '@/lib/ui'
+
+const series = getSeries(await getPosts(), import.meta.env.DEV)
+---
+<BaseLayout title={t('series.title')} description={t('series.description')}>
+  <section class="mx-auto max-w-[var(--container-reading)] pt-14 sm:pt-16">
+    <PageHead title={t('series.title')}>{t('series.description')}</PageHead>
+    {series.length ? <ul class="mt-14 space-y-4">
+      {series.map(group => <li>
+        <a class="flex flex-wrap items-baseline justify-between gap-3 rounded-xl border border-line p-5 hover:text-accent" href={`/series/${group.id}`}>
+          <span class="min-w-0 break-words font-medium">{group.title}</span>
+          <span class="text-sm text-quiet">{postCount(group.posts.length)}</span>
+        </a>
+      </li>)}
+    </ul> : <EmptyState>{t('series.empty')}</EmptyState>}
+  </section>
+</BaseLayout>

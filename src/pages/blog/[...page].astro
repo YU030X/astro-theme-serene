@@ -9,6 +9,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import { getPosts, type Post } from '@/lib/utils'
 import { siteConfig } from '@/site.config'
 import { t } from '@/lib/ui'
+import { getSeries } from '@/lib/series'
 
 export const getStaticPaths = (async ({ paginate }) => {
   const posts = await getPosts()
@@ -16,6 +17,7 @@ export const getStaticPaths = (async ({ paginate }) => {
 }) satisfies GetStaticPaths
 
 const { page } = Astro.props as { page: Page<Post> }
+const hasSeries = getSeries(await getPosts(), import.meta.env.DEV).length > 0
 ---
 
 <BaseLayout
@@ -27,7 +29,7 @@ const { page } = Astro.props as { page: Page<Post> }
       {t('blog.summary', { count: page.total })}
       <nav
         slot="after"
-        class="mt-5 flex items-center justify-center gap-6"
+        class="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-3"
         aria-label={t('nav.indexes')}
       >
         <a
@@ -42,6 +44,7 @@ const { page } = Astro.props as { page: Page<Post> }
           class="link-underline text-[0.85rem] font-medium text-quiet"
           href="/tags">{t('nav.tags')}</a
         >
+        {hasSeries && <a class="link-underline text-[0.85rem] font-medium text-quiet" href="/series">{t('series.title')}</a>}
       </nav>
     </PageHead>
 

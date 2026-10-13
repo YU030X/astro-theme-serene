@@ -1,6 +1,7 @@
 import { glob } from 'astro/loaders'
 import { z } from 'astro/zod'
 import { defineCollection } from 'astro:content'
+import { seriesSchema } from './lib/series'
 
 function dedupeLowercase(array: string[]) {
   return [...new Set(array.map((item) => item.trim().toLowerCase()))]
@@ -46,7 +47,8 @@ const blog = defineCollection({
           source: safeUrl.optional()
         })
         .optional(),
-      draft: z.boolean().default(false)
+      draft: z.boolean().default(false),
+      series: seriesSchema.optional()
     })
 })
 
