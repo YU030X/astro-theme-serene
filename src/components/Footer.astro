@@ -16,16 +16,18 @@ const secondaryLinks = [
   {/* Mirrors the page structure (padded 70rem shell → reading column) so the
       footer text sits exactly on the content axis. */}
   <div class="footer-shell mx-auto w-full max-w-[70rem]">
-    <div class="mx-auto w-full max-w-[var(--container-reading)] border-t border-line/70 py-10">
-    <div
-      class="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between"
-    >
-      <div>
-        <p class="text-sm text-quiet">
-          © {year} {siteConfig.author}.
-        </p>
-      </div>
-      <div class="flex items-center gap-0.5">
+    <div class="mx-auto w-full max-w-[var(--container-reading)] border-t border-line/70 py-6">
+    <div class="flex items-center justify-between gap-3 text-[0.8rem] text-quiet">
+      <nav class="flex flex-wrap gap-x-3 gap-y-2 sm:gap-x-5" aria-label={t('nav.footer')}>
+        {
+          secondaryLinks.map((link) => (
+            <a class="transition-colors hover:text-ink" href={link.href}>
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
+      <div class="flex shrink-0 items-center gap-0.5">
         {
           siteConfig.socials.map((social) => (
             <a
@@ -45,20 +47,9 @@ const secondaryLinks = [
         </a>
       </div>
     </div>
-
-    <div
-      class="mt-10 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 text-[0.8rem] text-quiet"
-    >
-      <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label={t('nav.footer')}>
-        {
-          secondaryLinks.map((link) => (
-            <a class="transition-colors hover:text-ink" href={link.href}>
-              {link.label}
-            </a>
-          ))
-        }
-      </nav>
-      <p>
+    <div class="mt-3 grid grid-cols-2 items-baseline gap-4 text-[0.8rem] text-quiet sm:flex sm:justify-between">
+      <p>© {year} {siteConfig.author}. All rights reserved.</p>
+      <p class="text-right">
         {t('footer.built')}{' '}
         <a
           class="font-medium transition-colors hover:text-ink"

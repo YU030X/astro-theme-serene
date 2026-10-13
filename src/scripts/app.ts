@@ -217,10 +217,19 @@ function settleSoftNavigationReveals() {
 function setupBackToTop(signal: AbortSignal) {
   const button = document.getElementById('back-to-top')
   if (!button) return
-  const update = () =>
+  const footer = document.querySelector('body > footer .footer-shell > div')
+  const update = () => {
     button.classList.toggle('visible', window.scrollY > 640)
+    const footerBounds = footer?.getBoundingClientRect()
+    const buttonBounds = button.getBoundingClientRect()
+    const besideFooter = footerBounds && buttonBounds.left < footerBounds.right && buttonBounds.right > footerBounds.left
+    button.style.bottom = besideFooter && footerBounds.top < window.innerHeight
+      ? `calc(${window.innerHeight - footerBounds.top + 16}px + env(safe-area-inset-bottom))`
+      : ''
+  }
   update()
   window.addEventListener('scroll', update, { passive: true, signal })
+  window.addEventListener('resize', update, { passive: true, signal })
   button.addEventListener(
     'click',
     () =>
