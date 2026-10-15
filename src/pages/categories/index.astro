@@ -5,6 +5,7 @@ import PageHead from '@/components/PageHead.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { formatCategory, getCategories, getPosts } from '@/lib/utils'
 import { t } from '@/lib/ui'
+import { taxonomyHref } from '@/lib/taxonomy'
 
 const posts = await getPosts()
 const categories = getCategories(posts)
@@ -22,7 +23,7 @@ const categories = getCategories(posts)
           {categories.map(({ category, count }, index) => (
             <a
               class="soft-lift no-hover-lift group flex items-center justify-between rounded-2xl border border-line bg-card px-5 py-4"
-              href={`/categories/${category}`}
+              href={taxonomyHref('categories', category)}
               style={`--reveal-delay: ${(index % 8) * 40}ms`}
               data-reveal
             >

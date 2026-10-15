@@ -5,6 +5,19 @@ import base from '../../astro.config'
 export default defineConfig({
   ...base,
   outDir: './docs/browser-fixture-dist',
+  vite: {
+    ...base.vite,
+    plugins: [...(base.vite?.plugins ?? []), {
+      name: 'serene-taxonomy-fixture',
+      enforce: 'pre',
+      transform(source, id) {
+        if (!id.replaceAll('\\', '/').endsWith('/src/lib/utils.ts')) return
+        const marker = 'return posts.sort('
+        if (!source.includes(marker)) throw new Error('Update taxonomy fixture for getPosts')
+        return source.replace(marker, 'return posts.map(post => ({ ...post, data: { ...post.data, category: "研发&Design+Tools", tags: ["c++", "研发", "rock&roll"] } })).sort(')
+      }
+    }]
+  },
   integrations: [...(base.integrations ?? []), {
     name: 'serene-browser-fixtures',
     hooks: {

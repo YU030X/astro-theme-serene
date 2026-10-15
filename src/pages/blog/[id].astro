@@ -12,6 +12,7 @@ import PostLicense from '@/components/PostLicense.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { formatCategory, getPosts, readingTime, type Post } from '@/lib/utils'
 import { t } from '@/lib/ui'
+import { taxonomyHref } from '@/lib/taxonomy'
 import SeriesNav from '@/components/SeriesNav.astro'
 import { getSeries, type PostSeries } from '@/lib/series'
 
@@ -180,7 +181,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
         <dd>
           <a
             class="link-underline"
-            href={`/categories/${category}`}
+            href={taxonomyHref('categories', category)}
           >
             {formatCategory(category)}
           </a>
@@ -191,7 +192,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
               <dt class="text-quiet">{t('nav.tags')}</dt>
               <dd class="flex flex-wrap gap-x-3 gap-y-1">
                 {tags.map((tag) => (
-                  <a class="link-underline" href={`/tags/${tag}`}>
+                  <a class="link-underline" href={taxonomyHref('tags', tag)}>
                     {tag}
                   </a>
                 ))}

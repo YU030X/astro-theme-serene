@@ -2,24 +2,11 @@ import { glob } from 'astro/loaders'
 import { z } from 'astro/zod'
 import { defineCollection } from 'astro:content'
 import { seriesSchema } from './lib/series'
+import { urlSegment } from './lib/taxonomy'
 
 function dedupeLowercase(array: string[]) {
   return [...new Set(array.map((item) => item.trim().toLowerCase()))]
 }
-
-/**
- * These become single URL segments verbatim. An empty value makes Astro throw
- * `Missing parameter`; a slash splits the route. Non-ASCII is fine.
- */
-const urlSegment = (label: string) =>
-  z
-    .string()
-    .trim()
-    .min(1, `${label} cannot be empty`)
-    .refine(
-      (value) => !/[/\\?#\s]/.test(value),
-      `${label} cannot contain slashes, '?', '#' or whitespace — use hyphens`
-    )
 
 /** Only http(s) is safe to put in an href. */
 const safeUrl = z
