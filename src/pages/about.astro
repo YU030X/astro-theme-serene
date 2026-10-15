@@ -47,7 +47,7 @@ import { t } from '@/lib/ui'
           for your own tools.
         </p>
         <div class="mt-6 space-y-6">
-          {toolGroups.map((group) => <ToolSection {group} />)}
+          {toolGroups.map((group, index) => <ToolSection {group} headingId={`tool-group-${index}`} />)}
         </div>
       </section>
 

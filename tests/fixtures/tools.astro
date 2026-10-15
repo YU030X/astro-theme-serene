@@ -1,0 +1,11 @@
+---
+import ToolSection from '../../src/components/ToolSection.astro'
+import BaseLayout from '../../src/layouts/BaseLayout.astro'
+
+const titles = ['Development', 'Development', 'A B', 'A  B', '中文工具']
+---
+<BaseLayout title="Tool group accessibility fixture">
+  {titles.map((title, index) => (
+    <ToolSection group={{ title, tools: [{ name: 'Example', description: 'Example tool' }] }} headingId={`tool-group-${index}`} />
+  ))}
+</BaseLayout>

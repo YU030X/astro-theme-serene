@@ -5,9 +5,11 @@ import type { ToolGroup } from '@/data/tools'
  *  Icons render grayscale and regain color on hover. */
 interface Props {
   group: ToolGroup
+  /** Unique within the page; independent of editable display labels. */
+  headingId: string
 }
 
-const { group } = Astro.props
+const { group, headingId } = Astro.props
 
 // tool.icon must match an @/assets/tools/*.svg basename; missing → no icon.
 const iconModules = import.meta.glob<string>('@/assets/tools/*.svg', {
@@ -24,10 +26,10 @@ for (const [path, raw] of Object.entries(iconModules)) {
 
 <section
   class="tool-group"
-  aria-labelledby={`tool-group-${group.title.toLowerCase().replace(/\s+/g, '-')}`}
+  aria-labelledby={headingId}
 >
   <h3
-    id={`tool-group-${group.title.toLowerCase().replace(/\s+/g, '-')}`}
+    id={headingId}
     class="document-eyebrow"
   >
     {group.title}
