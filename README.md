@@ -119,17 +119,16 @@ astro-theme-serene/
 ├── pnpm-workspace.yaml  # pnpm build-script permissions
 ├── tsconfig.json        # TypeScript configuration
 ├── CONTRIBUTING.md      # Contribution checks
-├── GIT规范.md           # Git, branch and verification conventions
 └── LICENSE              # MIT license
 ```
 
 ## Contributing
 
-For repeatable local resource measurements, run `pnpm run measure:performance baseline`; see [PERFORMANCE.md](PERFORMANCE.md) for the fixed protocol, limitations and before/after comparison.
+For repeatable local resource measurements, run `pnpm run measure:performance baseline`.
 
-Run `pnpm run check` and `pnpm run build` before opening a pull request. See [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`GIT规范.md`](GIT规范.md) for the full checklist and repository conventions.
+Run `pnpm run check` and `pnpm run build` before opening a pull request. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full checklist.
 
-For theme upgrades and releases, use [UPGRADING.md](UPGRADING.md), [CHANGELOG.md](CHANGELOG.md) and [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md). Preserve personal configuration/content; local validation is not remote CI or deployment evidence.
+See [CHANGELOG.md](CHANGELOG.md) for notable changes. Preserve personal configuration/content when upgrading; local validation is not remote CI or deployment evidence.
 
 For interaction changes, install Chromium and test the freshly built site:
 

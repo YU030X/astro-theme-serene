@@ -119,17 +119,16 @@ astro-theme-serene/
 ├── pnpm-workspace.yaml  # pnpm 构建脚本权限
 ├── tsconfig.json        # TypeScript 配置
 ├── CONTRIBUTING.md      # 贡献检查说明
-├── GIT规范.md           # Git、分支与验证约定
 └── LICENSE              # MIT 许可证
 ```
 
 ## 参与贡献
 
-可用 `pnpm run measure:performance baseline` 复测本地资源基线；固定流程、适用边界及前后对照见 [PERFORMANCE.md](PERFORMANCE.md)。
+可用 `pnpm run measure:performance baseline` 复测本地资源基线。
 
-提交 PR 前运行 `pnpm run check` 和 `pnpm run build`。完整检查见 [`CONTRIBUTING.md`](CONTRIBUTING.md)，仓库约定见 [`GIT规范.md`](GIT规范.md)。
+提交 PR 前运行 `pnpm run check` 和 `pnpm run build`。完整检查见 [`CONTRIBUTING.md`](CONTRIBUTING.md)。
 
-主题升级与发布请按 [UPGRADING.md](UPGRADING.md)、[CHANGELOG.md](CHANGELOG.md) 和 [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) 执行。保留个人配置与内容；本地验证不等于远端 CI 或部署验收。
+变更记录见 [CHANGELOG.md](CHANGELOG.md)。升级时请保留个人配置与内容；本地验证不等于远端 CI 或部署验收。
 
 修改交互后，安装 Chromium 并在最新生产构建上测试：
 

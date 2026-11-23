@@ -84,7 +84,7 @@ This section describes local theme work; no version tag or public release has be
 ### Verification limits
 
 - Local automated browser checks do not certify a real screen reader, remote CI, a production host, or third-party service availability.
-- Human screen-reader acceptance remains open. See the local roadmap evidence and [release checklist](RELEASE_CHECKLIST.md).
+- Human screen-reader acceptance remains open.
 
 Before a future release, move these entries under the actual version/date, add any intervening changes and record its real verification evidence. Do not infer a released version from `package.json` alone.
 
