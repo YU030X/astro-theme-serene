@@ -37,15 +37,7 @@ pnpm-debug.log*
 *-desktop.png
 *-mobile.png
 
-
-skills-lock.json
 AGENTS.md
 CLAUDE.md
-ARCHITECTURE.md
-TODO.md
-openspec/
 
-demo/
-
-# local reference repositories
-other_base/
+docs/
