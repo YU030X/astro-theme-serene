@@ -18,15 +18,17 @@ This section describes local theme work; no version tag or public release has be
 - Search races after edits, clearing, closing and soft navigation; recoverable index/query failures and safe result rendering.
 - Search keyboard/focus behavior and accessible status markup; composition events do not issue preedit queries.
 - Contribution requests and late comment imports are bounded to the current page lifecycle; errors and stalled loading have readable fallbacks.
-- Responsive homepage and card spacing, scrolling-navigation width, image zoom cleanup and footer spacing.
+- Responsive homepage and card spacing, scrolling-navigation width, image zoom cleanup, footer row alignment, mobile credit stacking and copyright copy.
 - Article cover size declarations now match the existing reading column, avoiding oversized responsive-image downloads.
 - Footnote previews now match the percent-encoded ids that
   `mdast-util-to-hast` emits. Non-ASCII labels such as `[^注一]` had silently
   lost their preview, and a literal `%` in a label threw a `URIError` that
   emptied the article body while the build still exited 0
-- `category` and `tags` are validated as URL segments. A slash used to crash
-  routing with an unattributable "Missing parameter"; empty or whitespace
-  values produced broken links
+- `category` and `tags` are validated as URL segments and encoded in generated
+  links (`encodeURIComponent`). Slashes, `.` / `..`, `%` (including pre-encoded
+  values), control characters, and empty or whitespace values are rejected,
+  while valid special characters (e.g. `c++`, `rock&roll`) and non-ASCII labels
+  resolve cleanly
 - Cover `src` and `source` are restricted to http(s), so an attribution link
   can no longer be a `javascript:` URL
 - JSON-LD escapes `<`, so a title containing a closing script sequence no
@@ -66,6 +68,9 @@ This section describes local theme work; no version tag or public release has be
 - Post meta tags dropped an opacity that put them at 2.86:1
 - Collapsible and non-collapsible callouts share the same narrow-screen
   padding
+- Tool groups use explicit unique heading IDs (`aria-labelledby`) rather than
+  deriving IDs from display titles, preventing duplicate or non-ASCII heading
+  collisions
 
 ### Configuration and compatibility
 

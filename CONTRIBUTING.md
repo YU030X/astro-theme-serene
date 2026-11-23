@@ -30,4 +30,5 @@ The build also generates the Pagefind index in `dist/`.
 ## Pull requests
 
 Explain the user-facing reason for the change, include verification commands,
-and attach screenshots for visual changes when practical.
+and attach screenshots for visual changes when practical. See [`GIT规范.md`](GIT规范.md)
+for commit, branch, and pre-submit conventions.
