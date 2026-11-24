@@ -31,7 +31,7 @@ const primaryLink = project.href ?? project.repo
 
       <span class="min-w-0">
         <span class="flex min-w-0 items-baseline gap-2">
-          <span class="min-w-0 truncate text-[0.95rem] font-medium text-ink">
+          <span class="min-w-0 truncate text-[1.05rem] font-normal text-ink">
             {project.name}
           </span>
           <span class="min-w-0 truncate font-mono text-[0.6875rem] uppercase tracking-[0.04em] text-quiet">
@@ -72,8 +72,8 @@ const primaryLink = project.href ?? project.repo
   ) : (
     <article
       class:list={[
-        'pcc group relative isolate flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-line bg-card p-4 transition-colors duration-200 hover:border-[color-mix(in_srgb,var(--line)_88%,var(--card))]',
-        { 'pcc--compact': density === 'compact' },
+        'pcc group relative isolate flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-line bg-card p-5 transition-colors duration-200 hover:border-[color-mix(in_srgb,var(--line)_88%,var(--card))]',
+        density === 'compact' ? 'pcc--compact min-h-[9.5rem]' : 'min-h-[11rem]',
       ]}
       style={`--pa: ${project.gradient[0]}; --pb: ${project.gradient[1]}`}
     >
@@ -89,7 +89,7 @@ const primaryLink = project.href ?? project.repo
 
       <span class="pcc-glow" aria-hidden="true" />
 
-      <span class="block text-[1.05rem] font-semibold leading-snug text-ink">{project.name}</span>
+      <span class="pcc-title block truncate text-[1.15rem] font-normal leading-snug tracking-[-0.01em] text-ink">{project.name}</span>
       <span
         class:list={[
           'pcc-description mt-2 text-sm leading-[1.65] text-quiet',
@@ -98,11 +98,11 @@ const primaryLink = project.href ?? project.repo
       >
         {project.description}
       </span>
-      <span class="pcc-actions flex h-11 items-center justify-between gap-3">
-        <span class="min-w-0 truncate font-mono text-[0.6875rem] leading-none uppercase tracking-[0.04em] text-quiet">
+      <span class="pcc-actions mt-auto flex items-center justify-between gap-3 pt-3.5">
+        <span class="min-w-0 truncate font-mono text-[0.6875rem] leading-4 uppercase tracking-[0.04em] text-quiet">
           {project.tags.join(' · ')}
         </span>
-        <span class="relative z-20 flex items-center gap-0.5">
+        <span class="relative z-20 -my-3.5 -mr-3.5 flex shrink-0 items-center gap-0.5">
           {project.repo && (
             <a
               class="icon-btn icon-btn-sm"

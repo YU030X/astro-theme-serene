@@ -77,6 +77,20 @@ test.describe('reading layout and controls', () => {
       return { overflow: style.overflow, clamp: style.webkitLineClamp }
     })
     expect(long).toEqual({ overflow: 'hidden', clamp: '3' })
+    await expect(card.locator('.pcc-title')).toHaveCSS('font-weight', '400')
+    await expect(card.locator('.pcc-title')).toHaveCSS('text-overflow', 'ellipsis')
+    const projectHeights = await page.locator('.pcc').evaluateAll(els => els.map(el => el.getBoundingClientRect().height))
+    expect(new Set(projectHeights.map(h => Math.round(h))).size).toBe(1)
+
+    await page.goto('/')
+    const homeHeights = await page.locator('.pcc--compact').evaluateAll(els => els.map(el => el.getBoundingClientRect().height))
+    expect(new Set(homeHeights.map(h => Math.round(h))).size).toBe(1)
+
+    await page.goto('/links/')
+    await expect(page.locator('.link-domain')).toHaveCount(0)
+    await expect(page.locator('.link-name').first()).toHaveCSS('font-weight', '400')
+    const linkHeights = await page.locator('.link-card').evaluateAll(els => els.map(el => el.getBoundingClientRect().height))
+    expect(new Set(linkHeights.map(h => Math.round(h))).size).toBe(1)
   })
 
   test('mobile menu opens, closes with Escape, and restores focus', async ({ page }) => {
@@ -271,5 +285,48 @@ test.describe('reading layout and controls', () => {
     await expect(details).not.toHaveAttribute('open')
     await details.locator('summary').click()
     await expect(details).toHaveAttribute('open', '')
+  })
+
+  test('blog post thumbnails keep a steady composited layer across hover-out', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.goto('/blog/')
+    const row = page.locator('.post-list > li > a').first()
+    const thumb = row.locator('.post-row-thumb')
+    const img = thumb.locator('img')
+    await expect(img).toBeVisible()
+    const box = (await thumb.boundingBox())!
+    expect(box.width).toBe(120)
+    expect(box.height).toBe(90)
+    await expect(thumb).toHaveClass(/media-dim/)
+    await expect(img).not.toHaveClass(/media-dim/)
+    await expect(img).toHaveCSS('will-change', 'transform')
+    const restingTransform = await img.evaluate(el => getComputedStyle(el).transform)
+    expect(restingTransform).not.toBe('none')
+    await row.hover()
+    await expect.poll(() => img.evaluate(el => getComputedStyle(el).transform)).toContain('1.04')
+    await page.mouse.move(5, 5)
+    await page.waitForTimeout(550)
+    expect(await img.evaluate(el => getComputedStyle(el).transform)).toBe(restingTransform)
+  })
+
+  test('blog post metadata places unbolded category inline beside reading time', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.goto('/blog/')
+    const row = page.locator('.post-list > li > a').first()
+    const dateMeta = row.locator('.post-meta-date')
+    const categoryMeta = row.locator('.post-meta-cat')
+    const tagsMeta = row.locator('.post-meta-tags')
+
+    await expect(categoryMeta).toHaveCSS('font-weight', '400')
+    await expect(tagsMeta).toHaveCSS('font-weight', '400')
+    const dateColor = await dateMeta.evaluate(el => getComputedStyle(el).color)
+    await expect(categoryMeta).toHaveCSS('color', dateColor)
+
+    const dateBox = (await dateMeta.boundingBox())!
+    const categoryBox = (await categoryMeta.boundingBox())!
+    const gapAfterReadingTime = categoryBox.x - (dateBox.x + dateBox.width)
+    expect(gapAfterReadingTime).toBeGreaterThan(0)
+    expect(gapAfterReadingTime).toBeLessThan(28)
+    expect(Math.abs(categoryBox.y - dateBox.y)).toBeLessThan(8)
   })
 })

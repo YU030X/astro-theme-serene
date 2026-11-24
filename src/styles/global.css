@@ -392,18 +392,20 @@ body::before {
   pointer-events: none;
 }
 
-/* Row metadata: the section name keeps small caps, tags fall back to
-   lowercase so the two read as different kinds of label. */
+/* Row metadata: date, reading time and category share the quiet small-caps
+   line; tags fall back to lowercase so they read as secondary labels. */
 .post-meta-date {
   font-variant-numeric: oldstyle-nums tabular-nums;
 }
 .post-meta-cat {
-  color: color-mix(in srgb, var(--ink) 58%, var(--quiet));
+  color: var(--quiet);
+  font-weight: 400;
 }
 /* Sized down so the lowercase x-height matches the small-caps beside it —
    tags are the least important part of the line and should not read largest. */
 .post-meta-tags {
   font-size: 0.86em;
+  font-weight: 400;
   font-variant-caps: normal;
   letter-spacing: 0;
 }

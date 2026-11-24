@@ -17,19 +17,18 @@ const themeColor = avatarThemeColor
   : `hsl(${link.hue} 55% 58%)`
 const avatarIsLogo =
   link.avatar?.split(/[?#]/)[0].toLowerCase().endsWith('.svg') ?? false
-const domain = new URL(link.url).hostname.replace(/^www\./, '')
 ---
 
 <a
   href={link.url}
   target="_blank"
   rel="noopener noreferrer"
-  class="link-card group grid min-h-[6.75rem] min-w-0 grid-cols-[2.25rem_minmax(0,1fr)_0.875rem] grid-rows-[auto_1fr_auto] items-start gap-x-2.5 gap-y-1 overflow-hidden rounded-xl border border-line/75 bg-card px-3.5 py-3"
+  class="link-card group flex min-h-[6.25rem] min-w-0 items-center gap-3 overflow-hidden rounded-xl border border-line/75 bg-card p-4"
   style={`--link-theme-color: ${themeColor}`}
   aria-label={t('link.visit', { name: link.name })}
 >
   <span
-    class="link-avatar relative row-span-3 grid size-9 select-none place-items-center self-start overflow-hidden rounded-full border border-line bg-tint text-xs font-medium text-ink"
+    class="link-avatar relative grid size-10 shrink-0 select-none place-items-center overflow-hidden rounded-full border border-line bg-tint text-xs font-medium text-ink"
     aria-hidden="true"
   >
     <span>{link.name.charAt(0)}</span>
@@ -38,38 +37,35 @@ const domain = new URL(link.url).hostname.replace(/^www\./, '')
         <img
           src={link.avatar}
           alt=""
-          width="36"
-          height="36"
+          width="40"
+          height="40"
           loading="lazy"
           decoding="async"
           referrerpolicy="no-referrer"
           class:list={[
             'absolute inset-0 size-full bg-card',
-            avatarIsLogo ? 'object-contain p-[0.35rem]' : 'object-cover'
+            avatarIsLogo ? 'object-contain p-[0.4rem]' : 'object-cover'
           ]}
         />
       )
     }
   </span>
 
-  <span class="link-name min-w-0 truncate text-[0.875rem] font-semibold leading-5 text-ink">
-    {link.name}
+  <span class="flex min-w-0 flex-1 flex-col justify-center gap-1">
+    <span class="flex min-w-0 items-center justify-between gap-1.5">
+      <span class="link-name min-w-0 truncate text-[1rem] font-normal leading-snug text-ink">
+        {link.name}
+      </span>
+      <Icon
+        name="arrow-up-right"
+        size={14}
+        class="link-external shrink-0 text-quiet/65"
+      />
+    </span>
+    <span class="link-description line-clamp-2 min-w-0 text-[0.78rem] leading-[1.5] text-quiet">
+      {link.description}
+    </span>
   </span>
-
-  <span class="col-[2/4] line-clamp-2 min-w-0 text-[0.75rem] leading-[1.45] text-quiet">
-    {link.description}
-  </span>
-
-  <span class="link-domain col-[2/4] flex min-w-0 items-center gap-1.5 font-mono text-[0.58rem] uppercase tracking-[0.09em] text-quiet">
-    <span class="link-dot size-1 shrink-0 rounded-full" aria-hidden="true"></span>
-    <span class="truncate">{domain}</span>
-  </span>
-
-  <Icon
-    name="arrow-up-right"
-    size={14}
-    class="link-external col-start-3 row-start-1 mt-0.5 text-quiet/65"
-  />
 </a>
 
 <style>
@@ -92,20 +88,12 @@ const domain = new URL(link.url).hostname.replace(/^www\./, '')
     display: none;
   }
 
-  .link-dot {
-    background: var(--link-theme-color);
-    opacity: 0.72;
-  }
-
   .link-avatar,
   .link-name,
-  .link-domain,
-  .link-external,
-  .link-dot {
+  .link-external {
     transition:
       color 0.2s var(--ease-out-quart),
-      border-color 0.2s var(--ease-out-quart),
-      opacity 0.2s var(--ease-out-quart);
+      border-color 0.2s var(--ease-out-quart);
   }
 
   .link-card:hover .link-avatar,
@@ -114,16 +102,9 @@ const domain = new URL(link.url).hostname.replace(/^www\./, '')
   }
 
   .link-card:hover .link-name,
-  .link-card:hover .link-domain,
   .link-card:hover .link-external,
   .link-card:focus-visible .link-name,
-  .link-card:focus-visible .link-domain,
   .link-card:focus-visible .link-external {
     color: color-mix(in srgb, var(--link-theme-color) 76%, var(--ink));
-  }
-
-  .link-card:hover .link-dot,
-  .link-card:focus-visible .link-dot {
-    opacity: 1;
   }
 </style>

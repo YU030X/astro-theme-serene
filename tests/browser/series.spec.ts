@@ -46,6 +46,7 @@ test('published index and detail use series order, not dates or filenames', asyn
   await expect(page).toHaveURL(/\/series\/?$/)
   await expect(page.getByRole('link', { name: /Writing a small series/ })).toContainText('2 posts')
   await page.getByRole('link', { name: /Writing a small series/ }).click()
+  await expect(page.locator('a[href="/series"] svg')).toHaveCount(1)
   const links = page.locator('ol.post-list > li > a')
   await expect(links).toHaveCount(2)
   await expect(links.nth(0)).toHaveAttribute('href', '/blog/series-planning')

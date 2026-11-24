@@ -1,4 +1,5 @@
 ---
+import Icon from '@/components/Icon.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import PageHead from '@/components/PageHead.astro'
 import PostRow from '@/components/PostRow.astro'
@@ -17,7 +18,18 @@ const { series } = Astro.props
 <BaseLayout title={series.title} description={t('series.detail', { title: series.title })}>
   <section class="mx-auto w-full max-w-[var(--container-reading)] pt-14 sm:pt-16">
     <PageHead title={series.title}>
-      <a slot="eyebrow" class="link-underline text-sm text-quiet" href="/series">{t('series.all')}</a>
+      <a
+        slot="eyebrow"
+        href="/series"
+        class="group inline-flex items-center gap-1.5 text-sm font-medium text-quiet transition-colors hover:text-ink"
+      >
+        <Icon
+          name="arrow-left"
+          size={15}
+          class="transition-transform duration-300 group-hover:-translate-x-0.5"
+        />
+        {t('series.all')}
+      </a>
       {postCount(series.posts.length)}
     </PageHead>
     <ol class="post-list mt-14" aria-label={t('series.ordered')}>

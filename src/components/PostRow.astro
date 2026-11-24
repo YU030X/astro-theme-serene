@@ -32,26 +32,27 @@ const isDraft = post.data.draft && import.meta.env.DEV
       <span class="mt-1 line-clamp-2 text-sm leading-relaxed text-quiet">
         {description}
       </span>
-      <span class="os-nums mt-2 grid gap-x-4 gap-y-1 text-[0.8rem] text-quiet sm:grid-cols-[9.5rem_minmax(0,1fr)]">
-        <span class="post-meta-date flex items-baseline gap-1.5">
+      <span class="os-nums mt-2 flex flex-wrap items-baseline gap-x-1.5 gap-y-1 text-[0.8rem] text-quiet">
+        <span class="post-meta-date inline-flex items-baseline gap-1.5">
           <FormattedDate date={publishDate} />
           <span class="opacity-45" aria-hidden="true">·</span>
           <span>{t('post.minutes', { count: minutes })}</span>
         </span>
-        <span class="flex items-baseline gap-2">
-          <span class="post-meta-cat">{formatCategory(category)}</span>
-          {tags.length > 0 && (
-            <span class="post-meta-tags">
+        <span class="opacity-45" aria-hidden="true">·</span>
+        <span class="post-meta-cat font-normal">{formatCategory(category)}</span>
+        {
+          tags.length > 0 && (
+            <span class="post-meta-tags ml-0.5 font-normal">
               {tags.slice(0, 2).map((tag) => `#${tag}`).join(' ')}
             </span>
-          )}
-        </span>
+          )
+        }
       </span>
     </span>
 
     {
       cover && (
-        <span class="block h-[4.1rem] w-[5.45rem] shrink-0 overflow-hidden rounded-lg sm:h-[5.6rem] sm:w-[7.5rem]">
+        <span class="post-row-thumb media-dim block h-[4.125rem] w-[5.5rem] shrink-0 overflow-hidden rounded-lg sm:h-[5.625rem] sm:w-[7.5rem]">
           {typeof cover.src === 'string' ? (
             <img
               src={cover.src}
@@ -60,7 +61,7 @@ const isDraft = post.data.draft && import.meta.env.DEV
               height="180"
               loading="lazy"
               decoding="async"
-              class="media-dim size-full object-cover transition-transform duration-500 ease-spring group-hover:scale-[1.04]"
+              class="size-full object-cover"
             />
           ) : (
             <Image
@@ -68,9 +69,9 @@ const isDraft = post.data.draft && import.meta.env.DEV
               alt={cover.alt}
               width={240}
               widths={[176, 240, 480]}
-              sizes="(min-width: 640px) 120px, 87px"
+              sizes="(min-width: 640px) 120px, 88px"
               loading="lazy"
-              class="media-dim size-full object-cover transition-transform duration-500 ease-spring group-hover:scale-[1.04]"
+              class="size-full object-cover"
             />
           )}
         </span>
@@ -78,3 +79,32 @@ const isDraft = post.data.draft && import.meta.env.DEV
     }
   </a>
 </li>
+
+<style>
+  /* Isolate the rounded clip and dark-mode filter on the outer box, and keep
+     the image permanently composited so hover-out never demotes the GPU layer
+     and snaps object-fit: cover cropping at transitionend. */
+  .post-row-thumb {
+    transform: translateZ(0);
+  }
+
+  .post-row-thumb :global(img) {
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0) scale(1);
+    transition: transform 0.5s var(--ease-spring);
+  }
+
+  a:hover .post-row-thumb :global(img) {
+    transform: translateZ(0) scale(1.04);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post-row-thumb :global(img) {
+      transition: none;
+    }
+    a:hover .post-row-thumb :global(img) {
+      transform: translateZ(0) scale(1);
+    }
+  }
+</style>
