@@ -92,7 +92,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
       </a>
 
       {cover && (
-        <figure class="mx-auto mt-8 max-w-[var(--container-prose)]">
+        <figure class="mt-8">
           <div
             class="hero-figure relative aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[3/2]"
             data-no-zoom
@@ -113,8 +113,8 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
                 src={cover.src}
                 alt={cover.alt}
                 width={1400}
-                widths={[640, 720, 1080, 1280, 1400]}
-                sizes="(min-width: 696px) 640px, (min-width: 640px) calc(100vw - 56px), calc(100vw - 32px)"
+                widths={[704, 720, 1080, 1280, 1400]}
+                sizes="(min-width: 760px) 704px, (min-width: 640px) calc(100vw - 56px), calc(100vw - 32px)"
                 loading="eager"
                 fetchpriority="high"
                 class="media-dim block h-full w-full object-[50%_35%] object-cover"
@@ -160,7 +160,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
         {isDraft && <DraftBadge />}
       </h1>
 
-      <p class="mt-4 max-w-[40rem] text-[1.02rem] italic leading-relaxed text-quiet">
+      <p class="mt-4 text-[1.02rem] italic leading-relaxed text-quiet">
         {description}
       </p>
 

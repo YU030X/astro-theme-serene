@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 for (const device of [
-  { name: 'desktop', width: 1440, dpr: 1, candidate: 640 },
+  { name: 'desktop', width: 1440, dpr: 1, candidate: 704 },
   { name: 'mobile', width: 390, dpr: 2, candidate: 720 }
 ]) {
   test.describe(`${device.name} cover sizing`, () => {
@@ -16,7 +16,7 @@ for (const device of [
         return { candidate: Number(selected?.[1].replace('w', '')), width: image.getBoundingClientRect().width, height: image.getBoundingClientRect().height }
       })
       expect(dimensions.candidate).toBe(device.candidate)
-      expect(dimensions.width).toBeLessThanOrEqual(640)
+      expect(dimensions.width).toBeLessThanOrEqual(704)
       expect(dimensions.height).toBeGreaterThan(0)
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
       await expect(image).toHaveCSS('opacity', '1')

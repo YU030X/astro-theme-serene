@@ -184,11 +184,23 @@ test.describe('reading layout and controls', () => {
       await page.goto(article)
       await page.evaluate(theme => document.documentElement.dataset.theme = theme, theme)
       const shell = page.locator('.header-shell')
+      const cover = page.locator('.hero-figure')
+      const header = page.locator('article > .relative > header')
       const prose = page.locator('.prose')
+      const license = page.locator('[data-post-license]')
       await expect(shell).toBeVisible()
       await expect(prose).toBeVisible()
-      expect((await shell.boundingBox())!.width).toBeLessThanOrEqual(Math.min(width, 1088))
-      expect((await prose.boundingBox())!.width).toBeLessThanOrEqual(Math.min(width, 640))
+      const shellBox = (await shell.boundingBox())!
+      const coverBox = (await cover.boundingBox())!
+      const headerBox = (await header.boundingBox())!
+      const proseBox = (await prose.boundingBox())!
+      const licenseBox = (await license.boundingBox())!
+      expect(shellBox.width).toBeLessThanOrEqual(Math.min(width, 1088))
+      expect(proseBox.width).toBeLessThanOrEqual(Math.min(width, 704))
+      for (const box of [coverBox, headerBox, licenseBox]) {
+        expect(box.x).toBeCloseTo(proseBox.x, 0)
+        expect(box.width).toBeCloseTo(proseBox.width, 0)
+      }
       await noOverflow(page)
     }
   })

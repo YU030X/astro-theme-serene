@@ -127,7 +127,7 @@
   /* Reading and scrolled-navigation measures. */
   --container-header-scrolled: 46rem;
   --container-reading: 44rem;
-  --container-prose: 40rem;
+  --container-prose: 44rem;
 
   /* Type scale — shared semantic sizes; one-off component sizes stay local. */
   --text-title: 2rem; /* article h1 base */
