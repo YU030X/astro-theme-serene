@@ -12,14 +12,14 @@ const categories = getCategories(posts)
 ---
 
 <BaseLayout title={t('nav.categories')} description={t('categories.description')}>
-  <section class="pt-14 sm:pt-16">
+  <section class="mx-auto w-full max-w-[var(--container-reading)] pt-14 sm:pt-16">
     <PageHead title={t('nav.categories')}>
       {t('categories.summary', { count: categories.length, posts: posts.length })}
     </PageHead>
 
     {
       categories.length > 0 ? (
-        <div class="mx-auto mt-14 grid max-w-[var(--container-reading)] gap-3 sm:grid-cols-2">
+        <div class="mt-14 grid gap-3 sm:grid-cols-2">
           {categories.map(({ category, count }, index) => (
             <a
               class="soft-lift no-hover-lift group flex items-center justify-between rounded-2xl border border-line bg-card px-5 py-4"
@@ -36,11 +36,7 @@ const categories = getCategories(posts)
           ))}
         </div>
       ) : (
-        <div class="mx-auto max-w-[var(--container-reading)]">
-          <EmptyState>
-            {t('categories.empty')}
-          </EmptyState>
-        </div>
+        <EmptyState>{t('categories.empty')}</EmptyState>
       )
     }
   </section>

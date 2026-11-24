@@ -12,7 +12,7 @@ const max = tags[0]?.count ?? 1
 ---
 
 <BaseLayout title={t('nav.tags')} description={t('tags.description')}>
-  <section class="pt-14 sm:pt-16">
+  <section class="mx-auto w-full max-w-[var(--container-reading)] pt-14 sm:pt-16">
     <PageHead title={t('nav.tags')}>
       {t('tags.summary', { count: tags.length, posts: posts.length })}
     </PageHead>
@@ -20,7 +20,7 @@ const max = tags[0]?.count ?? 1
     {
       tags.length > 0 ? (
         /* Underlined word cloud — no boxes; size tracks usage. */
-        <div class="mx-auto mt-14 flex max-w-[var(--container-reading)] flex-wrap items-baseline justify-center gap-x-6 gap-y-3">
+        <div class="mt-14 flex flex-wrap items-baseline justify-center gap-x-6 gap-y-3">
           {tags.map(({ tag, count }, i) => (
             <a
               class:list={[
@@ -37,11 +37,7 @@ const max = tags[0]?.count ?? 1
           ))}
         </div>
       ) : (
-        <div class="mx-auto max-w-[var(--container-reading)]">
-          <EmptyState>
-            {t('tags.empty')}
-          </EmptyState>
-        </div>
+        <EmptyState>{t('tags.empty')}</EmptyState>
       )
     }
   </section>

@@ -203,6 +203,16 @@ test.describe('reading layout and controls', () => {
       }
       await noOverflow(page)
     }
+    await page.setViewportSize({ width: 1440, height: 900 })
+    for (const route of ['/', '/blog/', '/projects/', '/links/', '/about/', '/archive/', '/categories/', '/tags/', '/series/', '/404.html']) {
+      await page.goto(route)
+      const containerBox = (await page.locator('main > *').first().boundingBox())!
+      const footerBox = (await page.locator('footer .footer-shell > div').first().boundingBox())!
+      expect(containerBox.width, route).toBeCloseTo(704, 0)
+      expect(containerBox.x, route).toBeCloseTo(footerBox.x, 0)
+      expect(containerBox.width, route).toBeCloseTo(footerBox.width, 0)
+      await noOverflow(page)
+    }
   })
 
   test('desktop scrolling navigation narrows without changing its top width', async ({ page }) => {

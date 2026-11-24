@@ -9,7 +9,7 @@ import { t, postCount } from '@/lib/ui'
 const series = getSeries(await getPosts(), import.meta.env.DEV)
 ---
 <BaseLayout title={t('series.title')} description={t('series.description')}>
-  <section class="mx-auto max-w-[var(--container-reading)] pt-14 sm:pt-16">
+  <section class="mx-auto w-full max-w-[var(--container-reading)] pt-14 sm:pt-16">
     <PageHead title={t('series.title')}>{t('series.description')}</PageHead>
     {series.length ? <ul class="mt-14 space-y-4">
       {series.map(group => <li>

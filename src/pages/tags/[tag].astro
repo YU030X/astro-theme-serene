@@ -19,7 +19,7 @@ const { posts } = Astro.props as { posts: Post[] }
 ---
 
 <BaseLayout title={`#${tag}`} description={t('tags.detail', { tag: tag ?? '' })}>
-  <section class="pt-14 sm:pt-16">
+  <section class="mx-auto w-full max-w-[var(--container-reading)] pt-14 sm:pt-16">
     <PageHead>
       <a
         slot="eyebrow"
@@ -37,7 +37,7 @@ const { posts } = Astro.props as { posts: Post[] }
       {t('tags.count', { posts: postCount(posts.length) })}
     </PageHead>
 
-    <ul class="post-list mx-auto mt-14 max-w-[var(--container-reading)]">
+    <ul class="post-list mt-14">
       {posts.map((post) => <PostRow {post} />)}
     </ul>
   </section>

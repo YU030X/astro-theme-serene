@@ -14,10 +14,10 @@ const years = groupByYear(posts)
   title={t('nav.archive')}
   description={t('archive.description')}
 >
-  <section class="pt-14 sm:pt-16">
+  <section class="mx-auto w-full max-w-[var(--container-reading)] pt-14 sm:pt-16">
     <PageHead title={t('nav.archive')}>{t('archive.summary', { count: posts.length })}</PageHead>
 
-    <div class="mx-auto mt-14 max-w-[var(--container-reading)]">
+    <div class="mt-14">
       {years.length === 0 && (
         <EmptyState>
           {t('archive.empty')}

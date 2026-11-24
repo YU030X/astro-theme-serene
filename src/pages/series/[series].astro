@@ -15,7 +15,7 @@ interface Props { series: PostSeries<Post> }
 const { series } = Astro.props
 ---
 <BaseLayout title={series.title} description={t('series.detail', { title: series.title })}>
-  <section class="mx-auto max-w-[var(--container-reading)] pt-14 sm:pt-16">
+  <section class="mx-auto w-full max-w-[var(--container-reading)] pt-14 sm:pt-16">
     <PageHead title={series.title}>
       <a slot="eyebrow" class="link-underline text-sm text-quiet" href="/series">{t('series.all')}</a>
       {postCount(series.posts.length)}

@@ -77,7 +77,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
   </div>
 
   <article class="pt-12 sm:pt-16" data-pagefind-body>
-    <div class="mx-auto max-w-[var(--container-reading)]">
+    <div class="mx-auto w-full max-w-[var(--container-reading)]">
       <a
         href="/blog"
         class="group inline-flex items-center gap-1.5 text-sm text-quiet transition-colors duration-150 hover:text-ink"
@@ -154,7 +154,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
         )
       }
 
-      <header class="mx-auto max-w-[var(--container-reading)] pt-12">
+      <header class="mx-auto w-full max-w-[var(--container-reading)] pt-12">
       <h1 class="mt-0 flex items-baseline gap-2 font-serif text-title font-medium leading-[1.16] sm:text-title-lg">
         <span>{title}</span>
         {isDraft && <DraftBadge />}
@@ -205,7 +205,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
 
     {
       hasToc && (
-        <details class="mx-auto mt-8 max-w-[var(--container-reading)] rounded-2xl border border-line bg-card px-5 py-4 shadow-soft xl:hidden">
+        <details class="mx-auto mt-8 w-full max-w-[var(--container-reading)] rounded-2xl border border-line bg-card px-5 py-4 shadow-soft xl:hidden">
           <summary class="cursor-pointer text-sm font-medium">{t('post.onPage')}</summary>
           <ol class="mt-3 space-y-2 border-t border-line pt-3 text-sm text-quiet">
             {tocHeadings.map((heading) => (
@@ -218,7 +218,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
       )
     }
 
-    <div class="mx-auto mt-10 max-w-[var(--container-reading)] sm:mt-12">
+    <div class="mx-auto mt-10 w-full max-w-[var(--container-reading)] sm:mt-12">
       <div class="min-w-0">
         <div class="prose max-w-[var(--container-prose)]">
           <Content />

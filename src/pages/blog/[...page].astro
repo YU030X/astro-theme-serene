@@ -24,7 +24,7 @@ const hasSeries = getSeries(await getPosts(), import.meta.env.DEV).length > 0
   title={t('nav.blog')}
   description={t('blog.description', { author: siteConfig.author })}
 >
-  <section class="mx-auto max-w-[var(--container-reading)] pt-14 sm:pt-16">
+  <section class="mx-auto w-full max-w-[var(--container-reading)] pt-14 sm:pt-16">
     <PageHead title={t('nav.blog')}>
       {t('blog.summary', { count: page.total })}
       <nav

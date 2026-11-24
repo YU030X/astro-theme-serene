@@ -30,7 +30,7 @@ const categoryLabel = formatCategory(category)
   title={categoryLabel}
   description={t('categories.detail', { category: categoryLabel })}
 >
-  <section class="pt-14 sm:pt-16">
+  <section class="mx-auto w-full max-w-[var(--container-reading)] pt-14 sm:pt-16">
     <PageHead title={categoryLabel}>
       <a
         slot="eyebrow"
@@ -47,7 +47,7 @@ const categoryLabel = formatCategory(category)
       {t('categories.count', { posts: postCount(posts.length) })}
     </PageHead>
 
-    <ul class="post-list mx-auto mt-14 max-w-[var(--container-reading)]">
+    <ul class="post-list mt-14">
       {posts.map((post) => <PostRow {post} />)}
     </ul>
   </section>
